@@ -1,0 +1,27 @@
+#nav1-content-container {
+    width: 100%;
+    display: flex; /* Giúp các phần tử con xếp theo hàng ngang */
+    justify-content: space-between; /* Căn các phần tử con ra hai bên, có khoảng cách giữa */
+    align-items: center; /* Căn các phần tử con theo chiều dọc */
+    padding: 10px; /* Thêm khoảng cách bên trong */
+    background-color: #f8f9fa; /* Màu nền */
+    gap: 20px; /* Khoảng cách giữa các phần tử */
+    flex-wrap: wrap; /* Giúp các phần tử tự động xuống hàng khi không đủ chỗ */
+  }
+#logo-container{
+    width:40%
+}
+#login_signin_infor{
+    width:20%
+}
+#login_signin_infor button{
+    margin-right: 10px;
+}
+#search-bar{
+    width: 40%
+}
+@media (max-width: 480px) {
+    #logo-text{
+        font: 16px;
+    }
+  }
