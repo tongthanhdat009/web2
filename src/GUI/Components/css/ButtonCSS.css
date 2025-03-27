@@ -1,9 +1,0 @@
-.btn-custom {
-    color: orange; /* Màu chữ cam */
-    border-color: orange; /* Viền cam */
-}
-
-.btn-custom:hover {
-    background-color: orange; /* Nền cam */
-    color: white; /* Chữ trắng */
-}
