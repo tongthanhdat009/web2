@@ -18,6 +18,8 @@
     font-size: 18px;
     cursor: pointer;
     transition: background 0.3s;
+    align-items: center;
+    display: flex;
   }
   
   .admin-sidebar li:hover {
