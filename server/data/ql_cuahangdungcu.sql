@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th3 19, 2025 lúc 09:33 AM
+-- Thời gian đã tạo: Th3 27, 2025 lúc 07:31 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.0.30
+-- Phiên bản PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -349,7 +349,6 @@ CREATE TABLE `khohang` (
   `Seri` int(11) NOT NULL,
   `MaPhieuNhap` int(11) NOT NULL,
   `MaHangHoa` int(11) NOT NULL,
-  `SoLuong` int(11) DEFAULT NULL,
   `GiaNhap` int(11) DEFAULT NULL,
   `GiaBan` int(11) DEFAULT NULL,
   `TinhTrang` tinyint(4) DEFAULT NULL

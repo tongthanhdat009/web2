@@ -1,13 +1,8 @@
-// import Header from "./Components/Header"
-import ProductList from "./Components/ProductList"
+import React from "react";
+import Admin from "./Admin";
+
 function App() {
-  return (
-    <>
-      {/* <Header /> */}
-      <ProductList/>
-    </>
-  )
+  return <Admin />;
 }
 
-export default App
-  
+export default App;
