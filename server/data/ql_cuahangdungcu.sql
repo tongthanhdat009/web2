@@ -83,7 +83,6 @@ INSERT INTO `chitiethanghoa` (`MaHangHoa`, `KhoiLuong`, `TocDoToiDa`, `CongSuat`
 --
 
 CREATE TABLE `chitiethoadon` (
-  `SoLuongHang` int(11) DEFAULT NULL,
   `MaHoaDon` int(11) NOT NULL,
   `MaHangHoa` int(11) NOT NULL,
   `Gia` int(11) DEFAULT NULL,
