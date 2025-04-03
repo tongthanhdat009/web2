@@ -1,0 +1,88 @@
+/* Common button styles */
+.admin-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Add button styles */
+.add-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+
+.add-button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Edit button styles */
+.edit-button {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+}
+
+.edit-button:hover {
+    background-color: #0b7dda;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.edit-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Delete button styles */
+.delete-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+.delete-button:hover {
+    background-color: #da190b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.delete-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon styles */
+.button-icon {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+.admin-button:hover .button-icon {
+    transform: scale(1.1);
+}
+
+/* Disabled button styles */
+.admin-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.admin-button:disabled:hover {
+    transform: none;
+    box-shadow: none;
+} 
