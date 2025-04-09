@@ -83,10 +83,7 @@ INSERT INTO `chitiethanghoa` (`MaHangHoa`, `KhoiLuong`, `TocDoToiDa`, `CongSuat`
 --
 
 CREATE TABLE `chitiethoadon` (
-  `SoLuongHang` int(11) DEFAULT NULL,
   `MaHoaDon` int(11) NOT NULL,
-  `MaHangHoa` int(11) NOT NULL,
-  `Gia` int(11) DEFAULT NULL,
   `Seri` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -565,7 +562,6 @@ ALTER TABLE `chitiethanghoa`
 -- Chỉ mục cho bảng `chitiethoadon`
 --
 ALTER TABLE `chitiethoadon`
-  ADD PRIMARY KEY (`MaHoaDon`,`MaHangHoa`),
   ADD KEY `FK_ChiTietHoaDon_KhoHang` (`Seri`);
 
 --
