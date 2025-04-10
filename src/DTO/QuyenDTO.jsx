@@ -1,11 +1,25 @@
 class QuyenDTO {
     constructor(data = {}) {
-        this.idQuyen = data.idQuyen || '';
-        this.tenQuyen = data.tenQuyen || '';
-        this.moTa = data.moTa || '';
-        this.trangThai = data.trangThai !== undefined ? data.trangThai : 1;
-        this.heThong = data.heThong || 0;
-        this.phanQuyen = data.phanQuyen || [];
+        this.IDQuyen = data.IDQuyen || null;
+        this.TenQuyen = data.TenQuyen || '';
+        this.ChucNang = data.ChucNang || [];
+    }
+
+    static fromJSON(json) {
+        return new QuyenDTO({
+            IDQuyen: json.IDQuyen,
+            TenQuyen: json.TenQuyen,
+            ChucNang: json.ChucNang
+        });
+    }
+
+    toJSON() {
+        return {
+            IDQuyen: this.IDQuyen,
+            TenQuyen: this.TenQuyen,
+            ChucNang: this.ChucNang
+        };
     }
 }
+
 export default QuyenDTO;
