@@ -1,6 +1,8 @@
-export default class PhanQuyenDTO {
+class PhanQuyenDTO {
     constructor(idChucNang, idQuyen) {
         this.idChucNang = idChucNang; // Mã chức năng (FK)
         this.idQuyen = idQuyen; // Mã quyền (FK)
     }
 }
+
+export default PhanQuyenDTO;

@@ -1,4 +1,4 @@
-export default class TaiKhoanDTO {
+class TaiKhoanDTO {
     constructor(idTaiKhoan, tenDangNhap, matKhau, idQuyen) {
         this.idTaiKhoan = idTaiKhoan; // Mã tài khoản
         this.tenDangNhap = tenDangNhap; // Tên đăng nhập
@@ -6,3 +6,4 @@ export default class TaiKhoanDTO {
         this.idQuyen = idQuyen; // Mã quyền (FK)
     }
 }
+export default TaiKhoanDTO;
