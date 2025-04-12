@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import React, { useState, useEffect  } from "react";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import TrangChu from "../Pages/Admin/TrangChu";
 import TraCuuSanPham from "../Pages/Admin/TraCuuSanPham";
@@ -12,10 +12,39 @@ import QuanLyChungLoai from "../Pages/Admin/QuanLyChungLoai";
 import QuanLyDonHang from "../Pages/Admin/QuanLyDonHang";
 import QuanLyNguoiDung from "../Pages/Admin/QuanLyNguoiDung";
 import QuanLyPhanQuyen from "../Pages/Admin/QuanLyPhanQuyen";
+import Header from "./Header"; // Import Header nếu chưa có
+import { layThongTinTaiKhoan } from "../../DAL/apiDangNhapAdmin.jsx";
 import "./css/AdminLayout.css";
 
-const AdminLayout = ({ isMenuOpen }) => {
+const AdminLayout = () => {
+  const [thongTinTKAdmin, setThongTinTKAdmin] = useState([]); // biến lưu mảng thông tin
+  const [menuItems, setMenu] = useState([]);
+  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
   const location = useLocation();
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+
+  useEffect(() => {
+    const IDTKAdmin = localStorage.getItem("IDTKAdmin");
+    console.log("IDTKAdmin:", IDTKAdmin);
+
+    if (!IDTKAdmin) {
+      navigate("/admin/dang-nhap-admin");
+    } else {
+      layThongTinTaiKhoan(IDTKAdmin)
+        .then((data) => {
+          setThongTinTKAdmin(data); // lưu vào state
+          const menuItems = data.map(item => item.TenChucNang); // tạo danh sách TenChucNang
+          setMenu(menuItems); // gán vào biến menu
+        })
+        .catch((error) => {
+          console.error("Lỗi khi lấy thông tin tài khoản:", error);
+        });
+    }
+  }, [navigate]);
 
   // Tạo đường dẫn dạng "admin\Trang chủ"
   const getBreadcrumb = () => {
@@ -38,40 +67,37 @@ const AdminLayout = ({ isMenuOpen }) => {
   
     return `${pathParts.slice(1).map(part => pathMapping[part] || part).join(" \\ ")}`;
   };
-  const menuItems = [
-    "Trang chủ", "Quản lý khuyến mãi", "Quản lý hãng", "Quản lý nhà cung cấp",
-    "Quản lý phiếu nhập", "Quản lý hàng hóa", "Quản lý chủng loại",
-    "Quản lý đơn hàng", "Quản lý người dùng",
-    "Quản lý phân quyền", "Tra cứu sản phẩm"
-  ];
+  const user = thongTinTKAdmin.length > 0 ? thongTinTKAdmin[0] : {};
 
   return (
-    <div className="admin-layout">
-      {isMenuOpen && <AdminSidebar menuItems = {menuItems}/>}
-      <div className="admin-main">
-        <div className="admin-header">
-          <h2>{getBreadcrumb()}</h2>
-        </div>
-        <div className="admin-content">
-          <Routes>
-          <Route path="/" element={<Navigate to="/admin/trang-chu" />} />
-            <Route path="/admin" element={<Navigate to="/admin/trang-chu" />} />
-            <Route path="/admin/trang-chu" element={<TrangChu />} />
-            <Route path="/admin/tra-cuu-san-pham" element={<TraCuuSanPham />} />
-            <Route path="/admin/quan-ly-khuyen-mai" element={<QuanLyKhuyenMai />} />
-            <Route path="/admin/quan-ly-hang" element={<QuanLyHang />} />
-            <Route path="/admin/quan-ly-nha-cung-cap" element={<QuanLyNhaCungCap />} />
-            <Route path="/admin/quan-ly-phieu-nhap" element={<QuanLyPhieuNhap />} />
-            <Route path="/admin/quan-ly-hang-hoa" element={<QuanLyHangHoa />} />
-            <Route path="/admin/quan-ly-chung-loai" element={<QuanLyChungLoai />} />
-            <Route path="/admin/quan-ly-don-hang" element={<QuanLyDonHang />} />
-            <Route path="/admin/quan-ly-nguoi-dung" element={<QuanLyNguoiDung />} />
-            <Route path="/admin/quan-ly-phan-quyen" element={<QuanLyPhanQuyen />} />
-          </Routes>
+    <>
+      <Header user={{ name: user.HoTen, avatar: user.Anh }} toggleMenu={toggleMenu} />
+      <div className="admin-layout">
+        {isMenuOpen && <AdminSidebar menuItems={menuItems} />}
+        <div className="admin-main">
+          <div className="admin-header">
+            <h2>{getBreadcrumb()}</h2>
+          </div>
+          <div className="admin-content">
+            <Routes>
+              <Route path="/admin" element={<Navigate to="/admin/trang-chu" />} />
+              <Route path="/trang-chu" element={<TrangChu />} />
+              <Route path="/tra-cuu-san-pham" element={<TraCuuSanPham />} />
+              <Route path="/quan-ly-khuyen-mai" element={<QuanLyKhuyenMai />} />
+              <Route path="/quan-ly-hang" element={<QuanLyHang />} />
+              <Route path="/quan-ly-nha-cung-cap" element={<QuanLyNhaCungCap />} />
+              <Route path="/quan-ly-phieu-nhap" element={<QuanLyPhieuNhap />} />
+              <Route path="/quan-ly-hang-hoa" element={<QuanLyHangHoa />} />
+              <Route path="/quan-ly-chung-loai" element={<QuanLyChungLoai />} />
+              <Route path="/quan-ly-don-hang" element={<QuanLyDonHang />} />
+              <Route path="/quan-ly-nguoi-dung" element={<QuanLyNguoiDung />} />
+              <Route path="/quan-ly-phan-quyen" element={<QuanLyPhanQuyen />} />
+            </Routes>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
-};
+}
 
 export default AdminLayout;
