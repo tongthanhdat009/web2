@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 12, 2025 lúc 11:41 AM
+-- Thời gian đã tạo: Th4 12, 2025 lúc 12:27 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -11,9 +11,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-DROP DATABASE IF EXISTS ql_cuahangdungcu;
-CREATE DATABASE ql_cuahangdungcu;
-USE `ql_cuahangdungcu`;
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -83,9 +81,17 @@ INSERT INTO `chitiethanghoa` (`MaHangHoa`, `KhoiLuong`, `TocDoToiDa`, `CongSuat`
 
 CREATE TABLE `chitiethoadon` (
   `MaHoaDon` int(11) NOT NULL,
-  `Gia` int(11) DEFAULT NULL,
-  `Seri` int(11) DEFAULT NULL
+  `Seri` int(11) DEFAULT NULL,
+  `GiaBan` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `chitiethoadon`
+--
+
+INSERT INTO `chitiethoadon` (`MaHoaDon`, `Seri`, `GiaBan`) VALUES
+(1, 1, 200000),
+(1, 2, 180000);
 
 -- --------------------------------------------------------
 
@@ -103,16 +109,17 @@ CREATE TABLE `chucnang` (
 --
 
 INSERT INTO `chucnang` (`IDChucNang`, `TenChucNang`) VALUES
-(1, 'Quản lý sản phẩm'),
-(2, 'Quản lý phân quyền'),
-(3, 'Quản lý phiếu nhập'),
-(4, 'Quản lý người dùng'),
-(5, 'Quản lý khuyến mãi'),
-(6, 'Quản lý đơn hàng'),
-(7, 'Quản lý hãng'),
-(8, 'Quản lý danh mục'),
-(9, 'Quản lý chủng loại'),
-(10, 'Quản lý thể loại');
+(1, 'Trang chủ'),
+(2, 'Quản lý khuyến mãi'),
+(3, 'Quản lý hãng'),
+(4, 'Quản lý nhà cung cấp'),
+(5, 'Quản lý phiếu nhập'),
+(6, 'Quản lý hàng hóa'),
+(7, 'Quản lý chủng loại'),
+(8, 'Quản lý đơn hàng'),
+(9, 'Quản lý người dùng'),
+(10, 'Quản lý phân quyền'),
+(11, 'Tra cứu sản phẩm');
 
 -- --------------------------------------------------------
 
@@ -336,6 +343,13 @@ CREATE TABLE `hoadon` (
   `SoDienThoai` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `hoadon`
+--
+
+INSERT INTO `hoadon` (`MaHoaDon`, `IDTaiKhoan`, `NgayXuatHoaDon`, `NgayDuyet`, `TrangThai`, `DiaChi`, `TenNguoiMua`, `SoDienThoai`) VALUES
+(1, 1, '2024-04-12', '2024-04-12', '1', '123 Đường ABC, Quận 1, TP.HCM', 'Người Mua 1', '0901234567');
+
 -- --------------------------------------------------------
 
 --
@@ -407,6 +421,13 @@ CREATE TABLE `nguoidung` (
   `Anh` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `nguoidung`
+--
+
+INSERT INTO `nguoidung` (`MaNguoiDung`, `HoTen`, `GioiTinh`, `Email`, `SoDienThoai`, `IDTaiKhoan`, `Anh`) VALUES
+(1, 'Người dùng 1', 'Nam', 'nd1@gmail.com', '09000000', 1, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -477,7 +498,8 @@ INSERT INTO `phanquyen` (`IDChucNang`, `IDQuyen`, `Them`, `Xoa`, `Sua`) VALUES
 (8, 1, 1, 1, 1),
 (8, 3, 1, 1, 1),
 (9, 1, 1, 1, 1),
-(10, 1, 1, 1, 1);
+(10, 1, 1, 1, 1),
+(11, 1, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -540,7 +562,7 @@ CREATE TABLE `taikhoan` (
 --
 
 INSERT INTO `taikhoan` (`IDTaiKhoan`, `TaiKhoan`, `matKhau`, `IDQuyen`, `TrangThai`, `SessionID`) VALUES
-(1, 'admin', 0x0a123456, 1, 0, '');
+(1, 'admin', 0x5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5, 1, 0, '');
 
 -- --------------------------------------------------------
 
@@ -693,7 +715,7 @@ ALTER TABLE `theloai`
 -- AUTO_INCREMENT cho bảng `chucnang`
 --
 ALTER TABLE `chucnang`
-  MODIFY `IDChucNang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `IDChucNang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT cho bảng `chungloai`
@@ -717,7 +739,7 @@ ALTER TABLE `hanghoa`
 -- AUTO_INCREMENT cho bảng `hoadon`
 --
 ALTER TABLE `hoadon`
-  MODIFY `MaHoaDon` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `MaHoaDon` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT cho bảng `khohang`
@@ -735,7 +757,7 @@ ALTER TABLE `khuyenmai`
 -- AUTO_INCREMENT cho bảng `nguoidung`
 --
 ALTER TABLE `nguoidung`
-  MODIFY `MaNguoiDung` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `MaNguoiDung` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT cho bảng `nhacungcap`
@@ -759,7 +781,7 @@ ALTER TABLE `quyen`
 -- AUTO_INCREMENT cho bảng `taikhoan`
 --
 ALTER TABLE `taikhoan`
-  MODIFY `IDTaiKhoan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `IDTaiKhoan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `theloai`
