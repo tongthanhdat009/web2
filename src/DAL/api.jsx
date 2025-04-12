@@ -1,26 +1,34 @@
 const API_URL_HANGHOA = "http://localhost/web2/server/api/getHangHoa.php";
-//API endpoints for KhuyenMai
+// API endpoints cho KhuyenMai
 const API_URL_KM = "http://localhost/web2/server/api/getKhuyenMai.php";
 const API_ADD_KM = "http://localhost/web2/server/api/addKhuyenMai.php";
 const API_DELETE_KM = "http://localhost/web2/server/api/deleteKhuyenMai.php";
 const API_UPDATE_KM = "http://localhost/web2/server/api/updateKhuyenMai.php";
 
-// API endpoints for Hang
+// API endpoints cho Hang
 const API_GET_HANG = "http://localhost/web2/server/api/getHang.php";
 const API_ADD_HANG = "http://localhost/web2/server/api/addHang.php";
 const API_UPDATE_HANG = "http://localhost/web2/server/api/updateHang.php";
 const API_DELETE_HANG = "http://localhost/web2/server/api/deleteHang.php";
 
-// API endpoints for NCC
+// API endpoints cho NCC
 const API_URL_NCC = "http://localhost/web2/server/api/getNCC.php";
 const API_ADD_NCC = "http://localhost/web2/server/api/addNCC.php";
 const API_DELETE_NCC = "http://localhost/web2/server/api/deleteNCC.php";
 const API_UPDATE_NCC = "http://localhost/web2/server/api/updateNCC.php";
 
+// API endpoints cho Phân quyền
+const API_URL_QUYEN = "http://localhost/web2/server/api/QuanLyPhanQuyen/getAllQuyen.php";
+const API_ADD_QUYEN = "http://localhost/web2/server/api/QuanLyPhanQuyen/addQuyen.php";
+const API_UPDATE_QUYEN = "http://localhost/web2/server/api/QuanLyPhanQuyen/updateQuyen.php";
+const API_DELETE_QUYEN = "http://localhost/web2/server/api/QuanLyPhanQuyen/deleteQuyen.php";
+
 import KhuyenMaiDTO from "../DTO/KhuyenMaiDTO";
 import HangDTO from "../DTO/HangDTO";
 import NhaCungCapDTO from "../DTO/NhaCungCapDTO";
 import HangHoaDTO from "../DTO/HangHoaDTO";
+import QuyenDTO from "../DTO/QuyenDTO";
+import PhanQuyenDTO from "../DTO/PhanQuyenDTO";
 
 // Lấy danh sách hàng hóa
 export async function fetchHangHoa() {
@@ -365,5 +373,280 @@ export async function deleteHang(maHang) {
     } catch (error) {
         console.error("Lỗi khi xóa hàng:", error);
         return { success: false, message: "Lỗi khi xóa hàng: " + error.message };
+    }
+}
+
+// Lấy danh sách phân quyền với phân trang và tìm kiếm
+export async function fetchRoles(page = 1, limit = 10, search = '', showSystem = false) {
+    try {
+        const params = new URLSearchParams({
+            page,
+            limit,
+            search,
+            system: showSystem
+        });
+
+        const response = await fetch(`${API_GET_ROLES}?${params}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new Error("Response is not JSON");
+        }
+
+        const data = await response.json();
+
+        if (data.code === "NO_SESSION") {
+            throw new Error("Vui lòng đăng nhập lại");
+        }
+        
+        if (data.code === "NO_PERMISSION") {
+            throw new Error("Bạn không có quyền xem danh sách quyền");
+        }
+
+        if (!data.success) {
+            throw new Error(data.message || "Lỗi khi tải danh sách quyền");
+        }
+
+        return data.data || [];
+    } catch (error) {
+        console.error("Error fetching roles:", error);
+        throw error;
+    }
+}
+
+// Thêm quyền mới
+export async function addRole(role) {
+    try {
+        const response = await fetch('http://localhost/web2/server/api/manageRoles.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tenQuyen: role.tenQuyen,
+                moTa: role.moTa,
+                trangThai: role.trangThai,
+                phanQuyen: role.phanQuyen,
+            }),
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (data.code === "NO_CREATE_PERMISSION") {
+            throw new Error("Bạn không có quyền thêm quyền mới");
+        }
+        
+        if (data.code === "NAME_EXISTS") {
+            throw new Error("Tên quyền đã tồn tại");
+        }
+
+        if (data.code === "EMPTY_NAME") {
+            throw new Error("Tên quyền không được để trống");
+        }
+
+        return data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+// Cập nhật quyền
+export async function updateRole(role) {
+    try {
+        const response = await fetch('http://localhost/web2/server/api/manageRoles.php', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                idQuyen: role.idQuyen,
+                tenQuyen: role.tenQuyen,
+                moTa: role.moTa,
+                trangThai: role.trangThai,
+                phanQuyen: role.phanQuyen
+            }),
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (data.code === "NO_UPDATE_PERMISSION") {
+            throw new Error("Bạn không có quyền sửa quyền");
+        }
+
+        if (data.code === "SYSTEM_ROLE") {
+            throw new Error("Không thể sửa quyền hệ thống");
+        }
+
+        if (data.code === "NAME_EXISTS") {
+            throw new Error("Tên quyền đã tồn tại");
+        }
+
+        return { success: true };
+    } catch (error) {
+        throw error;
+    }
+}
+
+// Xóa quyền
+export async function deleteRole(id) {
+    try {
+        const response = await fetch(`http://localhost/web2/server/api/manageRoles.php?IDQuyen=${id}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (data.code === "NO_DELETE_PERMISSION") {
+            throw new Error("Bạn không có quyền xóa quyền");
+        }
+
+        if (data.code === "SYSTEM_ROLE") {
+            throw new Error("Không thể xóa quyền hệ thống");
+        }
+
+        if (data.code === "ROLE_IN_USE") {
+            throw new Error("Quyền đang được sử dụng, không thể xóa");
+        }
+
+        return { success: true };
+    } catch (error) {
+        throw error;  
+    }
+}
+
+// Functions cho quản lý phân quyền
+
+// Lấy danh sách quyền
+export async function getAllQuyen() {
+    try {
+        const response = await fetch(API_URL_QUYEN);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        if (Array.isArray(data)) {
+            return data.map(quyen => ({
+                ...quyen,
+                ChucNang: quyen.ChucNang.map(cn => ({
+                    IDChucNang: cn.IDChucNang,
+                    TenChucNang: cn.TenChucNang,
+                    Them: cn.Them,
+                    Xoa: cn.Xoa,
+                    Sua: cn.Sua
+                }))
+            }));
+        }
+        
+        return [];
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách quyền:", error);
+        throw error;
+    }
+}
+
+// Thêm quyền mới
+export async function addQuyen(quyenDTO) {
+    try {
+        const response = await fetch(API_ADD_QUYEN, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                TenQuyen: quyenDTO.TenQuyen,
+                ChucNang: quyenDTO.ChucNang
+            })
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'Lỗi khi thêm quyền');
+        }
+
+        return {
+            success: true,
+            message: "Thêm quyền thành công",
+            data: data
+        };
+    } catch (error) {
+        console.error("Lỗi khi thêm quyền:", error);
+        throw error;
+    }
+}
+
+// Cập nhật quyền
+export async function updateQuyen(quyenDTO) {
+    try {
+        const response = await fetch(API_UPDATE_QUYEN, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                IDQuyen: quyenDTO.IDQuyen,
+                TenQuyen: quyenDTO.TenQuyen,
+                ChucNang: quyenDTO.ChucNang
+            })
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'Lỗi khi cập nhật quyền');
+        }
+
+        return {
+            success: true,
+            message: "Cập nhật quyền thành công"
+        };
+    } catch (error) {
+        console.error("Lỗi khi cập nhật quyền:", error);
+        throw error;
+    }
+}
+
+// Xóa quyền
+export async function deleteQuyen(idQuyen) {
+    try {
+        const response = await fetch(API_DELETE_QUYEN, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                IDQuyen: idQuyen
+            })
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'Lỗi khi xóa quyền');
+        }
+
+        return {
+            success: true,
+            message: "Xóa quyền thành công"
+        };
+    } catch (error) {
+        console.error("Lỗi khi xóa quyền:", error);
+        throw error;
     }
 }
