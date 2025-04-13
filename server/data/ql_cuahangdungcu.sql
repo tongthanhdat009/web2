@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 12, 2025 lúc 12:27 PM
+-- Thời gian đã tạo: Th4 13, 2025 lúc 11:30 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.0.30
+-- Phiên bản PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,7 +20,9 @@ SET time_zone = "+00:00";
 --
 -- Cơ sở dữ liệu: `ql_cuahangdungcu`
 --
-
+DROP DATABASE IF EXISTS ql_cuahangdungcu;
+CREATE DATABASE ql_cuahangdungcu;
+USE `ql_cuahangdungcu`;
 -- --------------------------------------------------------
 
 --
@@ -91,7 +93,8 @@ CREATE TABLE `chitiethoadon` (
 
 INSERT INTO `chitiethoadon` (`MaHoaDon`, `Seri`, `GiaBan`) VALUES
 (1, 1, 200000),
-(1, 2, 180000);
+(1, 2, 180000),
+(2, 3, 500000);
 
 -- --------------------------------------------------------
 
@@ -223,7 +226,7 @@ CREATE TABLE `hanghoa` (
 --
 
 INSERT INTO `hanghoa` (`MaHangHoa`, `MaChungLoai`, `TenHangHoa`, `MaHang`, `MaKhuyenMai`, `MoTa`, `ThoiGianBaoHanh`, `Anh`) VALUES
-(1, 1, 'Tạ tay cao su BoFit 2.5Kg', 1, NULL, 'Tạ Tập Tay BoFit 2.5Kg.', 24, '../assets/AnhHangHoa/1.png'),
+(1, 1, 'Tạ tay cao su BoFit 2.5Kg', 1, 1, 'Tạ Tập Tay BoFit 2.5Kg.', 24, '../assets/AnhHangHoa/1.png'),
 (2, 1, 'Tạ tay cao su BoFit 5Kg', 1, NULL, 'Tạ Tập Tay BoFit 5Kg.', 24, '../assets/AnhHangHoa/2.png'),
 (3, 1, 'Tạ tay cao su BoFit 7.5Kg', 1, NULL, 'Tạ tay cao su BoFit 7.5Kg', 24, '../assets/AnhHangHoa/3.png'),
 (4, 1, 'Tạ Tay Bọc Cao Su BoFit 10kg', 1, NULL, 'Tạ Tay Bọc Cao Su BoFit 10kg', 24, '../assets/AnhHangHoa/4.png'),
@@ -348,7 +351,8 @@ CREATE TABLE `hoadon` (
 --
 
 INSERT INTO `hoadon` (`MaHoaDon`, `IDTaiKhoan`, `NgayXuatHoaDon`, `NgayDuyet`, `TrangThai`, `DiaChi`, `TenNguoiMua`, `SoDienThoai`) VALUES
-(1, 1, '2024-04-12', '2024-04-12', '1', '123 Đường ABC, Quận 1, TP.HCM', 'Người Mua 1', '0901234567');
+(1, 1, '2024-04-12', '2024-04-12', '1', '123 Đường ABC, Quận 1, TP.HCM', 'Người Mua 1', '0901234567'),
+(2, 1, '2025-04-13', '2025-04-13', '1', '123 Đường ABC, Quận 1, TP.HCM', 'Người Mua 1', '0901234567');
 
 -- --------------------------------------------------------
 
@@ -372,7 +376,7 @@ CREATE TABLE `khohang` (
 INSERT INTO `khohang` (`Seri`, `MaPhieuNhap`, `MaHangHoa`, `GiaNhap`, `GiaBan`, `TinhTrang`) VALUES
 (1, 1, 1, 135000, 200000, 1),
 (2, 1, 2, 120000, 180000, 1),
-(3, 1, 3, 85000, 135000, 0),
+(3, 1, 3, 85000, 135000, 1),
 (4, 1, 4, 110000, 165000, 0),
 (5, 1, 5, 99000, 145000, 0),
 (6, 1, 6, 107000, 160000, 0),
@@ -554,14 +558,14 @@ CREATE TABLE `taikhoan` (
   `matKhau` varbinary(64) DEFAULT NULL,
   `IDQuyen` int(11) DEFAULT NULL,
   `TrangThai` tinyint(1) NOT NULL DEFAULT 0,
-  `SessionID` varchar(200) DEFAULT NULL
+  `HoatDong` varchar(200) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `taikhoan`
 --
 
-INSERT INTO `taikhoan` (`IDTaiKhoan`, `TaiKhoan`, `matKhau`, `IDQuyen`, `TrangThai`, `SessionID`) VALUES
+INSERT INTO `taikhoan` (`IDTaiKhoan`, `TaiKhoan`, `matKhau`, `IDQuyen`, `TrangThai`, `HoatDong`) VALUES
 (1, 'admin', 0x5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5, 1, 0, '');
 
 -- --------------------------------------------------------
@@ -739,7 +743,7 @@ ALTER TABLE `hanghoa`
 -- AUTO_INCREMENT cho bảng `hoadon`
 --
 ALTER TABLE `hoadon`
-  MODIFY `MaHoaDon` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `MaHoaDon` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `khohang`

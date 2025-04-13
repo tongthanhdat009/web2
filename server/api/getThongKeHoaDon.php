@@ -40,7 +40,7 @@ switch ($timeFrame) {
         $sql = "SELECT 
                     MONTH(hoadon.NgayDuyet) as Month,
                     YEAR(hoadon.NgayDuyet) as Year,
-                    SUM(khohang.GiaBan) as TongTien,
+                    SUM(chitiethoadon.GiaBan) as TongTien,
                     COUNT(DISTINCT hoadon.MaHoaDon) as SoLuongDonHang
                 FROM hoadon
                 JOIN chitiethoadon ON hoadon.MaHoaDon = chitiethoadon.MaHoaDon
@@ -56,7 +56,7 @@ switch ($timeFrame) {
         $sql = "SELECT 
                     MONTH(hoadon.NgayDuyet) as Month,
                     YEAR(hoadon.NgayDuyet) as Year,
-                    SUM(khohang.GiaBan) as TongTien,
+                    SUM(chitiethoadon.GiaBan) as TongTien,
                     COUNT(DISTINCT hoadon.MaHoaDon) as SoLuongDonHang
                 FROM hoadon
                 JOIN chitiethoadon ON hoadon.MaHoaDon = chitiethoadon.MaHoaDon
@@ -72,7 +72,7 @@ switch ($timeFrame) {
         $sql = "SELECT 
                     QUARTER(hoadon.NgayDuyet) as Quarter,
                     YEAR(hoadon.NgayDuyet) as Year,
-                    SUM(khohang.GiaBan) as TongTien,
+                    SUM(chitiethoadon.GiaBan) as TongTien,
                     COUNT(DISTINCT hoadon.MaHoaDon) as SoLuongDonHang
                 FROM hoadon
                 JOIN chitiethoadon ON hoadon.MaHoaDon = chitiethoadon.MaHoaDon
@@ -87,7 +87,7 @@ switch ($timeFrame) {
         // Lấy dữ liệu theo năm (5 năm gần đây)
         $sql = "SELECT 
                     YEAR(hoadon.NgayDuyet) as Year,
-                    SUM(khohang.GiaBan) as TongTien,
+                    SUM(chitiethoadon.GiaBan) as TongTien,
                     COUNT(DISTINCT hoadon.MaHoaDon) as SoLuongDonHang
                 FROM hoadon
                 JOIN chitiethoadon ON hoadon.MaHoaDon = chitiethoadon.MaHoaDon

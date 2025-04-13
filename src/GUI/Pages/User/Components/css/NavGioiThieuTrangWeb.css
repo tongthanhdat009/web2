@@ -1,0 +1,33 @@
+
+.nav-container.card {
+  border-radius: 0 !important;
+}
+
+.hamburger-button {
+  background: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.nav-container {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.nav-container .nav-link:hover {
+    font-weight: bold !important;
+}
+
+@media (max-width: 767.98px) {
+  .nav-item:not(:last-child) {
+    border-bottom: 1px solid #e9ecef;
+  }
+}
+
+@media (min-width: 768px) {
+  .nav-item:not(:last-child) {
+    border-right: 1px solid #e9ecef;
+  }
+}
