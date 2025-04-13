@@ -1,4 +1,11 @@
 const API_URL_HANGHOA = "http://localhost/web2/server/api/getHangHoa.php";
+const API_UPDATE_HANGHOA = "http://localhost/web2/server/api/updateHangHoa.php";
+const API_ADD_HANGHOA = "http://localhost/web2/server/api/addHangHoa.php";
+
+//API endpoints for ChungLoai
+const API_URL_CL = "http://localhost/web2/server/api/getChungLoai.php"
+const API_UPDATE_CL = "http://localhost/web2/server/api/updateChungLoai.php"
+
 //API endpoints for KhuyenMai
 const API_URL_KM = "http://localhost/web2/server/api/getKhuyenMai.php";
 const API_ADD_KM = "http://localhost/web2/server/api/addKhuyenMai.php";
@@ -21,6 +28,7 @@ import KhuyenMaiDTO from "../DTO/KhuyenMaiDTO";
 import HangDTO from "../DTO/HangDTO";
 import NhaCungCapDTO from "../DTO/NhaCungCapDTO";
 import HangHoaDTO from "../DTO/HangHoaDTO";
+import ChungLoaiDTO from "../DTO/ChungLoaiDTO";
 
 // Lấy danh sách hàng hóa
 export async function fetchHangHoa() {
@@ -35,6 +43,192 @@ export async function fetchHangHoa() {
     }
 }
 
+export async function addHangHoa(HangHoaDTO) {
+    // Kiểm tra nếu dữ liệu đầu vào đầy đủ và hợp lệ
+    if (!HangHoaDTO.MaHangHoa || !HangHoaDTO.TenHangHoa || !HangHoaDTO.MaChungLoai || !HangHoaDTO.MaHang) {
+        console.error("Dữ liệu không hợp lệ:", HangHoaDTO);
+        return { success: false, message: "Dữ liệu không hợp lệ hoặc thiếu thông tin" };
+    }
+
+    // In ra dữ liệu trước khi gửi
+    console.log("Dữ liệu gửi đi:", HangHoaDTO);
+
+    try {
+        // Tạo đối tượng dữ liệu để gửi
+        const dataToSend = {
+            MaHangHoa: HangHoaDTO.MaHangHoa,
+            TenHangHoa: HangHoaDTO.TenHangHoa,
+            MaChungLoai: HangHoaDTO.MaChungLoai,
+            MaHang: HangHoaDTO.MaHang,
+            MaKhuyenMai: HangHoaDTO.MaKhuyenMai || null,
+            MoTa: HangHoaDTO.MoTa || null,
+            ThoiGianBaoHanh: HangHoaDTO.ThoiGianBaoHanh || null,
+            Anh: HangHoaDTO.Anh || null
+        };
+
+        // In ra dữ liệu JSON trước khi gửi
+        console.log("JSON gửi đi:", JSON.stringify(dataToSend));
+
+        const response = await fetch('http://localhost/web2/server/api/addHangHoa.php', {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(dataToSend)
+        });
+
+        // Thử parse phản hồi về JSON, nếu lỗi sẽ bắt ở catch
+        const text = await response.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (err) {
+            console.error("Phản hồi không phải JSON:", text);
+            return { success: false, message: "Phản hồi server không phải JSON hợp lệ" };
+        }
+
+        console.log("Phản hồi từ server:", data);
+
+        // Xử lý kết quả từ API
+        if (data.success) {
+            return { success: true, message: "Thêm hàng hóa thành công!" };
+        } else {
+            return { success: false, message: data.message || "Lỗi khi thêm hàng hóa" };
+        }
+    } catch (error) {
+        console.error("Lỗi khi thêm hàng hóa:", error);
+        return { success: false, message: "Lỗi khi thêm hàng hóa: " + error.message };
+    }
+}
+
+export async function updateHangHoa(hangHoaDTO) {
+    try {
+        // Kiểm tra dữ liệu đầu vào
+        if (!hangHoaDTO.MaHangHoa || !hangHoaDTO.TenHangHoa || !hangHoaDTO.MaChungLoai || !hangHoaDTO.MaHang) {
+            console.error("Dữ liệu không hợp lệ:", hangHoaDTO);
+            return { success: false, message: "Dữ liệu không hợp lệ hoặc thiếu thông tin" };
+        }
+
+        // Tạo đối tượng dữ liệu để gửi
+        const dataToSend = {
+            MaHangHoa: hangHoaDTO.MaHangHoa,
+            TenHangHoa: hangHoaDTO.TenHangHoa,
+            MaChungLoai: hangHoaDTO.MaChungLoai,
+            MaHang: hangHoaDTO.MaHang,
+            MaKhuyenMai: hangHoaDTO.MaKhuyenMai || null,
+            MoTa: hangHoaDTO.MoTa || null,
+            ThoiGianBaoHanh: hangHoaDTO.ThoiGianBaoHanh || null,
+            Anh: hangHoaDTO.Anh || null
+        };
+
+        console.log("Sending update request:", dataToSend);
+        const response = await fetch(API_UPDATE_HANGHOA, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(dataToSend)
+        });
+
+        const data = await response.json();
+        console.log("Update response:", data);
+        
+        if (data.success) {
+            return { success: true, message: "Cập nhật hàng hóa thành công!" };
+        } else {
+            return { success: false, message: data.message || "Lỗi khi cập nhật hàng hóa" };
+        }
+    } catch (error) {
+        console.error("Lỗi khi cập nhật hàng hóa:", error);
+        return { success: false, message: "Lỗi khi cập nhật hàng hóa: " + error.message };
+    }
+}
+//chungloai
+export async function fetchChungLoai() {
+    try {
+        const response = await fetch(API_URL_CL);
+        const data = await response.json();
+        console.log("API response:", data);
+        return (data.data || []).map(item => new ChungLoaiDTO(item));
+    } catch (error) {
+        console.error("Lỗi khi gọi API:", error);
+        return [];
+    }
+}
+
+export async function addChungLoai(ChungLoaiDTO) {
+    // Kiểm tra nếu dữ liệu đầu vào đầy đủ và hợp lệ
+    if (!ChungLoaiDTO.MaChungLoai || !ChungLoaiDTO.TenChungLoai || !ChungLoaiDTO.MaTheLoai) {
+        console.error("Dữ liệu không hợp lệ:", ChungLoaiDTO);
+        return { success: false, message: "Dữ liệu không hợp lệ hoặc thiếu thông tin" };
+    }
+
+    // In ra dữ liệu để kiểm tra trước khi gửi
+    console.log("Dữ liệu gửi đi:", ChungLoaiDTO);
+
+    try {
+        // Tạo đối tượng dữ liệu để gửi
+        const dataToSend = {
+            MaChungLoai: ChungLoaiDTO.MaChungLoai,
+            TenChungLoai: ChungLoaiDTO.TenChungLoai,
+            MaTheLoai: ChungLoaiDTO.MaTheLoai
+        };
+
+        // In ra dữ liệu JSON để kiểm tra
+        console.log("JSON gửi đi:", JSON.stringify(dataToSend));
+
+        const response = await fetch('http://localhost/web2/server/api/addChungLoai.php', {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(dataToSend)
+        });
+
+        // Kiểm tra phản hồi từ server
+        const data = await response.json();
+
+        // In phản hồi từ server để kiểm tra
+        console.log("Phản hồi từ server:", data);
+
+        // Xử lý kết quả từ API
+        if (data.success) {
+            return { success: true, message: "Thêm chủng loại thành công!" };
+        } else {
+            return { success: false, message: data.message || "Lỗi khi thêm chủng loại" };
+        }
+    } catch (error) {
+        console.error("Lỗi khi thêm chủng loại:", error);
+        return { success: false, message: "Lỗi khi thêm chủng loại: " + error.message };
+    }
+}
+
+export async function updateChungLoai(ChungLoaiDTO) {
+    try {
+        const response = await fetch(API_UPDATE_CL, {
+            method: "POST",  // Thay vì PUT, ta có thể dùng POST để tránh vấn đề với server không hỗ trợ PUT
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                MaChungLoai: ChungLoaiDTO.MaChungLoai,
+                TenChungLoai: ChungLoaiDTO.TenChungLoai,
+                MaTheLoai: ChungLoaiDTO.MaTheLoai
+            })  // Gửi đầy đủ thông tin cần thiết
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            return { success: true, message: "Cập nhật chủng loại thành công!" };
+        } else {
+            return { success: false, message: data.message || "Lỗi khi cập nhật chủng loại" };
+        }
+    } catch (error) {
+        console.error("Lỗi khi cập nhật chủng loạii:", error);
+        return { success: false, message: "Lỗi khi cập nhật chủng loại" };
+    }
+}
 // Lấy danh sách khuyến mãi
 export async function fetchKhuyenMai() {
     try {
@@ -367,3 +561,7 @@ export async function deleteHang(maHang) {
         return { success: false, message: "Lỗi khi xóa hàng: " + error.message };
     }
 }
+
+
+
+
