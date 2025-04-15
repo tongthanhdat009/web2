@@ -20,7 +20,7 @@ const QuanLyHangHoa = () => {
     MoTa: "", 
     ThoiGianBaoHanh: "", 
     Anh: "" 
-  });
+  }); 
   const [selectedImage, setSelectedImage] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -71,6 +71,48 @@ const QuanLyHangHoa = () => {
       setLoading(false);
     }
   };
+  const handleToggleTrangThai = async (hangHoa) => {
+    try {
+      // Đảo trạng thái: nếu đang là 1 thì đổi thành 0, ngược lại
+      const updatedTrangThai = hangHoa.trangThai === "1" ? "0" : "1";
+  
+      // Tạo bản sao với các thuộc tính viết hoa đầu và trạng thái mới
+      const updatedHangHoa = {
+        MaHangHoa: hangHoa.maHangHoa,
+        TenHangHoa: hangHoa.tenHangHoa,
+        MaChungLoai: hangHoa.maChungLoai,
+        MaHang: hangHoa.maHang,
+        MaKhuyenMai: hangHoa.maKhuyenMai || null,
+        MoTa: hangHoa.moTa || null,
+        ThoiGianBaoHanh: hangHoa.thoiGianBaoHanh || null,
+        Anh: hangHoa.anh || null,
+        TrangThai: updatedTrangThai
+      };
+  
+      const response = await updateHangHoa(updatedHangHoa);
+  
+      if (response.success) {
+        setNotification({
+          message: "Cập nhật trạng thái thành công",
+          type: "success"
+        });
+        loadData();
+      } else {
+        setNotification({
+          message: "Cập nhật trạng thái thất bại",
+          type: "error"
+        });
+      }
+    } catch (error) {
+      setNotification({
+        message: "Lỗi khi cập nhật trạng thái: " + error.message,
+        type: "error"
+      });
+    }
+  };
+  
+  
+  
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -189,28 +231,6 @@ const QuanLyHangHoa = () => {
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      // TODO: Implement delete API call
-      // const response = await deleteHangHoa(deleteId);
-      setNotification({
-        message: "Xóa hàng hóa thành công",
-        type: 'success'
-      });
-      loadData();
-    } catch (error) {
-      setNotification({
-        message: "Có lỗi xảy ra khi xóa: " + error.message,
-        type: 'error'
-      });
-    }
-    setShowConfirm(false);
-  };
-
-  const handleConfirmDelete = (id) => {
-    setDeleteId(id);
-    setShowConfirm(true);
-  };
 
   const totalPages = Math.ceil(hangHoas.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -316,6 +336,7 @@ const QuanLyHangHoa = () => {
                 <th className="table-header">Mô tả</th>
                 <th className="table-header">Thời gian bảo hành</th>
                 <th className="table-header">Ảnh</th>
+                <th className="table-header">Trạng thái</th>
                 <th className="table-header">Thao tác</th>
               </tr>
             </thead>
@@ -340,11 +361,15 @@ const QuanLyHangHoa = () => {
                           e.target.style.display = 'none';
                           e.target.parentElement.textContent = '(trống)';
                         }}
+                        
                       />
+                      
                     ) : (
                       <span key={`no-image-${hangHoa.maHangHoa}`}>(trống)</span>
                     )}
                   </td>
+                  <td>{hangHoa.trangThai === "1" ? "Hoạt động" : "Ngừng hoạt động"}</td>
+
                   <td>
                     <button
                       key={`edit-${hangHoa.maHangHoa}`}
@@ -354,12 +379,12 @@ const QuanLyHangHoa = () => {
                       Sửa
                     </button>
                     <button
-                      key={`delete-${hangHoa.maHangHoa}`}
-                      onClick={() => handleConfirmDelete(hangHoa.maHangHoa)}
-                      className="button-common button-delete"
-                    >
-                      Xóa
+                          onClick={() => handleToggleTrangThai(hangHoa)}
+                          className="button-common button-delete"
+                        >
+                          {hangHoa.trangThai === "1" ? "Ngừng hoạt động" : "Kích hoạt"}
                     </button>
+
                   </td>
                 </tr>
               ))}
@@ -411,6 +436,7 @@ const QuanLyHangHoa = () => {
                 value={editingHangHoa.TenHangHoa || ''}
                 onChange={(e) => setEditingHangHoa({...editingHangHoa, TenHangHoa: e.target.value})}
                 placeholder="Nhập tên hàng hóa"
+                disabled={modalType === 'edit'}
               />
             </div>
 

@@ -14,11 +14,18 @@ $conn = $database->getConnection();
 
 $data = json_decode(file_get_contents("php://input"), true);
 
-if (isset($data['MaHangHoa']) && isset($data['TenHangHoa']) && isset($data['MaChungLoai']) && isset($data['MaHang'])) {
+if (
+    isset($data['MaHangHoa']) &&
+    isset($data['TenHangHoa']) &&
+    isset($data['MaChungLoai']) &&
+    isset($data['MaHang']) &&
+    isset($data['TrangThai'])
+) {
     $maHangHoa = $conn->real_escape_string($data['MaHangHoa']);
     $tenHangHoa = $conn->real_escape_string($data['TenHangHoa']);
     $maChungLoai = $conn->real_escape_string($data['MaChungLoai']);
     $maHang = $conn->real_escape_string($data['MaHang']);
+    $trangThai = $conn->real_escape_string($data['TrangThai']);
     $maKhuyenMai = isset($data['MaKhuyenMai']) ? $conn->real_escape_string($data['MaKhuyenMai']) : "NULL";
     $moTa = isset($data['MoTa']) ? $conn->real_escape_string($data['MoTa']) : "NULL";
     $thoiGianBaoHanh = isset($data['ThoiGianBaoHanh']) ? (int) $data['ThoiGianBaoHanh'] : "NULL";
@@ -54,7 +61,7 @@ if (isset($data['MaHangHoa']) && isset($data['TenHangHoa']) && isset($data['MaCh
         }
     }
 
-    // Cập nhật thông tin hàng hóa
+    // Cập nhật thông tin hàng hóa bao gồm trạng thái
     $sql = "UPDATE hanghoa SET 
                 TenHangHoa = '$tenHangHoa', 
                 MaChungLoai = '$maChungLoai', 
@@ -62,7 +69,8 @@ if (isset($data['MaHangHoa']) && isset($data['TenHangHoa']) && isset($data['MaCh
                 MaKhuyenMai = " . ($maKhuyenMai === "NULL" ? "NULL" : "'$maKhuyenMai'") . ", 
                 MoTa = " . ($moTa === "NULL" ? "NULL" : "'$moTa'") . ", 
                 ThoiGianBaoHanh = " . ($thoiGianBaoHanh === "NULL" ? "NULL" : $thoiGianBaoHanh) . ", 
-                Anh = " . ($anh === "NULL" ? "NULL" : "'$anh'") . " 
+                Anh = " . ($anh === "NULL" ? "NULL" : "'$anh'") . ",
+                TrangThai = '$trangThai'
             WHERE MaHangHoa = '$maHangHoa'";
 
     if ($conn->query($sql) === TRUE) {

@@ -1,5 +1,5 @@
 class HangHoaDTO {
-    constructor({ MaHangHoa, MaChungLoai, TenHangHoa, MaHang, MaKhuyenMai, MoTa, ThoiGianBaoHanh, Anh }) {
+    constructor({ MaHangHoa, MaChungLoai, TenHangHoa, MaHang, MaKhuyenMai, MoTa, ThoiGianBaoHanh, Anh, TrangThai }) {
         this.maHangHoa = MaHangHoa;  
         this.maChungLoai = MaChungLoai;
         this.tenHangHoa = TenHangHoa;
@@ -8,6 +8,7 @@ class HangHoaDTO {
         this.moTa = MoTa;
         this.thoiGianBaoHanh = ThoiGianBaoHanh;
         this.anh = Anh;
+        this.trangThai = TrangThai;
     }
 }
 

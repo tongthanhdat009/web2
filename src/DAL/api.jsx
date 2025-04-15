@@ -6,6 +6,8 @@ const API_ADD_HANGHOA = "http://localhost/web2/server/api/addHangHoa.php";
 const API_URL_CL = "http://localhost/web2/server/api/getChungLoai.php"
 const API_UPDATE_CL = "http://localhost/web2/server/api/updateChungLoai.php"
 
+//API endpoints for ChungLoai
+const API_URL_PN = ""
 //API endpoints for KhuyenMai
 const API_URL_KM = "http://localhost/web2/server/api/getKhuyenMai.php";
 const API_ADD_KM = "http://localhost/web2/server/api/addKhuyenMai.php";
@@ -63,7 +65,8 @@ export async function addHangHoa(HangHoaDTO) {
             MaKhuyenMai: HangHoaDTO.MaKhuyenMai || null,
             MoTa: HangHoaDTO.MoTa || null,
             ThoiGianBaoHanh: HangHoaDTO.ThoiGianBaoHanh || null,
-            Anh: HangHoaDTO.Anh || null
+            Anh: HangHoaDTO.Anh || null,
+            TrangThai: HangHoaDTO.TrangThai 
         };
 
         // In ra dữ liệu JSON trước khi gửi
@@ -119,7 +122,8 @@ export async function updateHangHoa(hangHoaDTO) {
             MaKhuyenMai: hangHoaDTO.MaKhuyenMai || null,
             MoTa: hangHoaDTO.MoTa || null,
             ThoiGianBaoHanh: hangHoaDTO.ThoiGianBaoHanh || null,
-            Anh: hangHoaDTO.Anh || null
+            Anh: hangHoaDTO.Anh || null,
+            TrangThai: hangHoaDTO.TrangThai 
         };
 
         console.log("Sending update request:", dataToSend);
@@ -145,6 +149,8 @@ export async function updateHangHoa(hangHoaDTO) {
         return { success: false, message: "Lỗi khi cập nhật hàng hóa: " + error.message };
     }
 }
+
+
 //chungloai
 export async function fetchChungLoai() {
     try {
