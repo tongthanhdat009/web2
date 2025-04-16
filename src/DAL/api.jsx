@@ -1,13 +1,18 @@
 const API_URL_HANGHOA = "http://localhost/web2/server/api/getHangHoa.php";
 const API_UPDATE_HANGHOA = "http://localhost/web2/server/api/updateHangHoa.php";
 const API_ADD_HANGHOA = "http://localhost/web2/server/api/addHangHoa.php";
-
+//api the loai
+const API_URL_THELOAI = "http://localhost/web2/server/api/getTheLoai.php";
 //API endpoints for ChungLoai
 const API_URL_CL = "http://localhost/web2/server/api/getChungLoai.php"
 const API_UPDATE_CL = "http://localhost/web2/server/api/updateChungLoai.php"
 
-//API endpoints for ChungLoai
-const API_URL_PN = ""
+//API endpoints for PhieuNhap
+const API_URL_PHIEUNHAP = "http://localhost/web2/server/api/getPhieuNhap.php";
+const API_ADD_PHIEUNHAP = "http://localhost/web2/server/api/addPhieuNhap.php";
+const API_URL_KHOHANG = "http://localhost/web2/server/api/getKhoHang.php";
+const API_ADD_KHOHANG = "http://localhost/web2/server/api/addKhoHang.php";
+
 //API endpoints for KhuyenMai
 const API_URL_KM = "http://localhost/web2/server/api/getKhuyenMai.php";
 const API_ADD_KM = "http://localhost/web2/server/api/addKhuyenMai.php";
@@ -31,6 +36,9 @@ import HangDTO from "../DTO/HangDTO";
 import NhaCungCapDTO from "../DTO/NhaCungCapDTO";
 import HangHoaDTO from "../DTO/HangHoaDTO";
 import ChungLoaiDTO from "../DTO/ChungLoaiDTO";
+import PhieuNhapDTO from "../DTO/PhieuNhapDTO";
+import KhoHangDTO from "../DTO/KhoHangDTO";
+import TheLoaiDTO from "../DTO/TheLoaiDTO";
 
 // Lấy danh sách hàng hóa
 export async function fetchHangHoa() {
@@ -157,7 +165,13 @@ export async function fetchChungLoai() {
         const response = await fetch(API_URL_CL);
         const data = await response.json();
         console.log("API response:", data);
-        return (data.data || []).map(item => new ChungLoaiDTO(item));
+        return (data.data || []).map(item => new ChungLoaiDTO({
+            MaChungLoai: item.MaChungLoai,
+            TenChungLoai: item.TenChungLoai,
+            MaTheLoai: item.MaTheLoai,
+            TenTheLoai: item.TenTheLoai
+        })
+        );
     } catch (error) {
         console.error("Lỗi khi gọi API:", error);
         return [];
@@ -565,6 +579,172 @@ export async function deleteHang(maHang) {
     } catch (error) {
         console.error("Lỗi khi xóa hàng:", error);
         return { success: false, message: "Lỗi khi xóa hàng: " + error.message };
+    }
+}
+
+// Lấy danh sách phiếu nhập
+export async function fetchPhieuNhap(timeFrame = 'fetch') {
+    try {
+        const response = await fetch(`${API_URL_PHIEUNHAP}?timeFrame=${timeFrame}`);
+        const data = await response.json();
+        console.log("API response PhieuNhap:", data);
+        
+        if (data.success && Array.isArray(data.data)) {
+            return data.data.map(item => new PhieuNhapDTO({
+                MaPhieuNhap: item.MaPhieuNhap,
+                TrangThai: item.TrangThai,
+                IDTaiKhoan: item.IDTaiKhoan,
+                MaNhaCungCap: item.MaNhaCungCap,
+                NgayNhap: item.NgayNhap,
+            }));
+        } else {
+            console.error("Invalid data format:", data);
+            return [];
+        }
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách phiếu nhập:", error);
+        return [];
+    }
+}
+
+// Thêm phiếu nhập
+export async function addPhieuNhap(phieuNhapDTO) {
+    try {
+        // Kiểm tra dữ liệu đầu vào
+        if (!phieuNhapDTO.TrangThai || !phieuNhapDTO.IDTaiKhoan || !phieuNhapDTO.MaNhaCungCap || !phieuNhapDTO.NgayNhap) {
+            console.error("Dữ liệu không hợp lệ:", phieuNhapDTO);
+            return { success: false, message: "Dữ liệu không hợp lệ hoặc thiếu thông tin" };
+        }
+
+        console.log("Sending add request:", phieuNhapDTO);
+        const response = await fetch(API_ADD_PHIEUNHAP, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+                TrangThai: phieuNhapDTO.TrangThai,
+                IDTaiKhoan: phieuNhapDTO.IDTaiKhoan,
+                MaNhaCungCap: phieuNhapDTO.MaNhaCungCap,
+                NgayNhap: phieuNhapDTO.NgayNhap
+            })
+        });
+
+        const data = await response.json();
+        console.log("Add response:", data);
+        
+        if (data.success) {
+            return { 
+                success: true, 
+                message: "Thêm phiếu nhập thành công!",
+                data: new PhieuNhapDTO(data)
+            };
+        } else {
+            return { success: false, message: data.message || "Lỗi khi thêm phiếu nhập" };
+        }
+    } catch (error) {
+        console.error("Lỗi khi thêm phiếu nhập:", error);
+        return { success: false, message: "Lỗi khi thêm phiếu nhập: " + error.message };
+    }
+}
+
+// Lấy danh sách kho hàng
+export async function fetchKhoHang(MaPhieuNhap) {
+    try {
+        const url = MaPhieuNhap 
+            ? `${API_URL_KHOHANG}?MaPhieuNhap=${MaPhieuNhap}`
+            : API_URL_KHOHANG;
+            
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log("API response KhoHang:", data);
+        if (data.success && Array.isArray(data.data)) {
+            return data.data.map(item => ({
+                ...new KhoHangDTO({
+                    Seri: item.Seri,
+                    MaPhieuNhap: item.MaPhieuNhap,
+                    MaHangHoa: item.MaHangHoa,
+                    GiaNhap: item.GiaNhap,
+                    GiaBan: item.GiaBan,
+                    TinhTrang: item.TinhTrang
+                }),
+                TenHangHoa: item.TenHangHoa,
+                TenHang: item.TenHang,
+                TenNhaCungCap: item.TenNhaCungCap
+            }));
+        } else {
+            console.error("Invalid data format:", data);
+            return [];
+        }
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách kho hàng:", error);
+        return [];
+    }
+}
+
+// Thêm kho hàng
+export async function addKhoHang(khoHangDTO) {
+    try {
+        // Kiểm tra dữ liệu đầu vào
+        if (!khoHangDTO.MaPhieuNhap || !khoHangDTO.MaHangHoa || !khoHangDTO.GiaNhap || !khoHangDTO.GiaBan) {
+            console.error("Dữ liệu không hợp lệ:", khoHangDTO);
+            return { success: false, message: "Dữ liệu không hợp lệ hoặc thiếu thông tin" };
+        }
+
+        console.log("Sending add request:", khoHangDTO);
+        const response = await fetch(API_ADD_KHOHANG, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+                MaPhieuNhap: khoHangDTO.MaPhieuNhap,
+                MaHangHoa: khoHangDTO.MaHangHoa,
+                GiaNhap: khoHangDTO.GiaNhap,
+                GiaBan: khoHangDTO.GiaBan,
+                TinhTrang: khoHangDTO.TinhTrang || 0 // Mặc định là 0 nếu không có giá trị
+            })
+        });
+
+        const data = await response.json();
+        console.log("Add response:", data);
+        
+        if (data.success) {
+            return { 
+                success: true, 
+                message: "Thêm kho hàng thành công!",
+                data: new KhoHangDTO(data.data)
+            };
+        } else {
+            return { success: false, message: data.message || "Lỗi khi thêm kho hàng" };
+        }
+    } catch (error) {
+        console.error("Lỗi khi thêm kho hàng:", error);
+        return { success: false, message: "Lỗi khi thêm kho hàng: " + error.message };
+    }
+}
+
+// Lấy danh sách thể loại
+export async function fetchTheLoai() {
+    try {
+        const response = await fetch(API_URL_THELOAI);
+        const data = await response.json();
+        console.log("API response TheLoai:", data);
+        
+        if (data.success && Array.isArray(data.data)) {
+            return data.data.map(item => new TheLoaiDTO({
+                MaTheLoai: item.MaTheLoai,
+                TenTheLoai: item.TenTheLoai
+            }));
+        } else {
+            console.error("Invalid data format:", data);
+            return [];
+        }
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách thể loại:", error);
+        return [];
     }
 }
 

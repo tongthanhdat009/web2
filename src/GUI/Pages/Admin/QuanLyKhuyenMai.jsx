@@ -250,8 +250,8 @@ const QuanLyKhuyenMai = () => {
                 type="text"
                 className="modal-input"
                 value={editingKhuyenMai.MaKhuyenMai || ''}
-                onChange={(e) => setEditingKhuyenMai({...editingKhuyenMai, MaKhuyenMai: e.target.value})}
-                disabled={modalType === "edit"}
+                readOnly
+                style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
               />
             </div>
 

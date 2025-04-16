@@ -11,6 +11,8 @@ const QuanLyHangHoa = () => {
   const [khuyenMais, setKhuyenMais] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("add");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchCriteria, setSearchCriteria] = useState("all");
   const [editingHangHoa, setEditingHangHoa] = useState({ 
     MaHangHoa: "", 
     MaChungLoai: "", 
@@ -19,11 +21,10 @@ const QuanLyHangHoa = () => {
     MaKhuyenMai: "", 
     MoTa: "", 
     ThoiGianBaoHanh: "", 
-    Anh: "" 
+    Anh: "",
+    TrangThai: "1"
   }); 
   const [selectedImage, setSelectedImage] = useState(null);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -57,7 +58,7 @@ const QuanLyHangHoa = () => {
       setKhuyenMais(khuyenMaiData);
 
       // Tự động tạo Mã hàng hóa mới khi thêm
-      const maxMaHangHoa = Math.max(...hangHoaData.map(hh => parseInt(hh.maHangHoa, 10)), 0);
+      const maxMaHangHoa = Math.max(...hangHoaData.map(hh => parseInt(hh.MaHangHoa, 10)), 0);
       setEditingHangHoa(prevState => ({
         ...prevState,
         MaHangHoa: (maxMaHangHoa + 1).toString()
@@ -71,21 +72,12 @@ const QuanLyHangHoa = () => {
       setLoading(false);
     }
   };
+
   const handleToggleTrangThai = async (hangHoa) => {
     try {
-      // Đảo trạng thái: nếu đang là 1 thì đổi thành 0, ngược lại
-      const updatedTrangThai = hangHoa.trangThai === "1" ? "0" : "1";
-  
-      // Tạo bản sao với các thuộc tính viết hoa đầu và trạng thái mới
+      const updatedTrangThai = hangHoa.TrangThai === "1" ? "0" : "1";
       const updatedHangHoa = {
-        MaHangHoa: hangHoa.maHangHoa,
-        TenHangHoa: hangHoa.tenHangHoa,
-        MaChungLoai: hangHoa.maChungLoai,
-        MaHang: hangHoa.maHang,
-        MaKhuyenMai: hangHoa.maKhuyenMai || null,
-        MoTa: hangHoa.moTa || null,
-        ThoiGianBaoHanh: hangHoa.thoiGianBaoHanh || null,
-        Anh: hangHoa.anh || null,
+        ...hangHoa,
         TrangThai: updatedTrangThai
       };
   
@@ -99,7 +91,7 @@ const QuanLyHangHoa = () => {
         loadData();
       } else {
         setNotification({
-          message: "Cập nhật trạng thái thất bại",
+          message: response.message || "Cập nhật trạng thái thất bại",
           type: "error"
         });
       }
@@ -110,15 +102,11 @@ const QuanLyHangHoa = () => {
       });
     }
   };
-  
-  
-  
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedImage(file);
-      // Tạo URL tạm thời cho ảnh
       const imageUrl = URL.createObjectURL(file);
       setEditingHangHoa(prev => ({ ...prev, Anh: imageUrl }));
     }
@@ -127,8 +115,7 @@ const QuanLyHangHoa = () => {
   const handleAdd = () => {
     setModalType("add");
     setSelectedImage(null);
-    // Tính toán mã hàng hóa mới
-    const maxMaHangHoa = Math.max(...hangHoas.map(hh => parseInt(hh.maHangHoa, 10)), 0);
+    const maxMaHangHoa = Math.max(...hangHoas.map(hh => parseInt(hh.MaHangHoa, 10)), 0);
     const newMaHangHoa = (maxMaHangHoa + 1).toString();
     
     setEditingHangHoa({
@@ -139,7 +126,8 @@ const QuanLyHangHoa = () => {
       MaKhuyenMai: "",
       MoTa: "",
       ThoiGianBaoHanh: "",
-      Anh: ""
+      Anh: "",
+      TrangThai: "1"
     });
     setShowModal(true);
   };
@@ -147,19 +135,9 @@ const QuanLyHangHoa = () => {
   const handleEdit = (hangHoa) => {
     setModalType("edit");
     setSelectedImage(null);
-    
-    // Mapping chính xác giữa DTO và state
     setEditingHangHoa({
-      MaHangHoa: hangHoa.maHangHoa,
-      MaChungLoai: hangHoa.maChungLoai,
-      TenHangHoa: hangHoa.tenHangHoa,
-      MaHang: hangHoa.maHang,
-      MaKhuyenMai: hangHoa.maKhuyenMai || "",
-      MoTa: hangHoa.moTa || "",
-      ThoiGianBaoHanh: hangHoa.thoiGianBaoHanh || "",
-      Anh: hangHoa.anh || ""
+      ...hangHoa
     });
-    
     setShowModal(true);
   };
 
@@ -192,14 +170,15 @@ const QuanLyHangHoa = () => {
 
     try {
       const hangHoaDTO = {
-        MaHangHoa: editingHangHoa.MaHangHoa,
-        MaChungLoai: editingHangHoa.MaChungLoai.trim(),
+        ...editingHangHoa,
         TenHangHoa: editingHangHoa.TenHangHoa.trim(),
+        MaChungLoai: editingHangHoa.MaChungLoai.trim(),
         MaHang: editingHangHoa.MaHang.trim(),
-        MaKhuyenMai: editingHangHoa.MaKhuyenMai.trim() || null,
-        MoTa: editingHangHoa.MoTa.trim() || null,
-        ThoiGianBaoHanh: editingHangHoa.ThoiGianBaoHanh.trim() || null,
-        Anh: editingHangHoa.Anh.trim() || null
+        MaKhuyenMai: editingHangHoa.MaKhuyenMai?.trim() || null,
+        MoTa: editingHangHoa.MoTa?.trim() || null,
+        ThoiGianBaoHanh: editingHangHoa.ThoiGianBaoHanh?.trim() || null,
+        Anh: editingHangHoa.Anh?.trim() || null,
+        TrangThai: editingHangHoa.TrangThai?.trim() || "1"
       };
       
       let response;
@@ -223,7 +202,6 @@ const QuanLyHangHoa = () => {
         });
       }
     } catch (error) {
-      console.error('Error in handleSave:', error);
       setNotification({
         message: "Có lỗi xảy ra: " + (error.message || "Không xác định"),
         type: 'error'
@@ -231,11 +209,43 @@ const QuanLyHangHoa = () => {
     }
   };
 
+  const filterHangHoas = () => {
+    if (!searchTerm.trim()) return hangHoas;
 
-  const totalPages = Math.ceil(hangHoas.length / ITEMS_PER_PAGE);
+    return hangHoas.filter(hangHoa => {
+      const searchLower = searchTerm.toLowerCase();
+      
+      switch (searchCriteria) {
+        case "MaHangHoa":
+          return hangHoa.MaHangHoa.toLowerCase().includes(searchLower);
+        case "TenHangHoa":
+          return hangHoa.TenHangHoa.toLowerCase().includes(searchLower);
+        case "MaChungLoai":
+          const chungLoai = chungLoais.find(cl => cl.MaChungLoai === hangHoa.MaChungLoai);
+          return chungLoai?.TenChungLoai.toLowerCase().includes(searchLower);
+        case "MaHang":
+          const hang = hangs.find(h => h.MaHang === hangHoa.MaHang);
+          return hang?.TenHang.toLowerCase().includes(searchLower);
+        case "all":
+          return (
+            hangHoa.MaHangHoa.toLowerCase().includes(searchLower) ||
+            hangHoa.TenHangHoa.toLowerCase().includes(searchLower) ||
+            (chungLoais.find(cl => cl.MaChungLoai === hangHoa.MaChungLoai)?.TenChungLoai.toLowerCase().includes(searchLower)) ||
+            (hangs.find(h => h.MaHang === hangHoa.MaHang)?.TenHang.toLowerCase().includes(searchLower)) ||
+            (hangHoa.MoTa && hangHoa.MoTa.toLowerCase().includes(searchLower)) ||
+            (hangHoa.ThoiGianBaoHanh && hangHoa.ThoiGianBaoHanh.toString().includes(searchLower))
+          );
+        default:
+          return true;
+      }
+    });
+  };
+
+  const filteredHangHoas = filterHangHoas();
+  const totalPages = Math.ceil(filteredHangHoas.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentHangHoas = hangHoas.slice(startIndex, endIndex);
+  const currentHangHoas = filteredHangHoas.slice(startIndex, endIndex);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -312,6 +322,36 @@ const QuanLyHangHoa = () => {
         </div>
       )}
       <h2 className="admin-header">Quản lý hàng hóa</h2>
+      
+      <div className="search-container" style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+        <input
+          type="text"
+          placeholder="Nhập từ khóa tìm kiếm..."
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="modal-input"
+          style={{ flex: 1 }}
+        />
+        <select
+          value={searchCriteria}
+          onChange={(e) => {
+            setSearchCriteria(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="modal-input"
+          style={{ width: 'auto' }}
+        >
+          <option value="all">Tất cả</option>
+          <option value="MaHangHoa">Mã hàng hóa</option>
+          <option value="TenHangHoa">Tên hàng hóa</option>
+          <option value="MaChungLoai">Chủng loại</option>
+          <option value="MaHang">Hãng</option>
+        </select>
+      </div>
+
       <button 
         onClick={handleAdd}
         className="button-common button-add"
@@ -325,72 +365,84 @@ const QuanLyHangHoa = () => {
         </div>
       ) : (
         <>
-          <table className="table-container">
-            <thead>
-              <tr>
-                <th className="table-header">Mã hàng hóa</th>
-                <th className="table-header">Mã chủng loại</th>
-                <th className="table-header">Tên hàng hóa</th>
-                <th className="table-header">Mã hãng</th>
-                <th className="table-header">Mã khuyến mãi</th>
-                <th className="table-header">Mô tả</th>
-                <th className="table-header">Thời gian bảo hành</th>
-                <th className="table-header">Ảnh</th>
-                <th className="table-header">Trạng thái</th>
-                <th className="table-header">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentHangHoas.map((hangHoa, index) => (
-                <tr key={`hanghoa-${hangHoa.maHangHoa}`} className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}>
-                  <td>{hangHoa.maHangHoa}</td>
-                  <td>{hangHoa.maChungLoai}</td>
-                  <td>{hangHoa.tenHangHoa}</td>
-                  <td>{hangHoa.maHang}</td>
-                  <td>{hangHoa.maKhuyenMai || "(trống)"}</td>
-                  <td>{hangHoa.moTa}</td>
-                  <td>{hangHoa.thoiGianBaoHanh}</td>
-                  <td className="product-image-cell">
-                    {hangHoa.anh ? (
-                      <img 
-                        key={`image-${hangHoa.maHangHoa}`}
-                        src={hangHoa.anh} 
-                        alt={hangHoa.tenHangHoa} 
-                        className="product-image"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.parentElement.textContent = '(trống)';
-                        }}
-                        
-                      />
-                      
-                    ) : (
-                      <span key={`no-image-${hangHoa.maHangHoa}`}>(trống)</span>
-                    )}
-                  </td>
-                  <td>{hangHoa.trangThai === "1" ? "Hoạt động" : "Ngừng hoạt động"}</td>
-
-                  <td>
-                    <button
-                      key={`edit-${hangHoa.maHangHoa}`}
-                      onClick={() => handleEdit(hangHoa)}
-                      className="button-common button-edit"
-                    >
-                      Sửa
-                    </button>
-                    <button
-                          onClick={() => handleToggleTrangThai(hangHoa)}
-                          className="button-common button-delete"
-                        >
-                          {hangHoa.trangThai === "1" ? "Ngừng hoạt động" : "Kích hoạt"}
-                    </button>
-
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {renderPagination()}
+          {filteredHangHoas.length === 0 ? (
+            <div className="no-results-message">
+              Không tìm thấy kết quả phù hợp
+            </div>
+          ) : (
+            <>
+              <table className="table-container">
+                <thead>
+                  <tr>
+                    <th className="table-header">Mã hàng hóa</th>
+                    <th className="table-header">Chủng loại</th>
+                    <th className="table-header">Tên hàng hóa</th>
+                    <th className="table-header">Hãng</th>
+                    <th className="table-header">Khuyến mãi</th>
+                    <th className="table-header">Mô tả</th>
+                    <th className="table-header">Thời gian bảo hành (Tháng)</th>
+                    <th className="table-header">Ảnh</th>
+                    <th className="table-header">Trạng thái</th>
+                    <th className="table-header">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentHangHoas.map((hangHoa, index) => {
+                    const chungLoai = chungLoais.find(cl => cl.MaChungLoai === hangHoa.MaChungLoai);
+                    const hang = hangs.find(h => h.MaHang === hangHoa.MaHang);
+                    const khuyenMai = khuyenMais.find(km => km.MaKhuyenMai === hangHoa.MaKhuyenMai);
+                    
+                    return (
+                      <tr key={`hanghoa-${hangHoa.MaHangHoa}`} className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}>
+                        <td>{hangHoa.MaHangHoa}</td>
+                        <td>{chungLoai ? chungLoai.TenChungLoai : hangHoa.MaChungLoai}</td>
+                        <td>{hangHoa.TenHangHoa}</td>
+                        <td>{hang ? hang.TenHang : hangHoa.MaHang}</td>
+                        <td>{khuyenMai ? `${khuyenMai.TenKhuyenMai} (${khuyenMai.PhanTram}%)` : "(Trống)"}</td>
+                        <td>{hangHoa.MoTa}</td>
+                        <td>{hangHoa.ThoiGianBaoHanh}</td>
+                        <td className="product-image-cell">
+                          {hangHoa.Anh ? (
+                            <img 
+                              src={hangHoa.Anh} 
+                              alt={hangHoa.TenHangHoa} 
+                              className="product-image"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.parentElement.textContent = '(trống)';
+                              }}
+                            />
+                          ) : (
+                            <span>(trống)</span>
+                          )}
+                        </td>
+                        <td>
+                          <span className={`status-badge ${hangHoa.TrangThai === "1" ? 'status-active' : 'status-inactive'}`}>
+                            {hangHoa.TrangThai === "1" ? "Hoạt động" : "Ngừng hoạt động"}
+                          </span>
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => handleEdit(hangHoa)}
+                            className="button-common button-edit"
+                          >
+                            Sửa
+                          </button>
+                          <button
+                            onClick={() => handleToggleTrangThai(hangHoa)}
+                            className={`button-common ${hangHoa.TrangThai === "1" ? 'button-delete' : 'button-add'}`}
+                          >
+                            {hangHoa.TrangThai === "1" ? "Ngừng hoạt động" : "Kích hoạt"}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {renderPagination()}
+            </>
+          )}
         </>
       )}
 
@@ -407,8 +459,8 @@ const QuanLyHangHoa = () => {
                 type="text"
                 className="modal-input"
                 value={editingHangHoa.MaHangHoa || ''}
-                onChange={(e) => setEditingHangHoa({...editingHangHoa, MaHangHoa: e.target.value})}
-                disabled={modalType === "edit"}
+                readOnly
+                style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
               />
             </div>
 
@@ -419,9 +471,9 @@ const QuanLyHangHoa = () => {
                 value={editingHangHoa.MaChungLoai || ''}
                 onChange={(e) => setEditingHangHoa({...editingHangHoa, MaChungLoai: e.target.value})}
               >
-                <option key="cl-default" value="">Chọn chủng loại</option>
-                {chungLoais.filter(cl => cl && cl.MaChungLoai).map(cl => (
-                  <option key={`cl-${cl.MaChungLoai}`} value={cl.MaChungLoai}>
+                <option value="">Chọn chủng loại</option>
+                {chungLoais.map(cl => (
+                  <option key={cl.MaChungLoai} value={cl.MaChungLoai}>
                     {cl.TenChungLoai}
                   </option>
                 ))}
@@ -436,7 +488,6 @@ const QuanLyHangHoa = () => {
                 value={editingHangHoa.TenHangHoa || ''}
                 onChange={(e) => setEditingHangHoa({...editingHangHoa, TenHangHoa: e.target.value})}
                 placeholder="Nhập tên hàng hóa"
-                disabled={modalType === 'edit'}
               />
             </div>
 
@@ -447,9 +498,9 @@ const QuanLyHangHoa = () => {
                 value={editingHangHoa.MaHang || ''}
                 onChange={(e) => setEditingHangHoa({...editingHangHoa, MaHang: e.target.value})}
               >
-                <option key="hang-default" value="">Chọn hãng</option>
-                {hangs.filter(hang => hang && hang.MaHang).map(hang => (
-                  <option key={`hang-${hang.MaHang}`} value={hang.MaHang}>
+                <option value="">Chọn hãng</option>
+                {hangs.map(hang => (
+                  <option key={hang.MaHang} value={hang.MaHang}>
                     {hang.TenHang}
                   </option>
                 ))}
@@ -463,10 +514,10 @@ const QuanLyHangHoa = () => {
                 value={editingHangHoa.MaKhuyenMai || ''}
                 onChange={(e) => setEditingHangHoa({...editingHangHoa, MaKhuyenMai: e.target.value})}
               >
-                <option key="km-default" value="">Chọn khuyến mãi</option>
-                {khuyenMais.filter(km => km && km.MaKhuyenMai).map(km => (
-                  <option key={`km-${km.MaKhuyenMai}`} value={km.MaKhuyenMai}>
-                    {km.TenKhuyenMai} ({km.MaKhuyenMai}%)
+                <option value="">Chọn khuyến mãi</option>
+                {khuyenMais.map(km => (
+                  <option key={km.MaKhuyenMai} value={km.MaKhuyenMai}>
+                    {km.TenKhuyenMai} ({km.PhanTram}%)
                   </option>
                 ))}
               </select>
@@ -495,6 +546,18 @@ const QuanLyHangHoa = () => {
             </div>
 
             <div className="form-group">
+              <label className="form-label">Trạng thái:</label>
+              <select
+                className="modal-input"
+                value={editingHangHoa.TrangThai || '1'}
+                onChange={(e) => setEditingHangHoa({...editingHangHoa, TrangThai: e.target.value})}
+              >
+                <option value="1">Hoạt động</option>
+                <option value="0">Ngừng hoạt động</option>
+              </select>
+            </div>
+
+            <div className="form-group">
               <label className="form-label">Ảnh:</label>
               <input
                 type="file"
@@ -519,30 +582,6 @@ const QuanLyHangHoa = () => {
               </button>
               <button className="modal-button modal-button-cancel" onClick={() => setShowModal(false)}>
                 Hủy
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showConfirm && (
-        <div className="modal-container">
-          <div className="modal-content">
-            <h3 style={{ marginBottom: "20px" }}>Xác nhận xóa</h3>
-            <p style={{ marginBottom: "20px" }}>Bạn có chắc chắn muốn xóa hàng hóa này?</p>
-            <div className="modal-buttons">
-              <button
-                onClick={() => setShowConfirm(false)}
-                className="modal-button modal-button-cancel"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={handleDelete}
-                className="modal-button modal-button-submit"
-                style={{ backgroundColor: "#f44336" }}
-              >
-                Xóa
               </button>
             </div>
           </div>

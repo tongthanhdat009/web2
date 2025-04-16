@@ -10,7 +10,9 @@ require_once "../config/Database.php";
 $database = new Database();
 $conn = $database->getConnection();
 
-$sql = "SELECT * FROM chungloai";
+$sql = "SELECT c.*, t.TenTheLoai 
+        FROM chungloai c 
+        LEFT JOIN theloai t ON c.MaTheLoai = t.MaTheLoai";
 $result = $conn->query($sql);
 
 $categories = [];

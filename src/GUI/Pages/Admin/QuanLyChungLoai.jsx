@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { fetchChungLoai, addChungLoai, updateChungLoai } from "../../../DAL/api";
+import { fetchChungLoai, addChungLoai, updateChungLoai, fetchTheLoai } from "../../../DAL/api";
 import "../../../GUI/Components/css/QuanLyChungLoai.css";
 
 const ITEMS_PER_PAGE = 10;
 
 const QuanLyChungLoai = () => {
   const [chungLoais, setChungLoais] = useState([]);
+  const [theLoais, setTheLoais] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("add");
   const [editingChungLoai, setEditingChungLoai] = useState({ 
@@ -18,7 +19,7 @@ const QuanLyChungLoai = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    loadChungLoais();
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -30,14 +31,19 @@ const QuanLyChungLoai = () => {
     }
   }, [notification]);
 
-  const loadChungLoais = async () => {
+  const loadData = async () => {
     setLoading(true);
     try {
-      const data = await fetchChungLoai();
-      setChungLoais(data);
+      const [chungLoaiData, theLoaiData] = await Promise.all([
+        fetchChungLoai(),
+        fetchTheLoai()
+      ]);
+      
+      setChungLoais(chungLoaiData);
+      setTheLoais(theLoaiData);
 
       // Tự động tạo Mã chủng loại mới khi thêm
-      const maxMaChungLoai = Math.max(...data.map(cl => parseInt(cl.MaChungLoai, 10)), 0);
+      const maxMaChungLoai = Math.max(...chungLoaiData.map(cl => parseInt(cl.MaChungLoai, 10)), 0);
       setEditingChungLoai(prevState => ({
         ...prevState,
         MaChungLoai: (maxMaChungLoai + 1).toString()
@@ -83,9 +89,9 @@ const QuanLyChungLoai = () => {
       return;
     }
 
-    if (!editingChungLoai.MaTheLoai || editingChungLoai.MaTheLoai.trim() === '') {
+    if (!editingChungLoai.MaTheLoai) {
       setNotification({
-        message: 'Vui lòng nhập mã thể loại',
+        message: 'Vui lòng chọn thể loại',
         type: 'error'
       });
       return;
@@ -95,7 +101,7 @@ const QuanLyChungLoai = () => {
       const chungLoaiDTO = {
         MaChungLoai: editingChungLoai.MaChungLoai,
         TenChungLoai: editingChungLoai.TenChungLoai.trim(),
-        MaTheLoai: editingChungLoai.MaTheLoai.trim()
+        MaTheLoai: editingChungLoai.MaTheLoai
       };
       
       let response;
@@ -111,7 +117,7 @@ const QuanLyChungLoai = () => {
           type: 'success'
         });
         setShowModal(false);
-        await loadChungLoais();
+        await loadData();
       } else {
         setNotification({
           message: response.message || "Có lỗi xảy ra",
@@ -223,7 +229,7 @@ const QuanLyChungLoai = () => {
               <tr>
                 <th className="table-header">Mã chủng loại</th>
                 <th className="table-header">Tên chủng loại</th>
-                <th className="table-header">Mã thể loại</th>
+                <th className="table-header">Tên thể loại</th>
                 <th className="table-header">Thao tác</th>
               </tr>
             </thead>
@@ -232,7 +238,7 @@ const QuanLyChungLoai = () => {
                 <tr key={chungLoai.MaChungLoai} className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}>
                   <td>{chungLoai.MaChungLoai}</td>
                   <td>{chungLoai.TenChungLoai}</td>
-                  <td>{chungLoai.MaTheLoai || "(trống)"}</td>
+                  <td>{chungLoai.TenTheLoai || "(trống)"}</td>
                   <td>
                     <button
                       onClick={() => handleEdit(chungLoai)}
@@ -262,8 +268,8 @@ const QuanLyChungLoai = () => {
                 type="text"
                 className="modal-input"
                 value={editingChungLoai.MaChungLoai || ''}
-                onChange={(e) => setEditingChungLoai({...editingChungLoai, MaChungLoai: e.target.value})}
-                disabled={modalType === "edit"}
+                readOnly
+                style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
               />
             </div>
 
@@ -279,14 +285,19 @@ const QuanLyChungLoai = () => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Mã thể loại:</label>
-              <input
-                type="text"
+              <label className="form-label">Thể loại:</label>
+              <select
                 className="modal-input"
                 value={editingChungLoai.MaTheLoai || ''}
                 onChange={(e) => setEditingChungLoai({...editingChungLoai, MaTheLoai: e.target.value})}
-                placeholder="Nhập mã thể loại"
-              />
+              >
+                <option value="">Chọn thể loại</option>
+                {theLoais.map(theLoai => (
+                  <option key={theLoai.MaTheLoai} value={theLoai.MaTheLoai}>
+                    {theLoai.TenTheLoai}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="modal-buttons">
