@@ -23,12 +23,19 @@ const API_ADD_QUYEN = "http://localhost/web2/server/api/QuanLyPhanQuyen/addQuyen
 const API_UPDATE_QUYEN = "http://localhost/web2/server/api/QuanLyPhanQuyen/updateQuyen.php";
 const API_DELETE_QUYEN = "http://localhost/web2/server/api/QuanLyPhanQuyen/deleteQuyen.php";
 
+// API endpoints cho Chức năng
+const API_GET_CHUC_NANG = "http://localhost/web2/server/api/QuanLyPhanQuyen/getAllChucNang.php";
+const API_ADD_CHUC_NANG = "http://localhost/web2/server/api/QuanLyPhanQuyen/addChucNang.php";
+const API_UPDATE_CHUC_NANG = "http://localhost/web2/server/api/QuanLyPhanQuyen/updateChucNang.php";
+const API_DELETE_CHUC_NANG = "http://localhost/web2/server/api/QuanLyPhanQuyen/deleteChucNang.php";
+
 import KhuyenMaiDTO from "../DTO/KhuyenMaiDTO";
 import HangDTO from "../DTO/HangDTO";
 import NhaCungCapDTO from "../DTO/NhaCungCapDTO";
 import HangHoaDTO from "../DTO/HangHoaDTO";
 import QuyenDTO from "../DTO/QuyenDTO";
 import PhanQuyenDTO from "../DTO/PhanQuyenDTO";
+import ChucNangDTO from "../DTO/ChucNangDTO"; // Assuming ChucNangDTO exists or will be created
 
 // Lấy danh sách hàng hóa
 export async function fetchHangHoa() {
@@ -422,6 +429,115 @@ export async function fetchRoles(page = 1, limit = 10, search = '', showSystem =
     } catch (error) {
         console.error("Error fetching roles:", error);
         throw error;
+    }
+}
+
+// Functions cho quản lý chức năng
+
+// Lấy danh sách chức năng
+export async function getAllChucNang() {
+    try {
+        const response = await fetch(API_GET_CHUC_NANG);
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || `HTTP error! status: ${response.status}`);
+        }
+
+        if (result.data && Array.isArray(result.data)) {
+            // Assuming ChucNangDTO takes ID and Ten
+            return result.data.map(cn => new ChucNangDTO(cn.IDChucNang, cn.TenChucNang));
+        }
+
+        return [];
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách chức năng:", error);
+        throw error; // Re-throw the error to be caught by the caller
+    }
+}
+
+// Thêm chức năng mới
+export async function addChucNang(chucNangData) { // Expects { TenChucNang: '...' }
+    try {
+        const response = await fetch(API_ADD_CHUC_NANG, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(chucNangData)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || `HTTP error! status: ${response.status}`);
+        }
+
+        // Return the newly created ChucNang data from the API response
+        return {
+            success: true,
+            message: result.message || "Thêm chức năng thành công",
+            data: result.data // Should contain IDChucNang and TenChucNang
+        };
+    } catch (error) {
+        console.error("Lỗi khi thêm chức năng:", error);
+        throw error; // Re-throw the error
+    }
+}
+
+// Cập nhật chức năng
+export async function updateChucNang(chucNangData) { // Expects { IDChucNang: ..., TenChucNang: '...' }
+    try {
+        const response = await fetch(API_UPDATE_CHUC_NANG, {
+            // Using POST as the PHP script allows it, common practice
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(chucNangData)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || `HTTP error! status: ${response.status}`);
+        }
+
+        return {
+            success: true,
+            message: result.message || "Cập nhật chức năng thành công"
+        };
+    } catch (error) {
+        console.error("Lỗi khi cập nhật chức năng:", error);
+        throw error; // Re-throw the error
+    }
+}
+
+// Xóa chức năng
+export async function deleteChucNang(idChucNang) {
+    try {
+        const response = await fetch(API_DELETE_CHUC_NANG, {
+            // Using POST as the PHP script allows it
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ IDChucNang: idChucNang })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || `HTTP error! status: ${response.status}`);
+        }
+
+        return {
+            success: true,
+            message: result.message || "Xóa chức năng thành công"
+        };
+    } catch (error) {
+        console.error("Lỗi khi xóa chức năng:", error);
+        throw error; // Re-throw the error
     }
 }
 

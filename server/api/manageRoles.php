@@ -1,181 +1,171 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+// Disable error display in output
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
 
-// Xử lý các yêu cầu OPTIONS (CORS preflight)
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    header("HTTP/1.1 200 OK");
+// Set headers
+header('Access-Control-Allow-Origin: http://localhost:5173');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Credentials: true');
+header('Content-Type: application/json; charset=utf-8');
+
+require_once '../config/Database.php';
+
+// Function to send JSON response
+function sendJsonResponse($data, $statusCode = 200) {
+    http_response_code($statusCode);
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-require_once "../config/Database.php";
-require_once "auth/checkSession.php"; // Giả định đã có file xác thực phiên
-
-$database = new Database();
-$conn = $database->getConnection();
-
-// Tăng giới hạn độ dài GROUP_CONCAT
-$conn->query("SET SESSION group_concat_max_len = 1000000");
-
-// Kiểm tra quyền của người dùng hiện tại
-function checkCurrentUserPermission($conn, $requiredPermission) {
-    // Giả định thông tin người dùng hiện tại được lưu trong session
-    if (!isset($_SESSION['user_id'])) {
-        return false;
-    }
-    
-    $userId = $_SESSION['user_id'];
-    $sql = "SELECT q.TenQuyen FROM taikhoan tk 
-            JOIN quyen q ON tk.IDQuyen = q.IDQuyen 
-            WHERE tk.IDTaiKhoan = ?";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
-    $result = $stmt->get_result()->fetch_assoc();
-    
-    // Admin có tất cả quyền
-    if ($result && $result['TenQuyen'] === 'Admin') {
-        return true;
-    }
-    
-    // Kiểm tra quyền cụ thể (them, xoa, sua)
-    $sql = "SELECT pq.$requiredPermission FROM taikhoan tk 
-            JOIN phanquyen pq ON tk.IDQuyen = pq.IDQuyen 
-            JOIN chucnang cn ON pq.IDChucNang = cn.IDChucNang
-            WHERE tk.IDTaiKhoan = ? AND cn.MaChucNang = 'ROLE_MANAGEMENT'";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
-    $result = $stmt->get_result()->fetch_assoc();
-    
-    return $result && $result[$requiredPermission] == 1;
+// Handle preflight requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
 }
-
-// Ghi nhật ký hoạt động
-function logActivity($conn, $userId, $action, $details) {
-    $sql = "INSERT INTO nhat_ky_hoat_dong (IDTaiKhoan, HanhDong, ChiTiet, ThoiGian) VALUES (?, ?, ?, NOW())";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iss", $userId, $action, $details);
-    $stmt->execute();
-}
-
-$method = $_SERVER['REQUEST_METHOD'];
-$userId = $_SESSION['user_id'] ?? 0; // ID người dùng hiện tại
 
 try {
+    // Kết nối database
+    $db = new Database();
+    $conn = $db->connect();
+
+    // Kiểm tra kết nối
+    if ($conn->connect_error) {
+        throw new Exception("Lỗi kết nối cơ sở dữ liệu: " . $conn->connect_error);
+    }
+
+    // Kiểm tra session và quyền
+    session_start();
+    if (!isset($_SESSION['IDTaiKhoan'])) {
+        sendJsonResponse([
+            "success" => false,
+            "message" => "Vui lòng đăng nhập để tiếp tục",
+            "code" => "NO_SESSION"
+        ], 401);
+    }
+
+    // Hàm kiểm tra quyền của người dùng hiện tại
+    function checkCurrentUserPermission($conn, $action) {
+        $userId = $_SESSION['IDTaiKhoan'];
+        
+        // Lấy quyền của người dùng
+        $sql = "SELECT q.IDQuyen, q.TenQuyen, pq.Them, pq.Sua, pq.Xoa 
+                FROM taikhoan tk 
+                JOIN quyen q ON tk.IDQuyen = q.IDQuyen 
+                LEFT JOIN phanquyen pq ON q.IDQuyen = pq.IDQuyen AND pq.IDChucNang = 2
+                WHERE tk.IDTaiKhoan = ?";
+        
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Lỗi chuẩn bị truy vấn: " . $conn->error);
+        }
+        
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $userRole = $result->fetch_assoc();
+
+        // Nếu là Admin, cho phép tất cả
+        if ($userRole && $userRole['TenQuyen'] === 'Admin') {
+            return true;
+        }
+
+        // Kiểm tra quyền cụ thể
+        if ($userRole) {
+            switch ($action) {
+                case 'Xem':
+                    return true; // Mọi người đều có quyền xem
+                case 'Them':
+                    return (bool)$userRole['Them'];
+                case 'Sua':
+                    return (bool)$userRole['Sua'];
+                case 'Xoa':
+                    return (bool)$userRole['Xoa'];
+                default:
+                    return false;
+            }
+        }
+        
+        return false;
+    }
+
+    $method = $_SERVER['REQUEST_METHOD'];
+
     switch ($method) {
         case 'GET':
-            // Lấy danh sách vai trò và quyền hạn chi tiết
-            // Thêm phân trang và tìm kiếm
+            // Kiểm tra quyền xem
+            if (!checkCurrentUserPermission($conn, 'Xem')) {
+                sendJsonResponse([
+                    "success" => false,
+                    "code" => "NO_PERMISSION"
+                ], 403);
+            }
+
+            // Get parameters
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
             $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+            $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
+            $showSystem = isset($_GET['system']) ? filter_var($_GET['system'], FILTER_VALIDATE_BOOLEAN) : false;
+
+            // Calculate offset
             $offset = ($page - 1) * $limit;
-            $search = isset($_GET['search']) ? "%" . $_GET['search'] . "%" : "%";
-            $includeSystemRoles = isset($_GET['system']) && $_GET['system'] === "true";
-            
-            // Lấy tổng số quyền để phân trang
-            $countSql = "SELECT COUNT(*) as total FROM quyen WHERE TenQuyen LIKE ?";
-            if (!$includeSystemRoles) {
-                $countSql .= " AND HeTHong = 0";
+
+            // Build WHERE clause
+            $whereClause = [];
+            if (!empty($search)) {
+                $whereClause[] = "q.TenQuyen LIKE '%$search%'";
             }
-            
-            $stmt = $conn->prepare($countSql);
-            $stmt->bind_param("s", $search);
-            $stmt->execute();
-            $totalResult = $stmt->get_result()->fetch_assoc();
-            $total = $totalResult['total'];
-            
-            // Câu truy vấn chính có phân trang và tìm kiếm
-            $sql = "SELECT q.IDQuyen, q.TenQuyen, q.HeTHong, q.TrangThai, q.MoTa, q.NgayTao,
-                    (SELECT COUNT(*) FROM taikhoan WHERE IDQuyen = q.IDQuyen) as SoLuongTaiKhoan,
-                    GROUP_CONCAT(DISTINCT CONCAT(cn.IDChucNang, ':', cn.TenChucNang, ':', cn.MaChucNang, ':', cn.NhomChucNang)) as ChucNang,
-                    GROUP_CONCAT(DISTINCT CONCAT(pq.IDChucNang, ':', COALESCE(pq.Them, 0), ':', COALESCE(pq.Xoa, 0), ':', COALESCE(pq.Sua, 0))) as PhanQuyen
+            if (!$showSystem) {
+                $whereClause[] = "q.HeTHong != 1";
+            }
+            $where = !empty($whereClause) ? "WHERE " . implode(" AND ", $whereClause) : "";
+
+            // Get total count
+            $countSql = "SELECT COUNT(*) as total FROM quyen q $where";
+            $totalResult = $conn->query($countSql);
+            $total = $totalResult->fetch_assoc()['total'];
+            $totalPages = ceil($total / $limit);
+
+            // Get roles with permissions
+            $sql = "SELECT q.*, 
+                    GROUP_CONCAT(
+                        JSON_OBJECT(
+                            'IDChucNang', c.IDChucNang,
+                            'TenChucNang', c.TenChucNang,
+                            'Them', IFNULL(pq.Them, 0),
+                            'Sua', IFNULL(pq.Sua, 0),
+                            'Xoa', IFNULL(pq.Xoa, 0)
+                        )
+                    ) as ChucNang
                     FROM quyen q
-                    LEFT JOIN phanquyen pq ON q.IDQuyen = pq.IDQuyen 
-                    LEFT JOIN chucnang cn ON pq.IDChucNang = cn.IDChucNang
-                    WHERE q.TenQuyen LIKE ?";
-            
-            if (!$includeSystemRoles) {
-                $sql .= " AND q.HeTHong = 0";
-            }
-            
-            $sql .= " GROUP BY q.IDQuyen ORDER BY q.NgayTao DESC LIMIT ? OFFSET ?";
-            
+                    LEFT JOIN phanquyen pq ON q.IDQuyen = pq.IDQuyen
+                    LEFT JOIN chucnang c ON pq.IDChucNang = c.IDChucNang
+                    $where
+                    GROUP BY q.IDQuyen
+                    ORDER BY q.IDQuyen 
+                    LIMIT ? OFFSET ?";
+
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sii", $search, $limit, $offset);
+            $stmt->bind_param("ii", $limit, $offset);
             $stmt->execute();
             $result = $stmt->get_result();
-            $roles = array();
-            
-            while($row = $result->fetch_assoc()) {
-                $role = array(
-                    'IDQuyen' => $row['IDQuyen'],
-                    'TenQuyen' => $row['TenQuyen'],
-                    'HeTHong' => (bool)$row['HeTHong'],
-                    'TrangThai' => (bool)$row['TrangThai'],
-                    'MoTa' => $row['MoTa'],
-                    'NgayTao' => $row['NgayTao'],
-                    'SoLuongTaiKhoan' => $row['SoLuongTaiKhoan'],
-                    'ChucNang' => array()
-                );
-                
-                if($row['ChucNang']) {
-                    $chucNangArray = explode(',', $row['ChucNang']);
-                    $phanQuyenArray = explode(',', $row['PhanQuyen']);
-                    
-                    $chucNangGrouped = []; // Nhóm chức năng theo nhóm
-                    
-                    foreach($chucNangArray as $index => $cn) {
-                        $cnParts = explode(':', $cn);
-                        if (count($cnParts) >= 4) {
-                            $idChucNang = $cnParts[0];
-                            $tenChucNang = $cnParts[1];
-                            $maChucNang = $cnParts[2];
-                            $nhomChucNang = $cnParts[3];
-                            
-                            $pqParts = explode(':', $phanQuyenArray[$index] ?? '');
-                            
-                            $chucNangData = array(
-                                'IDChucNang' => $idChucNang,
-                                'TenChucNang' => $tenChucNang,
-                                'MaChucNang' => $maChucNang,
-                                'Them' => isset($pqParts[1]) ? (int)$pqParts[1] : 0,
-                                'Xoa' => isset($pqParts[2]) ? (int)$pqParts[2] : 0, 
-                                'Sua' => isset($pqParts[3]) ? (int)$pqParts[3] : 0
-                            );
-                            
-                            // Nhóm chức năng theo nhóm
-                            if (!isset($chucNangGrouped[$nhomChucNang])) {
-                                $chucNangGrouped[$nhomChucNang] = [];
-                            }
-                            $chucNangGrouped[$nhomChucNang][] = $chucNangData;
-                        }
-                    }
-                    
-                    // Chuyển đổi nhóm thành mảng cho JSON
-                    foreach ($chucNangGrouped as $nhom => $danhSachChucNang) {
-                        $role['ChucNang'][] = [
-                            'TenNhom' => $nhom,
-                            'DanhSachChucNang' => $danhSachChucNang
-                        ];
-                    }
-                }
-                
-                $roles[] = $role;
+
+            $roles = [];
+            while ($row = $result->fetch_assoc()) {
+                $chucNangJson = $row['ChucNang'];
+                $row['ChucNang'] = $chucNangJson ? json_decode("[$chucNangJson]", true) : [];
+                $roles[] = $row;
             }
-            
-            echo json_encode([
-                'success' => true,
-                'data' => $roles,
-                'pagination' => [
-                    'total' => $total,
-                    'page' => $page,
-                    'limit' => $limit,
-                    'totalPages' => ceil($total / $limit)
+
+            sendJsonResponse([
+                "success" => true,
+                "data" => $roles,
+                "pagination" => [
+                    "currentPage" => $page,
+                    "totalPages" => $totalPages,
+                    "totalRecords" => $total,
+                    "limit" => $limit
                 ]
             ]);
             break;
@@ -183,339 +173,268 @@ try {
         case 'POST':
             // Kiểm tra quyền thêm
             if (!checkCurrentUserPermission($conn, 'Them')) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Bạn không có quyền thực hiện thao tác này.",
-                    "code" => "NO_PERMISSION"
-                ]);
-                exit;
+                sendJsonResponse([
+                    "success" => false,
+                    "code" => "NO_CREATE_PERMISSION"
+                ], 403);
             }
-            
+
             $data = json_decode(file_get_contents("php://input"), true);
             
-            // Validate dữ liệu đầu vào
+            // Validate dữ liệu
             if (empty($data['tenQuyen'])) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Tên quyền không được để trống.",
+                sendJsonResponse([
+                    "success" => false,
                     "code" => "EMPTY_NAME"
-                ]);
-                exit;
+                ], 400);
             }
-            
-            $tenQuyen = trim($data['tenQuyen']);
-            $moTa = trim($data['moTa'] ?? '');
-            $phanQuyen = $data['phanQuyen'] ?? array();
-            $copyFromId = $data['copyFromId'] ?? null; // ID quyền để sao chép
-            
-            // Kiểm tra tên quyền tồn tại (case-insensitive)
-            $checkRoleSql = "SELECT * FROM quyen WHERE LOWER(TenQuyen) = LOWER(?)";
-            $stmt = $conn->prepare($checkRoleSql);
-            $stmt->bind_param("s", $tenQuyen);
+
+            // Kiểm tra tên quyền đã tồn tại
+            $checkSql = "SELECT COUNT(*) as count FROM quyen WHERE TenQuyen = ?";
+            $stmt = $conn->prepare($checkSql);
+            $stmt->bind_param("s", $data['tenQuyen']);
             $stmt->execute();
-            if ($stmt->get_result()->num_rows > 0) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Tên quyền đã tồn tại.",
+            if ($stmt->get_result()->fetch_assoc()['count'] > 0) {
+                sendJsonResponse([
+                    "success" => false,
                     "code" => "NAME_EXISTS"
-                ]);
-                exit;
+                ], 400);
             }
 
             // Bắt đầu transaction
             $conn->begin_transaction();
+
             try {
                 // Thêm quyền mới
-                $insertRoleSql = "INSERT INTO quyen (TenQuyen, MoTa, HeTHong, TrangThai, NgayTao) VALUES (?, ?, 0, 1, NOW())";
-                $stmt = $conn->prepare($insertRoleSql);
-                $stmt->bind_param("ss", $tenQuyen, $moTa);
+                $sql = "INSERT INTO quyen (TenQuyen, MoTa, TrangThai, HeTHong) VALUES (?, ?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ssii", 
+                    $data['tenQuyen'],
+                    $data['moTa'],
+                    $data['trangThai'],
+                    $data['heThong']
+                );
                 $stmt->execute();
-                $idQuyen = $conn->insert_id;
-                
-                // Sao chép quyền từ một quyền có sẵn
-                if ($copyFromId) {
-                    $copyPermSql = "INSERT INTO phanquyen (IDQuyen, IDChucNang, Them, Xoa, Sua) 
-                                    SELECT ?, IDChucNang, Them, Xoa, Sua FROM phanquyen WHERE IDQuyen = ?";
-                    $stmt = $conn->prepare($copyPermSql);
-                    $stmt->bind_param("ii", $idQuyen, $copyFromId);
-                    $stmt->execute();
-                }
-                // Hoặc thêm phân quyền chi tiết từ form
-                else if (!empty($phanQuyen)) {
-                    $insertPermSql = "INSERT INTO phanquyen (IDQuyen, IDChucNang, Them, Xoa, Sua) VALUES (?, ?, ?, ?, ?)";
-                    $stmt = $conn->prepare($insertPermSql);
+                $newRoleId = $conn->insert_id;
+
+                // Xử lý phân quyền
+                if (!empty($data['phanQuyen'])) {
+                    $sql = "INSERT INTO phanquyen (IDQuyen, IDChucNang, Them, Sua, Xoa) VALUES (?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($sql);
                     
-                    foreach ($phanQuyen as $pq) {
-                        $idChucNang = $pq['idChucNang'];
-                        $them = $pq['them'] ?? 0;
-                        $xoa = $pq['xoa'] ?? 0;
-                        $sua = $pq['sua'] ?? 0;
-                        
-                        $stmt->bind_param("iiiii", $idQuyen, $idChucNang, $them, $xoa, $sua);
+                    foreach ($data['phanQuyen'] as $phanQuyen) {
+                        $stmt->bind_param("iiiii",
+                            $newRoleId,
+                            $phanQuyen['IDChucNang'],
+                            $phanQuyen['Them'],
+                            $phanQuyen['Sua'],
+                            $phanQuyen['Xoa']
+                        );
                         $stmt->execute();
                     }
                 }
 
-                // Ghi log
-                logActivity($conn, $userId, 'CREATE_ROLE', "Tạo quyền mới: {$tenQuyen} (ID: {$idQuyen})");
-
                 $conn->commit();
-                echo json_encode([
-                    "success" => true, 
-                    "message" => "Thêm quyền thành công",
-                    "data" => ["idQuyen" => $idQuyen]
+                sendJsonResponse([
+                    "success" => true,
+                    "data" => ["IDQuyen" => $newRoleId]
                 ]);
+
             } catch (Exception $e) {
                 $conn->rollback();
-                error_log($e->getMessage());
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Lỗi hệ thống: " . $e->getMessage(),
-                    "code" => "SYSTEM_ERROR"
-                ]);
+                throw $e;
             }
             break;
 
         case 'PUT':
             // Kiểm tra quyền sửa
             if (!checkCurrentUserPermission($conn, 'Sua')) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Bạn không có quyền thực hiện thao tác này.",
-                    "code" => "NO_PERMISSION"
-                ]);
-                exit;
+                sendJsonResponse([
+                    "success" => false,
+                    "code" => "NO_UPDATE_PERMISSION"
+                ], 403);
             }
-            
+
             $data = json_decode(file_get_contents("php://input"), true);
             
-            // Validate dữ liệu đầu vào
-            if (empty($data['idQuyen'])) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "ID quyền không hợp lệ.",
+            // Validate dữ liệu
+            if (!isset($data['idQuyen'])) {
+                sendJsonResponse([
+                    "success" => false,
                     "code" => "INVALID_ID"
-                ]);
-                exit;
+                ], 400);
             }
-            
-            if (empty($data['tenQuyen'])) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Tên quyền không được để trống.",
-                    "code" => "EMPTY_NAME"
-                ]);
-                exit;
-            }
-            
-            $idQuyen = $data['idQuyen'];
-            $tenQuyen = trim($data['tenQuyen']);
-            $moTa = trim($data['moTa'] ?? '');
-            $trangThai = isset($data['trangThai']) ? (int)$data['trangThai'] : 1;
-            $phanQuyen = $data['phanQuyen'] ?? array();
 
             // Kiểm tra quyền hệ thống
             $checkSystemSql = "SELECT HeTHong FROM quyen WHERE IDQuyen = ?";
             $stmt = $conn->prepare($checkSystemSql);
-            $stmt->bind_param("i", $idQuyen);
+            $stmt->bind_param("i", $data['idQuyen']);
             $stmt->execute();
-            $result = $stmt->get_result()->fetch_assoc();
-            
-            if (!$result) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Không tìm thấy quyền.",
-                    "code" => "NOT_FOUND"
-                ]);
-                exit;
-            }
-            
-            if ($result['HeTHong'] == 1) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Không thể sửa quyền hệ thống.",
+            $result = $stmt->get_result();
+            if ($result->fetch_assoc()['HeTHong'] == 1) {
+                sendJsonResponse([
+                    "success" => false,
                     "code" => "SYSTEM_ROLE"
-                ]);
-                exit;
+                ], 400);
             }
 
-            // Kiểm tra tên quyền tồn tại (case-insensitive)
-            $checkRoleSql = "SELECT * FROM quyen WHERE LOWER(TenQuyen) = LOWER(?) AND IDQuyen != ?";
-            $stmt = $conn->prepare($checkRoleSql);
-            $stmt->bind_param("si", $tenQuyen, $idQuyen);
-            $stmt->execute();
-            if ($stmt->get_result()->num_rows > 0) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Tên quyền đã tồn tại.",
-                    "code" => "NAME_EXISTS"
-                ]);
-                exit;
+            // Kiểm tra tên quyền trùng
+            if (!empty($data['tenQuyen'])) {
+                $checkSql = "SELECT COUNT(*) as count FROM quyen WHERE TenQuyen = ? AND IDQuyen != ?";
+                $stmt = $conn->prepare($checkSql);
+                $stmt->bind_param("si", $data['tenQuyen'], $data['idQuyen']);
+                $stmt->execute();
+                if ($stmt->get_result()->fetch_assoc()['count'] > 0) {
+                    sendJsonResponse([
+                        "success" => false,
+                        "code" => "NAME_EXISTS"
+                    ], 400);
+                }
             }
 
             // Bắt đầu transaction
             $conn->begin_transaction();
+
             try {
-                // Cập nhật tên quyền
-                $updateRoleSql = "UPDATE quyen SET TenQuyen = ?, MoTa = ?, TrangThai = ? WHERE IDQuyen = ?";
-                $stmt = $conn->prepare($updateRoleSql);
-                $stmt->bind_param("ssii", $tenQuyen, $moTa, $trangThai, $idQuyen);
+                // Cập nhật thông tin quyền
+                $sql = "UPDATE quyen SET TenQuyen = ?, MoTa = ?, TrangThai = ?, HeTHong = ? WHERE IDQuyen = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ssiii", 
+                    $data['tenQuyen'],
+                    $data['moTa'],
+                    $data['trangThai'],
+                    $data['heThong'],
+                    $data['idQuyen']
+                );
                 $stmt->execute();
 
                 // Xóa phân quyền cũ
-                $deletePermSql = "DELETE FROM phanquyen WHERE IDQuyen = ?";
-                $stmt = $conn->prepare($deletePermSql);
-                $stmt->bind_param("i", $idQuyen);
+                $sql = "DELETE FROM phanquyen WHERE IDQuyen = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("i", $data['idQuyen']);
                 $stmt->execute();
 
                 // Thêm phân quyền mới
-                if (!empty($phanQuyen)) {
-                    $insertPermSql = "INSERT INTO phanquyen (IDQuyen, IDChucNang, Them, Xoa, Sua) VALUES (?, ?, ?, ?, ?)";
-                    $stmt = $conn->prepare($insertPermSql);
+                if (!empty($data['phanQuyen'])) {
+                    $sql = "INSERT INTO phanquyen (IDQuyen, IDChucNang, Them, Sua, Xoa) VALUES (?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($sql);
                     
-                    foreach ($phanQuyen as $pq) {
-                        $idChucNang = $pq['idChucNang'];
-                        $them = $pq['them'] ?? 0;
-                        $xoa = $pq['xoa'] ?? 0;
-                        $sua = $pq['sua'] ?? 0;
-                        
-                        $stmt->bind_param("iiiii", $idQuyen, $idChucNang, $them, $xoa, $sua);
+                    foreach ($data['phanQuyen'] as $phanQuyen) {
+                        $stmt->bind_param("iiiii",
+                            $data['idQuyen'],
+                            $phanQuyen['IDChucNang'],
+                            $phanQuyen['Them'],
+                            $phanQuyen['Sua'],
+                            $phanQuyen['Xoa']
+                        );
                         $stmt->execute();
                     }
                 }
-                
-                // Ghi log
-                logActivity($conn, $userId, 'UPDATE_ROLE', "Cập nhật quyền: {$tenQuyen} (ID: {$idQuyen})");
 
                 $conn->commit();
-                echo json_encode([
-                    "success" => true, 
-                    "message" => "Cập nhật quyền thành công"
+                sendJsonResponse([
+                    "success" => true
                 ]);
+
             } catch (Exception $e) {
                 $conn->rollback();
-                error_log($e->getMessage());
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Lỗi hệ thống: " . $e->getMessage(),
-                    "code" => "SYSTEM_ERROR"
-                ]);
+                throw $e;
             }
             break;
 
         case 'DELETE':
             // Kiểm tra quyền xóa
             if (!checkCurrentUserPermission($conn, 'Xoa')) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Bạn không có quyền thực hiện thao tác này.",
-                    "code" => "NO_PERMISSION"
-                ]);
-                exit;
+                sendJsonResponse([
+                    "success" => false,
+                    "code" => "NO_DELETE_PERMISSION"
+                ], 403);
             }
-            
-            $idQuyen = $_GET['IDQuyen'] ?? 0;
-            
+
+            $idQuyen = isset($_GET['IDQuyen']) ? (int)$_GET['IDQuyen'] : null;
             if (!$idQuyen) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "ID quyền không hợp lệ.",
+                sendJsonResponse([
+                    "success" => false,
                     "code" => "INVALID_ID"
-                ]);
-                exit;
+                ], 400);
             }
 
             // Kiểm tra quyền hệ thống
-            $checkSystemSql = "SELECT HeTHong, TenQuyen FROM quyen WHERE IDQuyen = ?";
+            $checkSystemSql = "SELECT HeTHong FROM quyen WHERE IDQuyen = ?";
             $stmt = $conn->prepare($checkSystemSql);
             $stmt->bind_param("i", $idQuyen);
             $stmt->execute();
-            $result = $stmt->get_result()->fetch_assoc();
-            
-            if (!$result) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Không tìm thấy quyền.",
-                    "code" => "NOT_FOUND"
-                ]);
-                exit;
-            }
-            
-            if ($result['HeTHong'] == 1) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Không thể xóa quyền hệ thống.",
-                    "code" => "SYSTEM_ROLE"
-                ]);
-                exit;
-            }
-            
-            $tenQuyen = $result['TenQuyen'];
+            $result = $stmt->get_result();
+            $role = $result->fetch_assoc();
 
-            // Kiểm tra tài khoản đang sử dụng quyền
-            $checkAccountSql = "SELECT COUNT(*) as count FROM taikhoan WHERE IDQuyen = ?";
-            $stmt = $conn->prepare($checkAccountSql);
+            if (!$role) {
+                sendJsonResponse([
+                    "success" => false,
+                    "code" => "ROLE_NOT_FOUND"
+                ], 404);
+            }
+
+            if ($role['HeTHong'] == 1) {
+                sendJsonResponse([
+                    "success" => false,
+                    "code" => "SYSTEM_ROLE"
+                ], 400);
+            }
+
+            // Kiểm tra quyền đang được sử dụng
+            $checkUsageSql = "SELECT COUNT(*) as count FROM taikhoan WHERE IDQuyen = ?";
+            $stmt = $conn->prepare($checkUsageSql);
             $stmt->bind_param("i", $idQuyen);
             $stmt->execute();
-            $result = $stmt->get_result()->fetch_assoc();
-            
-            if ($result['count'] > 0) {
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Không thể xóa quyền đang được sử dụng bởi {$result['count']} tài khoản.",
+            if ($stmt->get_result()->fetch_assoc()['count'] > 0) {
+                sendJsonResponse([
+                    "success" => false,
                     "code" => "ROLE_IN_USE"
-                ]);
-                exit;
+                ], 400);
             }
 
             // Bắt đầu transaction
             $conn->begin_transaction();
+
             try {
                 // Xóa phân quyền
-                $deletePermSql = "DELETE FROM phanquyen WHERE IDQuyen = ?";
-                $stmt = $conn->prepare($deletePermSql);
+                $sql = "DELETE FROM phanquyen WHERE IDQuyen = ?";
+                $stmt = $conn->prepare($sql);
                 $stmt->bind_param("i", $idQuyen);
                 $stmt->execute();
 
                 // Xóa quyền
-                $deleteRoleSql = "DELETE FROM quyen WHERE IDQuyen = ?";
-                $stmt = $conn->prepare($deleteRoleSql);
+                $sql = "DELETE FROM quyen WHERE IDQuyen = ?";
+                $stmt = $conn->prepare($sql);
                 $stmt->bind_param("i", $idQuyen);
                 $stmt->execute();
-                
-                // Ghi log
-                logActivity($conn, $userId, 'DELETE_ROLE', "Xóa quyền: {$tenQuyen} (ID: {$idQuyen})");
 
                 $conn->commit();
-                echo json_encode([
-                    "success" => true, 
-                    "message" => "Xóa quyền thành công"
+                sendJsonResponse([
+                    "success" => true
                 ]);
+
             } catch (Exception $e) {
                 $conn->rollback();
-                error_log($e->getMessage());
-                echo json_encode([
-                    "success" => false, 
-                    "message" => "Lỗi hệ thống: " . $e->getMessage(),
-                    "code" => "SYSTEM_ERROR"
-                ]);
+                throw $e;
             }
             break;
-            
+
         default:
-            echo json_encode([
-                "success" => false, 
-                "message" => "Phương thức không được hỗ trợ.",
-                "code" => "METHOD_NOT_SUPPORTED"
-            ]);
-            break;
+            sendJsonResponse([
+                "success" => false,
+                "code" => "METHOD_NOT_ALLOWED"
+            ], 405);
     }
 } catch (Exception $e) {
+    // Log error to file instead of displaying it
     error_log($e->getMessage());
-    echo json_encode([
-        "success" => false, 
-        "message" => "Lỗi hệ thống: " . $e->getMessage(),
-        "code" => "SYSTEM_ERROR"
-    ]);
+    
+    sendJsonResponse([
+        "success" => false,
+        "message" => "Lỗi server: " . $e->getMessage(),
+        "code" => "SERVER_ERROR"
+    ], 500);
 }
-?>
+
+$conn->close();

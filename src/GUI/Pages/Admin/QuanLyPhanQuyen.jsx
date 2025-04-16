@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react'; // Added useCallback
 import { Table, Form, Select, Checkbox, Button, Card, Tabs, message, Modal, Input, Space, Spin } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons';
 import './QuanLyPhanQuyen.css';
-import { getAllQuyen, addQuyen, updateQuyen, deleteQuyen } from "../../../DAL/api.jsx";
+import {
+  getAllQuyen, addQuyen, updateQuyen, deleteQuyen,
+  getAllChucNang, addChucNang, updateChucNang, deleteChucNang // Import ChucNang API functions
+} from "../../../DAL/api.jsx";
 import QuyenDTO from "../../../DTO/QuyenDTO";
 import PhanQuyenDTO from "../../../DTO/PhanQuyenDTO";
+import ChucNangDTO from "../../../DTO/ChucNangDTO"; // Import ChucNangDTO
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -13,9 +17,9 @@ const QuanLyPhanQuyen = () => {
   // States
   const [quyenList, setQuyenList] = useState([]);
   const [chucNangList, setChucNangList] = useState([]);
-  const [phanQuyenList, setPhanQuyenList] = useState([]);
-  const [selectedQuyen, setSelectedQuyen] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [phanQuyenList, setPhanQuyenList] = useState([]); // This will hold the permissions for the currently selected role
+  const [selectedQuyenId, setSelectedQuyenId] = useState(null); // Changed state name for clarity
+  // const [isModalVisible, setIsModalVisible] = useState(false); // Modal seems unused, removing for now
   const [currentTab, setCurrentTab] = useState('1');
   const [editingQuyen, setEditingQuyen] = useState(null);
   const [editingChucNang, setEditingChucNang] = useState(null);
@@ -26,11 +30,11 @@ const QuanLyPhanQuyen = () => {
   const [quyenForm] = Form.useForm();
   const [chucNangForm] = Form.useForm();
 
-  // Mock data fetching
+  // Fetch initial data
   useEffect(() => {
     fetchQuyenList();
     fetchChucNangList();
-    fetchPhanQuyenList();
+    // fetchPhanQuyenList is removed as it's derived from quyenList and chucNangList
   }, []);
 
   // Notification effect
@@ -59,32 +63,22 @@ const QuanLyPhanQuyen = () => {
     }
   };
 
-  const fetchChucNangList = () => {
-    const mockChucNangList = [
-      { IDChucNang: 1, TenChucNang: 'Quản lý tài khoản' },
-      { IDChucNang: 2, TenChucNang: 'Quản lý phân quyền' },
-      { IDChucNang: 3, TenChucNang: 'Quản lý sản phẩm' },
-      { IDChucNang: 4, TenChucNang: 'Quản lý đơn hàng' },
-    ];
-    setChucNangList(mockChucNangList);
+  const fetchChucNangList = async () => {
+    setLoading(true); // Consider separate loading states if needed
+    try {
+      const data = await getAllChucNang(); // Call API
+      setChucNangList(data);
+    } catch (error) {
+      setNotification({
+        message: "Lỗi khi tải dữ liệu chức năng: " + error.message,
+        type: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const fetchPhanQuyenList = () => {
-    const mockPhanQuyenList = [
-      { IDChucNang: 1, IDQuyen: 1, Them: 1, Xoa: 1, Sua: 1 },
-      { IDChucNang: 2, IDQuyen: 1, Them: 1, Xoa: 1, Sua: 1 },
-      { IDChucNang: 3, IDQuyen: 1, Them: 1, Xoa: 1, Sua: 1 },
-      { IDChucNang: 4, IDQuyen: 1, Them: 1, Xoa: 1, Sua: 1 },
-      { IDChucNang: 1, IDQuyen: 2, Them: 1, Xoa: 0, Sua: 1 },
-      { IDChucNang: 2, IDQuyen: 2, Them: 0, Xoa: 0, Sua: 0 },
-      { IDChucNang: 3, IDQuyen: 2, Them: 1, Xoa: 1, Sua: 1 },
-      { IDChucNang: 4, IDQuyen: 2, Them: 1, Xoa: 0, Sua: 1 },
-      { IDChucNang: 1, IDQuyen: 3, Them: 0, Xoa: 0, Sua: 0 },
-      { IDChucNang: 3, IDQuyen: 3, Them: 0, Xoa: 0, Sua: 1 },
-      { IDChucNang: 4, IDQuyen: 3, Them: 0, Xoa: 0, Sua: 0 },
-    ];
-    setPhanQuyenList(mockPhanQuyenList);
-  };
+  // Removed fetchPhanQuyenList as it's now derived data
 
   // CRUD operations
   const handleSaveQuyen = async (values) => {
@@ -98,17 +92,22 @@ const QuanLyPhanQuyen = () => {
 
     try {
       if (editingQuyen) {
-        // Cập nhật quyền
+        // Cập nhật quyền - Ensure ChucNang data is correctly formatted if needed by API
+        // The current updateQuyen API seems to expect ChucNang array for permissions
+        // Let's assume it handles the update based on TenQuyen only for now,
+        // or adjust if the API requires full permission data on update.
         await updateQuyen({
           IDQuyen: editingQuyen.IDQuyen,
           TenQuyen: values.TenQuyen,
-          ChucNang: getPhanQuyenBySelectedQuyen()
+          // ChucNang: [] // Sending empty array might clear permissions, check API logic
+          // Or send existing permissions if API requires it:
+          // ChucNang: quyenList.find(q => q.IDQuyen === editingQuyen.IDQuyen)?.ChucNang || []
         });
       } else {
-        // Thêm quyền mới
+        // Thêm quyền mới - API expects TenQuyen and optionally ChucNang array
         await addQuyen({
           TenQuyen: values.TenQuyen,
-          ChucNang: []
+          ChucNang: [] // Start with no permissions by default
         });
       }
 
@@ -150,57 +149,82 @@ const QuanLyPhanQuyen = () => {
     });
   };
 
-  const handleSaveChucNang = (values) => {
-    const isDuplicate = chucNangList.some(
-      cn => cn.TenChucNang === values.TenChucNang && cn.IDChucNang !== (editingChucNang?.IDChucNang)
-    );
+  // Updated handleSaveChucNang to use API
+  const handleSaveChucNang = async (values) => {
+     if (!values.TenChucNang || !values.TenChucNang.trim()) {
+        setNotification({ message: 'Vui lòng nhập tên chức năng!', type: 'error' });
+        return;
+     }
 
-    if (isDuplicate) {
+    setLoading(true);
+    try {
+      let result;
+      if (editingChucNang) {
+        result = await updateChucNang({
+          IDChucNang: editingChucNang.IDChucNang,
+          TenChucNang: values.TenChucNang
+        });
+      } else {
+        result = await addChucNang({ TenChucNang: values.TenChucNang });
+      }
+
+      if (result.success) {
+        setNotification({
+          message: editingChucNang ? 'Cập nhật chức năng thành công!' : 'Thêm chức năng mới thành công!',
+          type: 'success'
+        });
+        fetchChucNangList(); // Reload list
+        setEditingChucNang(null);
+        chucNangForm.resetFields();
+      } else {
+         // Error message comes from API result
+         throw new Error(result.message || (editingChucNang ? 'Lỗi cập nhật chức năng' : 'Lỗi thêm chức năng'));
+      }
+    } catch (error) {
       setNotification({
-        message: 'Tên chức năng này đã tồn tại!',
+        message: error.message,
         type: 'error'
       });
-      return;
+    } finally {
+      setLoading(false);
     }
-
-    if (editingChucNang) {
-      const updatedList = chucNangList.map((cn) =>
-        cn.IDChucNang === editingChucNang.IDChucNang ? { ...cn, ...values } : cn
-      );
-      setChucNangList(updatedList);
-    } else {
-      const newChucNang = {
-        IDChucNang: Math.max(...chucNangList.map(cn => cn.IDChucNang), 0) + 1,
-        ...values
-      };
-      setChucNangList([...chucNangList, newChucNang]);
-    }
-
-    setNotification({
-      message: editingChucNang ? 'Cập nhật chức năng thành công!' : 'Thêm chức năng mới thành công!',
-      type: 'success'
-    });
-
-    setEditingChucNang(null);
-    chucNangForm.resetFields();
   };
 
+  // Updated handleDeleteChucNang to use API
   const handleDeleteChucNang = (id) => {
     Modal.confirm({
       title: 'Xác nhận xóa',
-      content: 'Bạn có chắc chắn muốn xóa chức năng này?',
-      onOk: () => {
-        setChucNangList(chucNangList.filter(cn => cn.IDChucNang !== id));
-        setNotification({
-          message: 'Xóa chức năng thành công!',
-          type: 'success'
-        });
+      content: 'Bạn có chắc chắn muốn xóa chức năng này? Thao tác này không thể hoàn tác.',
+      onOk: async () => {
+        setLoading(true);
+        try {
+          const result = await deleteChucNang(id);
+          if (result.success) {
+            setNotification({
+              message: 'Xóa chức năng thành công!',
+              type: 'success'
+            });
+            fetchChucNangList(); // Reload list
+            // Also need to update phanQuyenList if the deleted chucnang was part of it
+            setPhanQuyenList(prev => prev.filter(pq => pq.IDChucNang !== id));
+          } else {
+             throw new Error(result.message || 'Lỗi khi xóa chức năng');
+          }
+        } catch (error) {
+          setNotification({
+            message: error.message,
+            type: 'error'
+          });
+        } finally {
+          setLoading(false);
+        }
       }
     });
   };
 
+  // Updated handleSavePhanQuyen
   const handleSavePhanQuyen = async () => {
-    if (!selectedQuyen) {
+    if (!selectedQuyenId) {
       setNotification({
         message: 'Vui lòng chọn quyền trước khi lưu!',
         type: 'error'
@@ -208,53 +232,83 @@ const QuanLyPhanQuyen = () => {
       return;
     }
 
+    setLoading(true);
     try {
-      await updateQuyen({
-        IDQuyen: selectedQuyen,
-        ChucNang: getPhanQuyenBySelectedQuyen()
+      // Find the TenQuyen corresponding to the selectedQuyenId
+      const selectedQuyenObj = quyenList.find(q => q.IDQuyen === selectedQuyenId);
+      if (!selectedQuyenObj) {
+          throw new Error("Không tìm thấy thông tin quyền đã chọn.");
+      }
+
+      // Prepare the ChucNang data in the format expected by updateQuyen API
+      // The API expects an array of { IDChucNang, Them, Xoa, Sua }
+      const chucNangPermissions = phanQuyenList.map(pq => ({
+          IDChucNang: pq.IDChucNang,
+          Them: pq.Them,
+          Xoa: pq.Xoa,
+          Sua: pq.Sua
+      }));
+
+      const result = await updateQuyen({
+        IDQuyen: selectedQuyenId,
+        TenQuyen: selectedQuyenObj.TenQuyen, // Send TenQuyen as API might require it
+        ChucNang: chucNangPermissions
       });
 
-      setNotification({
-        message: 'Cập nhật phân quyền thành công!',
-        type: 'success'
-      });
-      setIsModalVisible(false);
+       if (result.success) {
+            setNotification({
+                message: 'Cập nhật phân quyền thành công!',
+                type: 'success'
+            });
+            // Optionally reload quyenList to reflect changes if API returns updated data
+            fetchQuyenList();
+       } else {
+           throw new Error(result.message || 'Lỗi khi cập nhật phân quyền');
+       }
+      // setIsModalVisible(false); // Modal removed
     } catch (error) {
       setNotification({
         message: error.message,
         type: 'error'
       });
+    } finally {
+        setLoading(false);
     }
   };
 
+  // Updated handlePhanQuyenChange to modify the local state `phanQuyenList`
   const handlePhanQuyenChange = (chucNangId, type, checked) => {
-    if (!selectedQuyen) return;
-
-    const newPhanQuyenList = [...phanQuyenList];
-    const index = newPhanQuyenList.findIndex(
-      pq => pq.IDChucNang === chucNangId && pq.IDQuyen === selectedQuyen
-    );
-
-    if (index >= 0) {
-      newPhanQuyenList[index] = {
-        ...newPhanQuyenList[index],
-        [type]: checked ? 1 : 0
-      };
-    } else {
-      newPhanQuyenList.push({
-        IDChucNang: chucNangId,
-        IDQuyen: selectedQuyen,
-        Them: type === 'Them' ? (checked ? 1 : 0) : 0,
-        Xoa: type === 'Xoa' ? (checked ? 1 : 0) : 0,
-        Sua: type === 'Sua' ? (checked ? 1 : 0) : 0,
+    setPhanQuyenList(currentPhanQuyen => {
+      return currentPhanQuyen.map(pq => {
+        if (pq.IDChucNang === chucNangId) {
+          return { ...pq, [type]: checked ? 1 : 0 };
+        }
+        return pq;
       });
-    }
-
-    setPhanQuyenList(newPhanQuyenList);
+    });
   };
 
+  // Updated handleQuyenChange to populate phanQuyenList from selected role's data
   const handleQuyenChange = (quyenId) => {
-    setSelectedQuyen(quyenId);
+    setSelectedQuyenId(quyenId);
+    const selectedRole = quyenList.find(q => q.IDQuyen === quyenId);
+
+    if (selectedRole && chucNangList.length > 0) {
+        // Map all available chucNangList and merge with permissions from selectedRole.ChucNang
+        const currentPermissions = chucNangList.map(cn => {
+            const existingPermission = selectedRole.ChucNang.find(p => p.IDChucNang === cn.IDChucNang);
+            return {
+                IDChucNang: cn.IDChucNang,
+                TenChucNang: cn.TenChucNang, // Keep TenChucNang for display purposes if needed
+                Them: existingPermission ? existingPermission.Them : 0,
+                Xoa: existingPermission ? existingPermission.Xoa : 0,
+                Sua: existingPermission ? existingPermission.Sua : 0,
+            };
+        });
+        setPhanQuyenList(currentPermissions);
+    } else {
+        setPhanQuyenList([]); // Clear if no role selected or no chucNang loaded
+    }
   };
 
   const quyenColumns = [
@@ -336,10 +390,8 @@ const QuanLyPhanQuyen = () => {
       title: 'Chức năng',
       dataIndex: 'TenChucNang',
       key: 'TenChucNang',
-      render: (_, record) => {
-        const chucNang = chucNangList.find(cn => cn.IDChucNang === record.IDChucNang);
-        return chucNang ? chucNang.TenChucNang : '';
-      }
+      // Render TenChucNang directly from the phanQuyenList item which now includes it
+      render: (text, record) => record.TenChucNang
     },
     {
       title: 'Thêm',
@@ -376,23 +428,7 @@ const QuanLyPhanQuyen = () => {
     },
   ];
 
-  const getPhanQuyenBySelectedQuyen = () => {
-    if (!selectedQuyen) return [];
-    
-    return chucNangList.map(chucNang => {
-      const phanQuyen = phanQuyenList.find(
-        pq => pq.IDChucNang === chucNang.IDChucNang && pq.IDQuyen === selectedQuyen
-      );
-      
-      return {
-        IDChucNang: chucNang.IDChucNang,
-        TenChucNang: chucNang.TenChucNang,
-        Them: phanQuyen ? phanQuyen.Them : 0,
-        Xoa: phanQuyen ? phanQuyen.Xoa : 0,
-        Sua: phanQuyen ? phanQuyen.Sua : 0,
-      };
-    });
-  };
+  // Removed getPhanQuyenBySelectedQuyen as phanQuyenList state now holds the data directly
 
   return (
     <div style={{ padding: 20 }}>
@@ -412,9 +448,11 @@ const QuanLyPhanQuyen = () => {
                 <h3>Chọn nhóm quyền:</h3>
                 <Select 
                   style={{ width: 300 }} 
-                  placeholder="Chọn quyền"
-                  onChange={handleQuyenChange}
-                  value={selectedQuyen}
+                  placeholder="Chọn nhóm quyền"
+                  onChange={handleQuyenChange} // This now populates phanQuyenList
+                  value={selectedQuyenId} // Use selectedQuyenId
+                  allowClear // Allow deselecting
+                  onClear={() => { setSelectedQuyenId(null); setPhanQuyenList([]); }}
                 >
                   {quyenList.map(quyen => (
                     <Option key={quyen.IDQuyen} value={quyen.IDQuyen}>
@@ -424,13 +462,13 @@ const QuanLyPhanQuyen = () => {
                 </Select>
               </div>
 
-              {selectedQuyen && (
+              {selectedQuyenId && ( // Check selectedQuyenId
                 <>
-                  <Table 
-                    dataSource={getPhanQuyenBySelectedQuyen()} 
-                    columns={phanQuyenColumns} 
+                  <Table
+                    dataSource={phanQuyenList} // Use phanQuyenList directly
+                    columns={phanQuyenColumns}
                     rowKey="IDChucNang"
-                    pagination={false}
+                    pagination={false} // Consider adding pagination if many features
                   />
                   <div style={{ marginTop: 20, textAlign: 'right' }}>
                     <Button 
@@ -543,17 +581,7 @@ const QuanLyPhanQuyen = () => {
           </TabPane>
         </Tabs>
 
-        <Modal
-          title="Xác nhận thay đổi"
-          visible={isModalVisible}
-          onOk={handleSavePhanQuyen}
-          onCancel={() => setIsModalVisible(false)}
-          okText="Xác nhận"
-          cancelText="Hủy"
-        >
-          <p>Bạn có chắc chắn muốn lưu các thay đổi phân quyền?</p>
-          <p>Các thay đổi này sẽ ảnh hưởng đến quyền truy cập của người dùng.</p>
-        </Modal>
+        {/* Modal removed as it seemed unused */}
       </Spin>
     </div>
   );
