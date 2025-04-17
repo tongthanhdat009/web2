@@ -31,7 +31,7 @@ switch ($timeFrame) {
                 GROUP BY YEAR(pn.NgayNhap), MONTH(pn.NgayNhap)
                 ORDER BY YEAR(pn.NgayNhap), MONTH(pn.NgayNhap)";
         break;
-    
+
     case 'quarterly':
         // Lấy dữ liệu theo quý (4 quý gần đây)
         $sql = "SELECT 
@@ -46,7 +46,7 @@ switch ($timeFrame) {
                 GROUP BY YEAR(pn.NgayNhap), QUARTER(pn.NgayNhap)
                 ORDER BY YEAR(pn.NgayNhap), QUARTER(pn.NgayNhap)";
         break;
-    
+
     case 'yearly':
         // Lấy dữ liệu theo năm (5 năm gần đây)
         $sql = "SELECT 
@@ -60,11 +60,12 @@ switch ($timeFrame) {
                 GROUP BY YEAR(pn.NgayNhap)
                 ORDER BY YEAR(pn.NgayNhap)";
         break;
-    
+
     case 'all':
         // Lấy tất cả dữ liệu (không lọc theo thời gian)
         $sql = "SELECT 
                 pn.MaPhieuNhap,
+                pn.TrangThai,
                 pn.NgayNhap,
                 ncc.MaNhaCungCap, 
                 SUM(kh.GiaNhap) AS TongTien 
@@ -75,11 +76,15 @@ switch ($timeFrame) {
             GROUP BY pn.MaPhieuNhap, pn.NgayNhap, ncc.MaNhaCungCap
             ORDER BY pn.NgayNhap DESC";
         break;
-    
+    case 'fetch':
+        $sql = "SELECT * FROM phieunhap";
+        break;
+
     default:
         // Mặc định là trả về tất cả phiếu nhập
         $sql = "SELECT 
                 pn.MaPhieuNhap,
+                pn.TrangThai,
                 pn.NgayNhap,
                 ncc.MaNhaCungCap, 
                 SUM(kh.GiaNhap) AS TongTien 

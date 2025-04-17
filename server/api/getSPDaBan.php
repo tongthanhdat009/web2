@@ -44,7 +44,7 @@ $sql = "SELECT
             hh.TenHangHoa,
             h.TenHang,
             COUNT(cthd.Seri) AS SoLuong,
-            SUM(kh.GiaBan) AS TongDoanhThu
+            SUM(cthd.GiaBan) AS TongDoanhThu
         FROM chitiethoadon cthd
         JOIN khohang kh ON cthd.Seri = kh.Seri
         JOIN hanghoa hh ON kh.MaHangHoa = hh.MaHangHoa

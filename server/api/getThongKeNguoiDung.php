@@ -42,11 +42,10 @@ $sql = "SELECT
             u.HoTen,
             u.Email,
             COUNT(hd.MaHoaDon) AS SoLuongDonHang,
-            SUM(kh.GiaBan) AS TongTien
+            SUM(cthd.GiaBan) AS TongTien
         FROM nguoidung u
         JOIN hoadon hd ON u.IDTaiKhoan = hd.IDTaiKhoan
         JOIN chitiethoadon cthd ON cthd.MaHoaDon = hd.MaHoaDon
-        JOIN khohang kh ON kh.Seri = cthd.Seri
         WHERE hd.TrangThai = '1' $timeCondition
         GROUP BY u.MaNguoiDung, u.HoTen, u.Email
         ORDER BY $orderBy

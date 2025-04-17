@@ -63,7 +63,7 @@ const XemChiTiet = ({ show, onHide, maHoaDon }) => {
   };
 
   return (
-    <Modal show={show} onHide={onHide} size="lg" centered>
+    <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton style={{ backgroundColor: "#d2a679" }}>
         <Modal.Title>Chi tiết đơn hàng #{maHoaDon}</Modal.Title>
       </Modal.Header>
