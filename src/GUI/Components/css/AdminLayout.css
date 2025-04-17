@@ -1,0 +1,22 @@
+.admin-layout {
+    display: flex;
+    height: calc(100vh - 60px); /* Chiều cao toàn màn hình */
+    background-color: #eceff8; /* Màu nền cho layout */
+  }
+  
+.admin-main {
+    margin: 10px 0px 0px 30px; /* Đẩy nội dung chính sang bên phải */
+    flex: 1; /* Tự động lấy phần còn lại */
+    overflow-y: auto; /* Cuộn nội dung nếu quá dài */
+    padding: 20px; /* Thêm padding để nội dung đẹp hơn */
+}
+.admin-header {
+  width: 100%;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 8px;
+  margin-bottom: 20px; /* Khoảng cách giữa h2 và nội dung */
+}
+.admin-header h2 {
+  font-size: 24px;
+  margin: 0; /* Đảm bảo margin không bị gộp */
+}
