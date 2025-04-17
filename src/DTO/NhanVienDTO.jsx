@@ -1,3 +1,4 @@
+
 import NguoiDungDTO from './NguoiDungDTO';
 
 class NhanVienDTO extends NguoiDungDTO {
@@ -39,3 +40,15 @@ class NhanVienDTO extends NguoiDungDTO {
 }
 
 export default NhanVienDTO;
+=======
+class NhanVienDTO {
+    constructor(maNguoiDung, ngaySinh, luong, cccd) {
+        this.maNguoiDung = maNguoiDung;
+        this.ngaySinh = ngaySinh;
+        this.luong = luong;
+        this.cccd = cccd;
+    }
+}
+
+export default NhanVienDTO; 
+
