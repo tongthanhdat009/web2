@@ -10,17 +10,19 @@ require_once "../config/Database.php";
 $database = new Database();
 $conn = $database->getConnection();
 
-$sql = "SELECT * FROM hanghoa";
+$sql = "SELECT c.*, t.TenTheLoai 
+        FROM chungloai c 
+        LEFT JOIN theloai t ON c.MaTheLoai = t.MaTheLoai";
 $result = $conn->query($sql);
 
-$products = [];
+$categories = [];
 if ($result) {
     while ($row = $result->fetch_assoc()) {
-        $products[] = $row;
+        $categories[] = $row;
     }
 }
 
 // Xuất dữ liệu dưới dạng JSON hợp lệ
-echo json_encode(["success" => true, "data" => $products], JSON_UNESCAPED_UNICODE);
+echo json_encode(["success" => true, "data" => $categories], JSON_UNESCAPED_UNICODE);
 exit();
 ?>

@@ -1,13 +1,14 @@
 class HangHoaDTO {
-    constructor({ MaHangHoa, MaChungLoai, TenHangHoa, MaHang, MaKhuyenMai, MoTa, ThoiGianBaoHanh, Anh }) {
-        this.maHangHoa = MaHangHoa;  
-        this.maChungLoai = MaChungLoai;
-        this.tenHangHoa = TenHangHoa;
-        this.maHang = MaHang;
-        this.maKhuyenMai = MaKhuyenMai;
-        this.moTa = MoTa;
-        this.thoiGianBaoHanh = ThoiGianBaoHanh;
-        this.anh = Anh;
+    constructor({ MaHangHoa, MaChungLoai, TenHangHoa, MaHang, MaKhuyenMai, MoTa, ThoiGianBaoHanh, Anh, TrangThai }) {
+        this.MaHangHoa = MaHangHoa;
+        this.MaChungLoai = MaChungLoai;
+        this.TenHangHoa = TenHangHoa;
+        this.MaHang = MaHang;
+        this.MaKhuyenMai = MaKhuyenMai;
+        this.MoTa = MoTa;
+        this.ThoiGianBaoHanh = ThoiGianBaoHanh;
+        this.Anh = Anh;
+        this.TrangThai = TrangThai;
     }
 }
 
