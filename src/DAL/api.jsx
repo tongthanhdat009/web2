@@ -14,10 +14,6 @@ const API_ADD_PHIEUNHAP = "http://localhost/web2/server/api/addPhieuNhap.php";
 const API_URL_KHOHANG = "http://localhost/web2/server/api/getKhoHang.php";
 const API_ADD_KHOHANG = "http://localhost/web2/server/api/addKhoHang.php";
 
-//API endpoints for KhuyenMai
-=======
-// API endpoints cho KhuyenMai
-
 const API_URL_KM = "http://localhost/web2/server/api/getKhuyenMai.php";
 const API_ADD_KM = "http://localhost/web2/server/api/addKhuyenMai.php";
 const API_DELETE_KM = "http://localhost/web2/server/api/deleteKhuyenMai.php";
