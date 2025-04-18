@@ -106,6 +106,9 @@ function TrangDangNhapDangKy() {
            setShowLogin(true);
            handleCloseNotification();
         }, 2000);
+
+        // Chuyển hướng với tham số register
+        navigate("/dang-nhap-dang-ky?register=true");
       } else {
         setNotification({ show: true, type: 'danger', message: data.message || 'Đăng ký thất bại.' });
       }
@@ -218,6 +221,9 @@ function TrangDangNhapDangKy() {
                  navigate('/');
             }
           }, 1500);
+
+          // Chuyển hướng với tham số success
+          navigate("/dang-nhap-dang-ky?success=true");
         } else {
           throw new Error("Không tìm thấy thông tin người dùng.");
         }
@@ -237,23 +243,31 @@ function TrangDangNhapDangKy() {
     <>
       <HeaderDangNhapDangKy />
 
-      <div className="login-register-page">
-        <ToastContainer position="top-end" className="p-3 toast-container">
-          <Toast 
-            onClose={handleCloseNotification} 
-            show={notification.show} 
-            delay={3000} 
-            autohide
-            bg={notification.type}
-            className="text-white"
-          >
-            <Toast.Header closeButton={true}>
-              <strong className="me-auto">Thông báo</strong>
-            </Toast.Header>
-            <Toast.Body>{notification.message}</Toast.Body>
-          </Toast>
-        </ToastContainer>
+      <ToastContainer 
+        position="fixed" 
+        style={{ 
+          top: "20px", 
+          right: "20px", 
+          zIndex: 9999,
+          position: "fixed"
+        }}
+      >
+        <Toast 
+          onClose={handleCloseNotification} 
+          show={notification.show} 
+          delay={3000} 
+          autohide
+          bg={notification.type}
+          className="text-white"
+        >
+          <Toast.Header closeButton={true}>
+            <strong className="me-auto">Thông báo</strong>
+          </Toast.Header>
+          <Toast.Body>{notification.message}</Toast.Body>
+        </Toast>
+      </ToastContainer>
 
+      <div className="login-register-page">
         <Container>
           <Row className="justify-content-center">
             <Col md={8} lg={6}>
