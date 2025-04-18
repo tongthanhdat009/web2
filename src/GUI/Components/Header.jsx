@@ -7,11 +7,16 @@ const Header = ({ user, toggleMenu }) => {
   
   // Hàm đăng xuất
   const handleLogout = () => {
-    // Xóa thông tin tài khoản trong localStorage
-    localStorage.removeItem("IDTKAdmin");
+    // Xóa tất cả thông tin đăng nhập trong localStorage
+    localStorage.removeItem("IDTaiKhoan");
+    localStorage.removeItem("IDQuyen");
+    localStorage.removeItem("MaNguoiDung");
+    localStorage.removeItem("HoTen");
+    localStorage.removeItem("Anh");
+    localStorage.removeItem("IDTKAdmin"); // Xóa cả key cũ để đảm bảo
 
-    // Điều hướng về trang đăng nhập admin
-    navigate("/admin/dang-nhap-admin");
+    // Điều hướng về trang chủ
+    navigate("/");
   };
 
   return (

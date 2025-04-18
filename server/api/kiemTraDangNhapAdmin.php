@@ -1,18 +1,19 @@
 <?php
-require_once "../config/Database.php";
-
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+// Xử lý OPTIONS request (CORS preflight)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+require_once "../config/Database.php";
+
 $database = new Database();
 $conn = $database->getConnection();
-
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
 
 if ($conn->connect_error) {
     echo json_encode(["message" => "Kết nối thất bại: " . $conn->connect_error]);
@@ -41,8 +42,8 @@ if (json_last_error() !== JSON_ERROR_NONE || !isset($data->tenTaiKhoan) || !isse
 $tenTaiKhoan = $data->tenTaiKhoan;
 $matKhau = $data->matKhau;
 
-// Truy vấn kiểm tra tài khoản
-$sql = "SELECT IDTaiKhoan, MatKhau FROM taikhoan WHERE TaiKhoan = ?";
+// Truy vấn kiểm tra tài khoản và lấy cả IDQuyen
+$sql = "SELECT IDTaiKhoan, MatKhau, IDQuyen FROM taikhoan WHERE TaiKhoan = ?";
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
     echo json_encode(["message" => "Lỗi chuẩn bị câu lệnh SQL: " . $conn->error]);
@@ -62,18 +63,36 @@ if ($result->num_rows == 0) {
 
 $row = $result->fetch_assoc();
 
-$hashedPassword = hash("sha256", $matKhau, true); // Băm với SHA-256 (true để nhận dạng nhị phân)
+// Lấy mật khẩu đã hash và IDQuyen từ database
+$storedHash = $row['MatKhau'];
+$idQuyen = $row['IDQuyen'];
 
-// So sánh mật khẩu nhập vào với mật khẩu đã băm trong cơ sở dữ liệu
-if (!hash_equals($row['MatKhau'], $hashedPassword)) {
+// Kiểm tra xem mật khẩu có phải định dạng bcrypt không (bắt đầu bằng $2y$)
+$isBcrypt = strpos($storedHash, '$2y$') === 0;
+
+// Kiểm tra mật khẩu
+$passwordValid = false;
+
+if ($isBcrypt) {
+    // Nếu là bcrypt, sử dụng password_verify
+    $passwordValid = password_verify($matKhau, $storedHash);
+} else {
+    // Nếu không phải bcrypt, giả sử là SHA-256
+    $hashedPassword = hash("sha256", $matKhau, true);
+    $passwordValid = hash_equals($storedHash, $hashedPassword);
+}
+
+if (!$passwordValid) {
     http_response_code(401); // Unauthorized
     echo json_encode(["message" => "Mật khẩu không chính xác"]);
     exit;
 }
 
+// Trả về idQuyen trong response thành công
 echo json_encode([
     "message" => "Đăng nhập thành công",
-    "idTaiKhoan" => $row['IDTaiKhoan']
+    "idTaiKhoan" => $row['IDTaiKhoan'],
+    "idQuyen" => $idQuyen
 ]);
 
 $stmt->close();

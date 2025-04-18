@@ -1,9 +1,36 @@
-import React from 'react';
-import { Navbar, Container, Nav, Form, InputGroup, Image, Row, Col, Stack } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Navbar, Container, Nav, Form, InputGroup, Image, Row, Col, Stack, Dropdown } from 'react-bootstrap';
 import { Search, ChatDots, Cart, Person } from 'react-bootstrap-icons'; // Import icons
-
+import { useNavigate } from 'react-router-dom';
 
 function Header() {
+  const [userInfo, setUserInfo] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Kiểm tra xem người dùng đã đăng nhập chưa
+    const IDTaiKhoan = localStorage.getItem("IDTaiKhoan");
+    if (IDTaiKhoan) {
+      // Lấy thông tin người dùng từ localStorage hoặc API
+      const userData = {
+        HoTen: localStorage.getItem("HoTen"),
+        Anh: localStorage.getItem("Anh")
+      };
+      setUserInfo(userData);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    // Xóa thông tin đăng nhập
+    localStorage.removeItem("IDTaiKhoan");
+    localStorage.removeItem("IDQuyen");
+    localStorage.removeItem("HoTen");
+    localStorage.removeItem("Anh");
+    setUserInfo(null);
+    // Chuyển hướng về trang chủ
+    navigate("/");
+  };
+
   return (
     <>
       <Navbar bg="light" variant="light" className="border-bottom" style={{height: 'fit-content'}}>
@@ -55,12 +82,30 @@ function Header() {
                     <small>Giỏ hàng</small>
                   </Stack>
                 </Nav.Link>
-                <Nav.Link href="/dang-nhap-dang-ky" className="text-center ps-2 pe-0">
-                  <Stack gap={1} className="align-items-center">
-                    <Person size={24} />
-                    <small>Đăng nhập</small>
-                  </Stack>
-                </Nav.Link>
+                {userInfo ? (
+                  <Dropdown className="text-center ps-2 pe-0">
+                    <Dropdown.Toggle variant="light" id="dropdown-basic" className="d-flex align-items-center">
+                      <Stack gap={1} className="align-items-center">
+                        <Person size={24} />
+                        <small>{userInfo.HoTen}</small>
+                      </Stack>
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      <Dropdown.Item href="/thong-tin-tai-khoan">Thông tin tài khoản</Dropdown.Item>
+                      <Dropdown.Item href="/don-hang-cua-toi">Đơn hàng của tôi</Dropdown.Item>
+                      <Dropdown.Divider />
+                      <Dropdown.Item onClick={handleLogout}>Đăng xuất</Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                ) : (
+                  <Nav.Link href="/dang-nhap-dang-ky" className="text-center ps-2 pe-0">
+                    <Stack gap={1} className="align-items-center">
+                      <Person size={24} />
+                      <small>Đăng nhập</small>
+                    </Stack>
+                  </Nav.Link>
+                )}
               </Nav>
             </Col>
 
