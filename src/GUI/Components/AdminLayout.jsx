@@ -12,45 +12,65 @@ import QuanLyChungLoai from "../Pages/Admin/QuanLyChungLoai";
 import QuanLyDonHang from "../Pages/Admin/QuanLyDonHang";
 import QuanLyNguoiDung from "../Pages/Admin/QuanLyNguoiDung";
 import QuanLyPhanQuyen from "../Pages/Admin/QuanLyPhanQuyen";
-import Header from "./Header"; // Import Header nếu chưa có
+import Header from "./Header";
 import { layThongTinTaiKhoan } from "../../DAL/apiDangNhapAdmin.jsx";
 import "./css/AdminLayout.css";
 
+// Danh sách menu cố định
+const MENU_ITEMS = [
+  "Trang chủ",
+  "Quản lý khuyến mãi",
+  "Quản lý hãng",
+  "Quản lý nhà cung cấp",
+  "Quản lý phiếu nhập",
+  "Quản lý hàng hóa",
+  "Quản lý chủng loại",
+  "Quản lý đơn hàng",
+  "Quản lý người dùng",
+  "Quản lý phân quyền",
+  "Tra cứu sản phẩm",
+];
+
 const AdminLayout = () => {
-  const [thongTinTKAdmin, setThongTinTKAdmin] = useState([]); // biến lưu mảng thông tin
-  const [menuItems, setMenu] = useState([]);
-  const navigate = useNavigate();
+  console.log("--- AdminLayout Component Rendered ---");
+  const [thongTinTKAdmin, setThongTinTKAdmin] = useState([]); 
   const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const navigate = useNavigate();
   const location = useLocation();
+  
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-
   useEffect(() => {
-    const IDTKAdmin = localStorage.getItem("IDTKAdmin");
-    console.log("IDTKAdmin:", IDTKAdmin);
+    const IDTaiKhoan = localStorage.getItem("IDTaiKhoan");
+    const IDQuyen = localStorage.getItem("IDQuyen");
+    
+    console.log("AdminLayout - IDTaiKhoan:", IDTaiKhoan);
+    console.log("AdminLayout - IDQuyen:", IDQuyen);
 
-    if (!IDTKAdmin) {
-      navigate("/admin/dang-nhap-admin");
-    } else {
-      layThongTinTaiKhoan(IDTKAdmin)
-        .then((data) => {
-          setThongTinTKAdmin(data); // lưu vào state
-          const menuItems = data.map(item => item.TenChucNang); // tạo danh sách TenChucNang
-          setMenu(menuItems); // gán vào biến menu
-        })
-        .catch((error) => {
-          console.error("Lỗi khi lấy thông tin tài khoản:", error);
-        });
+    // Kiểm tra quyền admin
+    if (!IDTaiKhoan || IDQuyen !== "1") {
+      console.log("Redirecting to login - Invalid credentials");
+      navigate("/admin/dang-nhap");
+      return;
     }
+
+    // Chỉ lấy thông tin cơ bản của tài khoản
+    layThongTinTaiKhoan(IDTaiKhoan)
+      .then((data) => {
+        console.log("Admin account info:", data);
+        setThongTinTKAdmin(data);
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy thông tin tài khoản:", error);
+        navigate("/admin/dang-nhap");
+      });
   }, [navigate]);
 
-  // Tạo đường dẫn dạng "admin\Trang chủ"
   const getBreadcrumb = () => {
     const pathParts = location.pathname.split("/").filter(Boolean);
   
-    // Bảng ánh xạ đường dẫn → Tiêu đề hiển thị
     const pathMapping = {
       "trang-chu": "Trang chủ",
       "quan-ly-khuyen-mai": "Quản lý khuyến mãi",
@@ -67,31 +87,32 @@ const AdminLayout = () => {
   
     return `${pathParts.slice(1).map(part => pathMapping[part] || part).join(" \\ ")}`;
   };
+
   const user = thongTinTKAdmin.length > 0 ? thongTinTKAdmin[0] : {};
 
   return (
     <>
       <Header user={{ name: user.HoTen, avatar: user.Anh }} toggleMenu={toggleMenu} />
       <div className="admin-layout">
-        {isMenuOpen && <AdminSidebar menuItems={menuItems} />}
+        {isMenuOpen && <AdminSidebar />}
         <div className="admin-main">
           <div className="admin-header">
             <h2>{getBreadcrumb()}</h2>
           </div>
           <div className="admin-content">
             <Routes>
-              <Route path="/admin" element={<Navigate to="/admin/trang-chu" />} />
-              <Route path="/trang-chu" element={<TrangChu />} />
-              <Route path="/tra-cuu-san-pham" element={<TraCuuSanPham />} />
-              <Route path="/quan-ly-khuyen-mai" element={<QuanLyKhuyenMai />} />
-              <Route path="/quan-ly-hang" element={<QuanLyHang />} />
-              <Route path="/quan-ly-nha-cung-cap" element={<QuanLyNhaCungCap />} />
-              <Route path="/quan-ly-phieu-nhap" element={<QuanLyPhieuNhap />} />
-              <Route path="/quan-ly-hang-hoa" element={<QuanLyHangHoa />} />
-              <Route path="/quan-ly-chung-loai" element={<QuanLyChungLoai />} />
-              <Route path="/quan-ly-don-hang" element={<QuanLyDonHang />} />
-              <Route path="/quan-ly-nguoi-dung" element={<QuanLyNguoiDung />} />
-              <Route path="/quan-ly-phan-quyen" element={<QuanLyPhanQuyen />} />
+              <Route index element={<Navigate to="trang-chu" replace />} />
+              <Route path="trang-chu" element={<TrangChu />} />
+              <Route path="tra-cuu-san-pham" element={<TraCuuSanPham />} />
+              <Route path="quan-ly-khuyen-mai" element={<QuanLyKhuyenMai />} />
+              <Route path="quan-ly-hang" element={<QuanLyHang />} />
+              <Route path="quan-ly-nha-cung-cap" element={<QuanLyNhaCungCap />} />
+              <Route path="quan-ly-phieu-nhap" element={<QuanLyPhieuNhap />} />
+              <Route path="quan-ly-hang-hoa" element={<QuanLyHangHoa />} />
+              <Route path="quan-ly-chung-loai" element={<QuanLyChungLoai />} />
+              <Route path="quan-ly-don-hang" element={<QuanLyDonHang />} />
+              <Route path="quan-ly-nguoi-dung" element={<QuanLyNguoiDung />} />
+              <Route path="quan-ly-phan-quyen" element={<QuanLyPhanQuyen />} />
             </Routes>
           </div>
         </div>

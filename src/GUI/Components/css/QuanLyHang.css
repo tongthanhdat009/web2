@@ -7,6 +7,7 @@
   transition: all 0.3s ease;
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 80px;
 }
 
 .button-add {
@@ -27,7 +28,7 @@
 
 .button-edit {
   background-color: #2196F3;
-  color: white;
+  color: white; 
 }
 
 .button-edit:hover {
@@ -68,7 +69,7 @@
   align-items: center;
   gap: 10px;
   animation: slideIn 0.3s ease-out;
-  z-index: 1000;
+  z-index: 10000000000000000;
 }
 
 .notification-success {
@@ -109,6 +110,22 @@
 .table-container td {
   padding: 12px;
   border-bottom: 1px solid #ddd;
+}
+
+.table-container td:last-child {
+  text-align: center;
+  width: 200px;
+  white-space: nowrap;
+}
+
+.table-container td:last-child .button-common {
+  margin: 0 4px;
+  display: inline-block;
+}
+
+.table-container th:last-child {
+  text-align: center;
+  width: 200px;
 }
 
 .modal-container {

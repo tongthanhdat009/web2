@@ -1,0 +1,144 @@
+/* src/GUI/Pages/User/TrangDangNhapDangKy.css */
+
+:root {
+  --primary-color: #0d6efd; /* Bootstrap Blue */
+  --primary-hover-color: #0b5ed7;
+  /* Remove success colors if not needed elsewhere or keep for other potential uses */
+  /* --success-color: #198754; */
+  /* --success-hover-color: #157347; */
+  --text-color: #495057;
+  --heading-color: #212529;
+  --border-color: #ced4da; /* Slightly darker border */
+  --input-bg: #f8f9fa; /* Subtle input background */
+  --card-bg: #ffffff;
+  --body-bg-start: #f8f9fa;
+  --body-bg-end: #e9ecef;
+}
+
+.login-register-page {
+  min-height: calc(100vh - 80px); /* Adjust height considering header height approx 80px */
+  background: linear-gradient(135deg, var(--body-bg-start), var(--body-bg-end));
+  display: flex;
+  align-items: center;
+  padding: 2rem 0; /* More vertical padding */
+}
+
+.login-register-card {
+  background-color: var(--card-bg);
+  border: none;
+  border-radius: 1rem; /* Slightly larger radius */
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Optional: Add a slight lift effect on hover */
+.login-register-card:hover {
+  transform: translateY(-3px);
+}
+
+.login-register-card .card-body {
+  padding: 2.5rem; /* Increase padding */
+}
+
+.login-register-card h2 {
+  color: var(--heading-color);
+  font-weight: 600;
+  margin-bottom: 1.8rem; /* Increase space below heading */
+}
+
+.form-label {
+  font-weight: bold; /* Make labels bold */
+  color: var(--text-color);
+  margin-bottom: 0.6rem; /* Slightly more space */
+}
+
+.form-control,
+.form-select {
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg); /* Subtle background for inputs */
+  border-radius: 0.375rem;
+  padding: 0.75rem 1rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-color);
+  background-color: var(--card-bg); /* White background on focus */
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  outline: 0;
+}
+
+/* Style buttons consistently */
+.btn {
+  padding: 0.8rem 1.3rem; /* Slightly larger buttons */
+  font-size: 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.1s ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover-color);
+  border-color: var(--primary-hover-color);
+}
+
+/* Keep .btn-success rules removed or commented if Login button is primary */
+/* 
+.btn-success {
+  background-color: var(--success-color);
+  border-color: var(--success-color);
+}
+
+.btn-success:hover {
+  background-color: var(--success-hover-color);
+  border-color: var(--success-hover-color);
+}
+*/
+
+.btn-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem; /* Add some padding */
+}
+
+.btn-link:hover {
+  color: var(--primary-hover-color);
+  text-decoration: underline;
+}
+
+.toast-container {
+  z-index: 1090 !important;
+}
+
+.text-danger {
+  margin-left: 0.2rem;
+  font-size: 0.875em; /* Make asterisk slightly smaller */
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast.show {
+  animation: slideInRight 0.4s ease-out forwards;
+}
+  
