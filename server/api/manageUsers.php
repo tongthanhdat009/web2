@@ -12,26 +12,28 @@ $conn = $database->getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 
 // Hàm mã hóa mật khẩu
-function hashPassword($password) {
+function hashPassword($password)
+{
     return password_hash($password, PASSWORD_DEFAULT);
 }
 
 // Hàm xử lý tải lên ảnh đại diện
-function uploadAvatar($file) {
+function uploadAvatar($file)
+{
     $targetDir = "../uploads/avatars/";
-    
+
     // Tạo thư mục nếu chưa tồn tại
     if (!file_exists($targetDir)) {
         mkdir($targetDir, 0777, true);
     }
-    
+
     $fileName = time() . '_' . basename($file['name']);
     $targetFilePath = $targetDir . $fileName;
     $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
-    
+
     // Danh sách các định dạng file cho phép
     $allowTypes = array('jpg', 'jpeg', 'png', 'gif');
-    
+
     if (in_array(strtolower($fileType), $allowTypes)) {
         // Tải file lên server
         if (move_uploaded_file($file['tmp_name'], $targetFilePath)) {
@@ -101,12 +103,12 @@ switch ($method) {
             if (empty($jsonData)) {
                 throw new Exception("Không có dữ liệu được gửi đến");
             }
-            
+
             $data = json_decode($jsonData);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new Exception("Dữ liệu JSON không hợp lệ: " . json_last_error_msg());
             }
-            
+
             // Kiểm tra các trường bắt buộc
             $requiredFields = ['hoTen', 'gioiTinh', 'email', 'soDienThoai', 'tenDangNhap', 'matKhau'];
             foreach ($requiredFields as $field) {
@@ -114,14 +116,14 @@ switch ($method) {
                     throw new Exception("Trường " . $field . " là bắt buộc");
                 }
             }
-            
+
             $hoTen = trim($data->hoTen);
             $gioiTinh = trim($data->gioiTinh);
             $email = trim($data->email);
             $soDienThoai = trim($data->soDienThoai);
             $tenDangNhap = trim($data->tenDangNhap);
             $matKhau = trim($data->matKhau);
-            $idQuyen = isset($data->idQuyen) ? (int)$data->idQuyen : 2;
+            $idQuyen = isset($data->idQuyen) ? (int) $data->idQuyen : 2;
 
             // Validate email format
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -217,10 +219,10 @@ switch ($method) {
             // Lấy IDTaiKhoan vừa được tạo
             $idTaiKhoan = $conn->insert_id;
             $stmtTaiKhoan->close();
-            
+
             // --- Bước 2: Thêm người dùng --- 
             // Thêm cột IDTaiKhoan vào câu lệnh INSERT và bind_param
-            $sqlNguoiDung = "INSERT INTO nguoidung (HoTen, GioiTinh, Email, SoDienThoai, IDTaiKhoan) VALUES (?, ?, ?, ?, ?)"; 
+            $sqlNguoiDung = "INSERT INTO nguoidung (HoTen, GioiTinh, Email, SoDienThoai, IDTaiKhoan) VALUES (?, ?, ?, ?, ?)";
             $stmtNguoiDung = $conn->prepare($sqlNguoiDung);
             if (!$stmtNguoiDung) {
                 throw new Exception("Lỗi chuẩn bị câu lệnh thêm người dùng: " . $conn->error);
@@ -232,7 +234,7 @@ switch ($method) {
             }
             $maNguoiDung = $conn->insert_id;
             $stmtNguoiDung->close();
-            
+
             // --- Bước 3: Không cần cập nhật nguoidung nữa --- 
             // Bỏ phần cập nhật IDTaiKhoan trong bảng nguoidung vì đã thêm ở Bước 2
             /*
@@ -247,12 +249,12 @@ switch ($method) {
             }
             $stmtNguoiDungUpdate->close();
             */
-            
+
             // Commit transaction
             $conn->commit();
             http_response_code(200);
             echo json_encode([
-                "success" => true, 
+                "success" => true,
                 "message" => "Đăng ký thành công",
                 "data" => [
                     "maNguoiDung" => $maNguoiDung,
@@ -267,7 +269,7 @@ switch ($method) {
             }
             http_response_code(400);
             echo json_encode([
-                "success" => false, 
+                "success" => false,
                 "message" => $e->getMessage()
             ]);
         } finally {
@@ -308,11 +310,11 @@ switch ($method) {
             $tenDangNhapUpdate = isset($data['tenDangNhap']) ? trim($data['tenDangNhap']) : null;
             $updatePassword = isset($data['matKhau']) && !empty(trim($data['matKhau']));
             $idQuyenUpdate = isset($data['idQuyen']) ? $data['idQuyen'] : null;
-            
+
             // Kiểm tra quyền hợp lệ nếu có cập nhật quyền
             if ($idQuyenUpdate !== null) {
                 $validRoles = [1, 2, 3]; // Giả sử 1: Admin, 2: Nhân viên, 3: Khách hàng
-                if (!in_array((int)$idQuyenUpdate, $validRoles)) {
+                if (!in_array((int) $idQuyenUpdate, $validRoles)) {
                     echo json_encode(["success" => false, "message" => "Quyền không hợp lệ"]);
                     exit;
                 }
@@ -377,13 +379,13 @@ switch ($method) {
                 $sqlFields = [];
                 $sqlParams = [];
                 $sqlTypes = "";
-                
+
                 if ($tenDangNhapUpdate) {
                     $sqlFields[] = "TaiKhoan = ?";
                     $sqlParams[] = $tenDangNhapUpdate;
                     $sqlTypes .= "s";
                 }
-                
+
                 if ($updatePassword) {
                     $matKhau = trim($data['matKhau']);
                     $hashedPassword = hashPassword($matKhau);
@@ -391,18 +393,18 @@ switch ($method) {
                     $sqlParams[] = $hashedPassword;
                     $sqlTypes .= "s";
                 }
-                
+
                 if ($idQuyenUpdate !== null) {
                     $sqlFields[] = "IDQuyen = ?";
                     $sqlParams[] = $idQuyenUpdate;
                     $sqlTypes .= "i";
                 }
-                
+
                 if (!empty($sqlFields)) {
                     $sqlTaiKhoan = "UPDATE taikhoan SET " . implode(", ", $sqlFields) . " WHERE IDTaiKhoan = ?";
                     $sqlParams[] = $idTaiKhoan;
                     $sqlTypes .= "i";
-                    
+
                     $stmtTaiKhoan = $conn->prepare($sqlTaiKhoan);
                     $stmtTaiKhoan->bind_param($sqlTypes, ...$sqlParams);
                     $stmtTaiKhoan->execute();
@@ -443,7 +445,7 @@ switch ($method) {
             $avatarResult = $avatarStmt->get_result();
             $avatar = $avatarResult->fetch_assoc();
             $avatarStmt->close();
-            
+
             if ($avatar && !empty($avatar['Anh'])) {
                 $avatarPath = "../uploads/avatars/" . $avatar['Anh'];
                 if (file_exists($avatarPath)) {
@@ -478,7 +480,7 @@ switch ($method) {
 
 // Đóng kết nối nếu chưa đóng (trong trường hợp GET thành công)
 if ($method === 'GET' && $conn) {
-   $conn->close();
+    $conn->close();
 }
 
 ?>
