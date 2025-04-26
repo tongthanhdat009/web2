@@ -10,7 +10,7 @@ const UserLayout = () => {
     <>
       <NavGioiThieuTrangWeb />
       <Header/>
-      <div className="content flex-grow-1">
+      <div className="content flex-grow-1" style={{ height: "fit-content"}}>
         <Outlet />
       </div>
       <Footer />
