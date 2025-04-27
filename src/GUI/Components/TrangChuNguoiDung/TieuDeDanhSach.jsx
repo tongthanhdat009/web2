@@ -1,6 +1,6 @@
 function TieuDeDanhSach(props){
     return(
-        <div className="mt-2 mb-2" style={{marginLeft:'10%', marginRight:'10%'}}>
+        <div className="mt-2 mb-2" style={{marginLeft:'5%', marginRight:'5%'}}>
             <div className="title-content">
                 <h2 className="text-center text-dark">{props.TieuDeDanhSach}</h2>
 

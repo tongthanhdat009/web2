@@ -1,19 +1,18 @@
 function Slider() {
     return (
-        <div id="carouselExampleAutoplaying" className="carousel slide mt-2 mb-5 shadow-lg" data-bs-ride="carousel" 
-        style={{marginLeft:"10%", marginRight:"10%"}}>
+        <div id="carouselExampleAutoplaying" className="carousel slide mt-2 mb-5 shadow-lg" data-bs-ride="carousel">
             <div className="carousel-inner">
                 <div className="carousel-item active">
-                    <img src="/assets/AnhSlider/1.png" style={{height:"800px"}} className="d-block w-100" alt="Anh 1" />
+                    <img src="/assets/AnhSlider/1.png" style={{height:"650px"}} className="d-block w-100" alt="Anh 1" />
                 </div>
                 <div className="carousel-item">
-                    <img src="/assets/AnhSlider/2.png" style={{height:"800px"}} className="d-block w-100" alt="Anh 2" />
+                    <img src="/assets/AnhSlider/2.png" style={{height:"650px"}} className="d-block w-100" alt="Anh 2" />
                 </div>
                 <div className="carousel-item">
-                    <img src="/assets/AnhSlider/3.png" style={{height:"800px"}} className="d-block w-100" alt="Anh 3" />
+                    <img src="/assets/AnhSlider/3.png" style={{height:"650px"}} className="d-block w-100" alt="Anh 3" />
                 </div>
                 <div className="carousel-item">
-                    <img src="/assets/AnhSlider/4.png" style={{height:"800px"}} className="d-block w-100" alt="Anh 4" />
+                    <img src="/assets/AnhSlider/4.png" style={{height:"650px"}} className="d-block w-100" alt="Anh 4" />
                 </div>
             </div>
             <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
