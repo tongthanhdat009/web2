@@ -141,9 +141,9 @@ function DanhMuc() {
                                   {theLoai.Ten}
                               </Nav.Link>
                           ))}
-                          <Nav.Link href="#sale" className="promo-highlight">
+                          {/* <Nav.Link href="#sale" className="promo-highlight">
                             🔥 Khuyến Mãi
-                          </Nav.Link>
+                          </Nav.Link> */}
                       </Nav>
                   </Navbar.Collapse>
               </Container>

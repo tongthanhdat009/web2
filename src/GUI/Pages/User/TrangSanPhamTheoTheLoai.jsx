@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Form } from 'react-bootstrap';
+import { Container, Row, Col, Form, InputGroup } from 'react-bootstrap';
 import { useParams } from 'react-router-dom'; // Import useParams
 
 import LocTheoCacThietBiTa from '../../Components/TrangHienThiSanPhamTheoTheLoai/Filters/LocTheoCacThietBiTa';
@@ -38,6 +38,18 @@ function TrangSanPhamTheoTheLoai() {
 
     const [selectedShoeSizes, setSelectedShoeSizes] = useState([]);       
     
+    // --- State mới cho bộ lọc giá ---
+    const [overallMinPrice, setOverallMinPrice] = useState(0);
+    const [overallMaxPrice, setOverallMaxPrice] = useState(10000000); // Giá trị mặc định lớn
+    const [minPrice, setMinPrice] = useState(0);
+    const [maxPrice, setMaxPrice] = useState(10000000);
+
+    // --- State mới cho bộ lọc khuyến mãi ---
+    const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
+
+    // State để debounce việc cập nhật giá khi kéo slider
+    const [tempMaxPrice, setTempMaxPrice] = useState(10000000);
+
     // useEffect để khởi tạo bộ lọc từ URL
     useEffect(() => {
         if (maChungLoaiUrl) {
@@ -50,6 +62,7 @@ function TrangSanPhamTheoTheLoai() {
         setSelectedKhoiLuong([]);
         setSelectedClothingSizes([]);
         setSelectedShoeSizes([]);
+        setShowDiscountedOnly(false); 
     }, [maChungLoaiUrl]); // Chạy lại khi maChungLoaiUrl thay đổi
 
     // useEffect để fetch sản phẩm gốc (có thể gộp với useEffect trên nếu muốn)
@@ -62,15 +75,45 @@ function TrangSanPhamTheoTheLoai() {
         setSelectedKhoiLuong([]);
         setSelectedClothingSizes([]);
         setSelectedShoeSizes([]);
+        setShowDiscountedOnly(false);
 
         getHangHoaTheoTheLoai(maTheLoai)
           .then(data => {
-            setListSanPham(data || []);
+            const products = data || [];
+            setListSanPham(products);
+
+            // --- Tính toán và đặt giới hạn giá ---
+            if (products.length > 0) {
+                const prices = products.map(p => p.GiaBan);
+                const min = Math.min(...prices);
+                const max = Math.max(...prices);
+                setOverallMinPrice(min);
+                setOverallMaxPrice(max);
+                // Reset bộ lọc giá về giới hạn tổng thể
+                setMinPrice(min);
+                setMaxPrice(max);
+                setTempMaxPrice(max); // Reset cả temp
+            } else {
+                // Đặt giá trị mặc định nếu không có sản phẩm
+                setOverallMinPrice(0);
+                setOverallMaxPrice(10000000);
+                setMinPrice(0);
+                setMaxPrice(10000000);
+                setTempMaxPrice(10000000);
+            }
+
             setLoading(false);
           })
           .catch(error => {
             console.error("Error fetching products:", error);
             setListSanPham([]);
+             // Đặt giá trị mặc định khi lỗi
+            setOverallMinPrice(0);
+            setOverallMaxPrice(10000000);
+            setMinPrice(0);
+            setMaxPrice(10000000);
+            setTempMaxPrice(10000000);
+            setShowDiscountedOnly(false); 
             setLoading(false);
           });
     }, [maTheLoai, maChungLoaiUrl]); // Chạy lại khi maTheLoai hoặc maChungLoaiUrl thay đổi
@@ -86,7 +129,11 @@ function TrangSanPhamTheoTheLoai() {
             );
         }
 
-        
+        // --- 0. Lọc theo Khuyến mãi (nếu được chọn) ---
+        if (showDiscountedOnly) {
+            filtered = filtered.filter(sp => sp.PhanTram != null && sp.PhanTram > 0);
+        }
+
         // 2. Lọc theo Khối lượng (chỉ áp dụng nếu là thể loại Tạ và có lựa chọn)
         if (maTheLoai === MA_THE_LOAI.TA && selectedKhoiLuong.length > 0) {
             // Giả sử sp.KhoiLuong là number (kg) và selectedKhoiLuong chứa các giá trị số
@@ -110,6 +157,13 @@ function TrangSanPhamTheoTheLoai() {
             );
         }
 
+        // --- 5. Lọc theo Giá ---
+        // Chỉ lọc nếu minPrice hoặc maxPrice khác với giới hạn tổng thể
+        if (minPrice > overallMinPrice || maxPrice < overallMaxPrice) {
+            filtered = filtered.filter(sp =>
+               sp.GiaBan >= minPrice && sp.GiaBan <= maxPrice
+           );
+       }
 
         switch (sortOrder) {
             case 'price-asc':
@@ -122,12 +176,84 @@ function TrangSanPhamTheoTheLoai() {
             default:
                 break;
         }
-        setDisplayedProducts(filtered); 
 
-    }, [listSanPham, selectedChungLoai, sortOrder, selectedKhoiLuong, maTheLoai, selectedClothingSizes,selectedShoeSizes]); // Chạy lại khi các dependencies này thay đổi
+        const groupedByMaHangHoa = filtered.reduce((acc, sp) => {
+            const key = sp.MaHangHoa;
+            if (!acc[key]) {
+                acc[key] = []; // Khởi tạo mảng cho MaHangHoa này nếu chưa có
+            }
+            acc[key].push(sp); // Thêm biến thể hiện tại vào nhóm
+            return acc;
+        }, {}); 
+
+        let representativeProducts = Object.values(groupedByMaHangHoa).map(group => {
+            // Sắp xếp các biến thể trong nhóm theo giá tăng dần
+            group.sort((a, b) => a.GiaBan - b.GiaBan);
+            // Trả về biến thể đầu tiên (giá thấp nhất) làm đại diện
+            return group[0];
+        });
+
+        switch (sortOrder) {
+            case 'price-asc':
+                // Sắp xếp các đại diện theo giá của chúng (đã là giá thấp nhất)
+                representativeProducts.sort((a, b) => a.GiaBan - b.GiaBan);
+                break;
+            case 'price-desc':
+                // Sắp xếp các đại diện theo giá của chúng giảm dần
+                representativeProducts.sort((a, b) => b.GiaBan - a.GiaBan);
+                break;
+            default:
+                representativeProducts.sort((a, b) => a.MaHangHoa - b.MaHangHoa);
+                break;
+        }
+
+        console.log("Filtered products:", representativeProducts); // Debug log
+        setDisplayedProducts(representativeProducts);
+
+    }, [listSanPham,
+        selectedChungLoai, 
+        sortOrder, 
+        selectedKhoiLuong, 
+        maTheLoai, 
+        selectedClothingSizes,
+        selectedShoeSizes, 
+        minPrice, 
+        maxPrice, 
+        overallMinPrice, 
+        overallMaxPrice,
+        showDiscountedOnly]); // Chạy lại khi các dependencies này thay đổi
 
     const handleSortChange = (event) => {
         setSortOrder(event.target.value);
+    };
+
+    // --- Hàm xử lý thay đổi giá từ thanh trượt ---
+    const handlePriceChange = (event) => {
+        const newMax = parseInt(event.target.value, 10);
+        // Cập nhật giá trị tạm thời để hiển thị ngay lập tức
+        setTempMaxPrice(newMax);
+        // Chỉ cập nhật maxPrice thực tế (kích hoạt lọc) khi người dùng nhả chuột
+        // (Sử dụng onMouseUp hoặc onChange tùy thuộc vào cách bạn muốn debounce)
+        // Ở đây dùng onChange, có thể cân nhắc debounce nếu hiệu năng bị ảnh hưởng
+        setMaxPrice(newMax);
+        // Đảm bảo min không vượt quá max mới
+        if (minPrice > newMax) {
+            setMinPrice(newMax);
+        }
+    };
+
+    // Hàm xử lý thay đổi giá từ input (ví dụ)
+    const handleMinPriceInputChange = (event) => {
+        let newMin = parseInt(event.target.value, 10) || overallMinPrice;
+        newMin = Math.max(overallMinPrice, Math.min(newMin, maxPrice)); // Giới hạn trong khoảng hợp lệ
+        setMinPrice(newMin);
+    };
+
+    const handleMaxPriceInputChange = (event) => {
+        let newMax = parseInt(event.target.value, 10) || overallMaxPrice;
+        newMax = Math.min(overallMaxPrice, Math.max(newMax, minPrice)); // Giới hạn trong khoảng hợp lệ
+        setMaxPrice(newMax);
+        setTempMaxPrice(newMax); // Đồng bộ tempMaxPrice
     };
 
     // Hàm render component lọc dựa trên maTheLoai
@@ -184,6 +310,16 @@ function TrangSanPhamTheoTheLoai() {
         };
         return title;
     }
+    
+    // --- Hàm xử lý thay đổi checkbox khuyến mãi ---
+     const handleDiscountFilterChange = (event) => {
+        setShowDiscountedOnly(event.target.checked);
+    };
+
+    // Định dạng tiền tệ
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+    };
     return (
         <Container fluid className="my-4 min-vh-100">
             <Row>
@@ -193,6 +329,67 @@ function TrangSanPhamTheoTheLoai() {
                         <Funnel className="me-2" />
                         Bộ lọc
                     </h4>
+
+                    {/* --- Bộ lọc Khuyến mãi --- */}
+                    <div className="mb-3 mt-3 border-top pt-3">
+                        <Form.Check
+                            type="checkbox"
+                            id="discount-filter"
+                            label="Khuyến mãi"
+                            checked={showDiscountedOnly}
+                            onChange={handleDiscountFilterChange}
+                            disabled={loading} // Vô hiệu hóa khi đang tải
+                        />
+                    </div>
+                    
+                    {/* --- Bộ lọc giá --- */}
+                    <div className="mb-3 mt-3 border-top pt-3">
+                        <h6>Khoảng giá</h6>
+                        <Form.Label htmlFor="priceRange">
+                            {formatCurrency(minPrice)} - {formatCurrency(tempMaxPrice)}
+                        </Form.Label>
+                        <Form.Range
+                            id="priceRange"
+                            min={overallMinPrice}
+                            max={overallMaxPrice}
+                            value={tempMaxPrice} // Hiển thị giá trị tạm thời khi kéo
+                            onChange={handlePriceChange} // Cập nhật giá khi thay đổi
+                            step={10000} // Bước nhảy (tùy chỉnh)
+                            disabled={loading || listSanPham.length === 0} // Vô hiệu hóa khi đang tải hoặc không có SP
+                        />
+                         {/* (Tùy chọn) Thêm input để nhập giá min/max */}
+                         <Row className="g-2 mt-2">
+                             <Col>
+                                 <InputGroup size="sm">
+                                     <InputGroup.Text>Từ</InputGroup.Text>
+                                     <Form.Control
+                                         type="number"
+                                         value={minPrice}
+                                         onChange={handleMinPriceInputChange}
+                                         min={overallMinPrice}
+                                         max={maxPrice}
+                                         step={10000}
+                                         disabled={loading || listSanPham.length === 0}
+                                     />
+                                 </InputGroup>
+                             </Col>
+                             <Col>
+                                 <InputGroup size="sm">
+                                     <InputGroup.Text>Đến</InputGroup.Text>
+                                     <Form.Control
+                                         type="number"
+                                         value={maxPrice} // Dùng maxPrice thực tế
+                                         onChange={handleMaxPriceInputChange}
+                                         min={minPrice}
+                                         max={overallMaxPrice}
+                                         step={10000}
+                                         disabled={loading || listSanPham.length === 0}
+                                     />
+                                 </InputGroup>
+                             </Col>
+                         </Row>
+                    </div>
+
                     {renderFilterComponent()}
                 </Col>
 

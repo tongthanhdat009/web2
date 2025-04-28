@@ -65,61 +65,81 @@ function TrangChuUser() {
     // Hàm render danh sách sản phẩm cho một section
     const renderSanPhamList = (sanPhamList, maTheLoai) => {
         if (loading) {
-            return null;
+            return null; // Hoặc hiển thị skeleton loaders
         }
-        
+
+        // Xử lý lỗi (giữ nguyên)
         if (error && error[maTheLoai]) {
             return <div className="col-12"><div className="alert alert-warning mx-auto" style={{maxWidth: '500px'}}>{error[maTheLoai]}</div></div>;
         }
-
-        // Hiển thị lỗi chung nếu có và không có lỗi cụ thể cho section này
         if (error && error.general && !error[maTheLoai]) {
             return <div className="col-12"><div className="alert alert-danger mx-auto" style={{maxWidth: '500px'}}>{error.general}</div></div>;
         }
 
-        // Lấy tối đa 5 sản phẩm để hiển thị trên trang chủ
-        const limitedList = sanPhamList.slice(0, 5);
+        // --- BƯỚC 1: Nhóm các biến thể theo MaHangHoa ---
+        const groupedByMaHangHoa = (sanPhamList || []).reduce((acc, sp) => {
+            const key = sp.MaHangHoa;
+            if (!acc[key]) {
+                acc[key] = [];
+            }
+            acc[key].push(sp);
+            return acc;
+        }, {});
 
-        // Hiển thị thông báo nếu không có sản phẩm nào (sau khi fetch hoặc slice)
+        // --- BƯỚC 2: Chọn biến thể đại diện (giá thấp nhất) cho mỗi nhóm ---
+        let representativeProducts = Object.values(groupedByMaHangHoa).map(group => {
+            // Sắp xếp các biến thể trong nhóm theo giá tăng dần
+            group.sort((a, b) => a.GiaBan - b.GiaBan);
+            // Trả về biến thể đầu tiên (giá thấp nhất) làm đại diện
+            return group[0];
+        });
+
+        // (Tùy chọn) Sắp xếp các sản phẩm đại diện theo một tiêu chí mặc định nếu cần
+        // Ví dụ: sắp xếp theo MaHangHoa hoặc một trường khác nếu API trả về
+        // representativeProducts.sort((a, b) => a.MaHangHoa - b.MaHangHoa);
+
+        // --- BƯỚC 3: Lấy tối đa 5 sản phẩm ĐẠI DIỆN để hiển thị ---
+        const limitedList = representativeProducts.slice(0, 5);
+
+        // Hiển thị thông báo nếu không có sản phẩm nào sau khi xử lý
         if (limitedList.length === 0) {
             return <div className="col-12"><p className="text-center text-muted">Không có sản phẩm nào trong mục này.</p></div>;
         }
 
-        console.log("Danh sách sản phẩm:", limitedList); // Kiểm tra danh sách sản phẩm
-        // Render danh sách sản phẩm giới hạn
-        return limitedList.map((sp) => (
-            <div className="col p-2" key={`${maTheLoai}-${sp.MaHangHoa}`}>
+        // --- BƯỚC 4: Render danh sách sản phẩm đại diện giới hạn ---
+        return limitedList.map((sp) => ( // Sử dụng limitedList đã xử lý
+            <div className="col p-2" key={`${maTheLoai}-${sp.MaHangHoa}`}> {/* Key vẫn dùng MaHangHoa */}
                 <SanPhamCardLayout
                     MaHangHoa={sp.MaHangHoa}
-                    Anh={sp.Anh || '/assets/AnhHangHoa/placeholder.png'} // Cập nhật placeholder nếu cần
+                    Anh={sp.Anh || '/assets/AnhHangHoa/placeholder.png'}
                     MoTa={sp.MoTa || ''}
                     TenHangHoa={sp.TenHangHoa}
-                    GiaGoc={sp.GiaBan} // Đảm bảo API trả về GiaGoc dạng number
-                    PhanTramKM={sp.PhanTram || 0} // Đảm bảo API trả về PhanTramKM dạng number
+                    GiaGoc={sp.GiaBan} // Giá này là giá thấp nhất của sản phẩm đó
+                    PhanTramKM={sp.PhanTram || 0}
                 />
             </div>
         ));
     };
 
-    // Hàm render nút "Xem tất cả"
+    // Hàm render nút "Xem tất cả" (Giữ nguyên logic dựa trên sanPhamList gốc)
     const renderXemTatCaButton = (maTheLoai, sanPhamList) => {
-        // Chỉ hiển thị nút nếu không loading, không có lỗi chung và danh sách gốc có nhiều hơn 5 sản phẩm
-        if (!loading && (!error || !error.general) && sanPhamList && sanPhamList.length > 5) {
+        // Sử dụng sanPhamList gốc (chưa xử lý) để đếm tổng số biến thể
+        const totalVariants = sanPhamList ? sanPhamList.length : 0;
+
+        // Chỉ hiển thị nút nếu không loading, không có lỗi chung và có sản phẩm
+        if (!loading && (!error || !error.general) && totalVariants > 0) {
+            // Lấy số lượng sản phẩm đại diện duy nhất để quyết định text nút
+            const groupedByMaHangHoa = (sanPhamList || []).reduce((acc, sp) => {
+                acc[sp.MaHangHoa] = true; return acc;
+            }, {});
+            const uniqueProductCount = Object.keys(groupedByMaHangHoa).length;
+
+            const buttonText = uniqueProductCount > 5 ? `Xem tất cả (${uniqueProductCount})` : "Xem thêm";
+
             return (
                 <div className="text-center mt-3 mb-4">
-                    {/* Cập nhật đường dẫn '/the-loai/' nếu cần */}
                     <Link to={`/the-loai/${maTheLoai}`} className="btn btn-outline-primary">
-                        Xem tất cả ({sanPhamList.length})
-                    </Link>
-                </div>
-            );
-        }
-        // Cũng hiển thị nút nếu có từ 1-5 sản phẩm, nhưng không cần text "(số lượng)"
-        else if (!loading && (!error || !error.general) && sanPhamList && sanPhamList.length > 0 && sanPhamList.length <= 5) {
-             return (
-                <div className="text-center mt-3 mb-4">
-                    <Link to={`/the-loai/${maTheLoai}`} className="btn btn-outline-primary">
-                        Xem thêm
+                        {buttonText}
                     </Link>
                 </div>
             );
