@@ -46,7 +46,7 @@ if (!$conn) {
 // Sửa SQL: Chọn tất cả các cột từ các bảng liên quan.
 // Sử dụng LEFT JOIN cho khuyenmai để vẫn lấy hàng hóa dù không có khuyến mãi.
 // Chọn cột cụ thể với alias để tránh trùng tên nếu cần, hoặc dùng hh.*, cl.*, km.*
-$sql = "SELECT hh.MaHangHoa, hh.TenHangHoa, hh.Anh, km.PhanTram, ctpn.GiaBan, pn.NgayNhap, cl.MaTheLoai,hh.MoTa
+$sql = "SELECT hh.MaHangHoa, hh.TenHangHoa , hh.MaChungLoai, hh.Anh, km.PhanTram, ctpn.GiaBan, pn.NgayNhap, cl.MaTheLoai,hh.MoTa, ctpn.IDKhoiLuongTa, ctpn.IDKichThuocQuanAo, ctpn.IDKichThuocGiay
         FROM hanghoa hh 
         JOIN chitietphieunhap ctpn ON hh.MaHangHoa = ctpn.MaHangHoa 
         JOIN chungloai cl ON cl.MaChungLoai = hh.MaChungLoai

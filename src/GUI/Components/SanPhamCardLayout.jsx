@@ -54,7 +54,7 @@ function SanPhamCardLayout({MaHangHoa, Anh, TenHangHoa, GiaGoc, PhanTramKM = 0, 
                         </div>
                     </div>
 
-                    <a href={`/chi-tiet-san-pham/${MaHangHoa}`} className="btn btn-sm btn-outline-primary w-100 stretched-link">Xem chi tiết</a>
+                    <a href={`/chi-tiet-san-pham/${MaHangHoa}`} className="btn btn-sm btn-outline-primary w-100 stretched-link tẽ">Xem chi tiết</a>
                 </div>
             </a>
         </div>

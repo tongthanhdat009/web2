@@ -90,7 +90,7 @@ function DanhMuc() {
                                 <ListGroup.Item
                                     as={Link}
                                     // Link này cũng cần đóng modal
-                                    to={`/the-loai/${maTheLoai}/chung-loai/${subCategory.MaChungLoai}`}
+                                    to={`/the-loai/${maTheLoai}/${subCategory.MaChungLoai}`}
                                     key={subCategory.MaChungLoai}
                                     action
                                     className="category-list-item"

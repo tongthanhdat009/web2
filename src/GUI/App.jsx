@@ -14,6 +14,7 @@ import TrangTraCuuSanPham from "./Pages/User/TrangGioiThieu/TrangTraCuuSanPham";
 import TrangGioHang from "./Pages/User/TrangGioHang";
 import TrangDangNhapDangKy from "./Pages/User/TrangDangNhapDangKy";
 import TrangChuUser from "./Pages/User/TrangChuUser";
+import TrangSanPhamTheoTheLoai from "./Pages/User/TrangSanPhamTheoTheLoai";
 
 function App() {
   return (
@@ -29,6 +30,8 @@ function App() {
           <Route path="chinh-sach-bao-hanh" element={<TrangChinhSachBaoHanh />} />
           <Route path="tra-cuu-san-pham" element={<TrangTraCuuSanPham />} />
           <Route path="gio-hang" element={<TrangGioHang />} />
+          <Route path="the-loai/:maTheLoai" element={<TrangSanPhamTheoTheLoai />} />
+          <Route path="/the-loai/:maTheLoai/:maChungLoaiUrl?" element={<TrangSanPhamTheoTheLoai />} />
         </Route>
         <Route path="/dang-nhap-dang-ky" element={<TrangDangNhapDangKy />} />
         <Route path="/admin/*" element={<AdminLayout />} />

@@ -52,7 +52,7 @@ function DanhMucNoiBat() {
                     style={imageStyle}
                     onMouseEnter={() => setImgSrc1(hoverPath + '1.png')}
                     onMouseLeave={() => setImgSrc1(defaultPath + '1.png')}
-                    onClick={() => handleClick(1)} 
+                    onClick={() => handleClick(3)} 
                 />
                 {/* Ảnh 2 */}
                 <img
@@ -61,7 +61,7 @@ function DanhMucNoiBat() {
                     style={imageStyle}
                     onMouseEnter={() => setImgSrc2(hoverPath + '2.png')}
                     onMouseLeave={() => setImgSrc2(defaultPath + '2.png')}
-                    onClick={() => handleClick(2)}
+                    onClick={() => handleClick(5)}
                 />
             </div>
 
@@ -74,7 +74,7 @@ function DanhMucNoiBat() {
                     style={imageStyle}
                     onMouseEnter={() => setImgSrc3(hoverPath + '3.png')}
                     onMouseLeave={() => setImgSrc3(defaultPath + '3.png')}
-                    onClick={() => handleClick(3)} 
+                    onClick={() => handleClick(4)} 
                 />
                 {/* Ảnh 4 */}
                 <img
@@ -83,7 +83,7 @@ function DanhMucNoiBat() {
                     style={imageStyle}
                     onMouseEnter={() => setImgSrc4(hoverPath + '4.png')}
                     onMouseLeave={() => setImgSrc4(defaultPath + '4.png')}
-                    onClick={() => handleClick(4)} 
+                    onClick={() => handleClick(2)} 
                 />
             </div>
         </div>

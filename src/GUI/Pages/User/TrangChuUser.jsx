@@ -130,7 +130,6 @@ function TrangChuUser() {
 
     return (
         <>
-            <DanhMuc />
             <Slider />
             <ChinhSachComponent />
 
