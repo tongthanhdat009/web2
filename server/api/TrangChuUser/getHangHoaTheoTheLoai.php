@@ -52,8 +52,7 @@ $sql = "SELECT hh.MaHangHoa, hh.TenHangHoa , hh.MaChungLoai, hh.Anh, km.PhanTram
         JOIN chungloai cl ON cl.MaChungLoai = hh.MaChungLoai
         LEFT JOIN khuyenmai km ON km.MaKhuyenMai = hh.MaKhuyenMai
         JOIN phieunhap pn ON pn.MaPhieuNhap = ctpn.MaPhieuNhap
-        WHERE hh.TrangThai = 1 AND pn.TrangThai = N'Đã Duyệt' AND ctpn.SoLuongTon > 0 AND cl.MaTheLoai = ?
-        GROUP BY hh.MaHangHoa";
+        WHERE hh.TrangThai = 1 AND pn.TrangThai = N'Đã Duyệt' AND ctpn.SoLuongTon > 0 AND cl.MaTheLoai = ?";
 
 $stmt = $conn->prepare($sql);
 
