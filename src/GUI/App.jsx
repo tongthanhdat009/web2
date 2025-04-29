@@ -14,6 +14,7 @@ import TrangTraCuuSanPham from "./Pages/User/TrangGioiThieu/TrangTraCuuSanPham";
 import TrangGioHang from "./Pages/User/TrangGioHang";
 import TrangDangNhapDangKy from "./Pages/User/TrangDangNhapDangKy";
 import TrangChuUser from "./Pages/User/TrangChuUser";
+import TrangChiTietHangHoa from "./Pages/User/TrangChiTietHangHoa";
 
 function App() {
   return (

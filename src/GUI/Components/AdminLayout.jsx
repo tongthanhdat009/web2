@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import TrangChu from "../Pages/Admin/TrangChu";
@@ -13,7 +13,8 @@ import QuanLyDonHang from "../Pages/Admin/QuanLyDonHang";
 import QuanLyNguoiDung from "../Pages/Admin/QuanLyNguoiDung";
 import QuanLyPhanQuyen from "../Pages/Admin/QuanLyPhanQuyen";
 import Header from "./Header";
-import { layThongTinTaiKhoan } from "../../DAL/apiDangNhapAdmin.jsx";
+import { layThongTinTaiKhoan } from "../../DAL/apiDangNhapAdmin";
+import { dangNhap } from "../../DAL/apiDangNhapAdmin";
 import "./css/AdminLayout.css";
 
 // Danh sách menu cố định
@@ -32,7 +33,6 @@ const MENU_ITEMS = [
 ];
 
 const AdminLayout = () => {
-  console.log("--- AdminLayout Component Rendered ---");
   const [thongTinTKAdmin, setThongTinTKAdmin] = useState([]); 
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const navigate = useNavigate();
@@ -43,29 +43,30 @@ const AdminLayout = () => {
   };
 
   useEffect(() => {
-    const IDTaiKhoan = localStorage.getItem("IDTaiKhoan");
-    const IDQuyen = localStorage.getItem("IDQuyen");
-    
-    console.log("AdminLayout - IDTaiKhoan:", IDTaiKhoan);
-    console.log("AdminLayout - IDQuyen:", IDQuyen);
+    const tenTaiKhoan = localStorage.getItem("TaiKhoanAdmin");
+    const matKhau = localStorage.getItem("MatKhauAdmin");
 
-    // Kiểm tra quyền admin
-    if (!IDTaiKhoan || IDQuyen !== "1") {
-      console.log("Redirecting to login - Invalid credentials");
-      navigate("/admin/dang-nhap");
-      return;
+    const loginAndFetchInfo = async () => {
+      try {
+        // Đăng nhập và nhận thông tin tài khoản
+        const result = await dangNhap(tenTaiKhoan, matKhau);
+        
+        // Nếu đăng nhập thành công, lấy thông tin tài khoản
+        const thongTin = await layThongTinTaiKhoan(result.idTaiKhoan);
+        setThongTinTKAdmin(thongTin);
+      } catch (error) {
+        // Nếu có lỗi xảy ra, có thể chuyển hướng về trang đăng nhập
+        console.error("Lỗi đăng nhập:", error);
+        navigate("/admin/dang-nhap-admin");
+      }
+    };
+
+    // Nếu có tài khoản và mật khẩu trong localStorage thì thực hiện đăng nhập
+    if (tenTaiKhoan && matKhau) {
+      loginAndFetchInfo();
+    } else {
+      navigate("/admin/dang-nhap-admin"); // Chuyển hướng nếu không có thông tin đăng nhập
     }
-
-    // Chỉ lấy thông tin cơ bản của tài khoản
-    layThongTinTaiKhoan(IDTaiKhoan)
-      .then((data) => {
-        console.log("Admin account info:", data);
-        setThongTinTKAdmin(data);
-      })
-      .catch((error) => {
-        console.error("Lỗi khi lấy thông tin tài khoản:", error);
-        navigate("/admin/dang-nhap");
-      });
   }, [navigate]);
 
   const getBreadcrumb = () => {
@@ -119,6 +120,6 @@ const AdminLayout = () => {
       </div>
     </>
   );
-}
+};
 
 export default AdminLayout;

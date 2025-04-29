@@ -12,13 +12,13 @@ const DangNhapAdmin = () => {
     e.preventDefault();
     try {
       const result = await dangNhap(taiKhoan, matKhau);
-      localStorage.setItem("IDTKAdmin", result.idTaiKhoan);
+      localStorage.setItem("TaiKhoanAdmin", taiKhoan);
+      localStorage.setItem("MatKhauAdmin", matKhau);
       navigate("/admin/trang-chu");
     } catch (error) {
-      setError(error.message); // giờ sẽ hiện đúng: "Mật khẩu không chính xác", v.v.
+      setError(error.message);
     }
-  }
-  
+  };
     
   return (
     <div className="container d-flex justify-content-center align-items-center vh-100">
