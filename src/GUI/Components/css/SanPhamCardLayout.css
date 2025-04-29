@@ -1,0 +1,29 @@
+.product-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer; /* Thêm con trỏ để cho biết có thể tương tác */
+    overflow: hidden; /* Đảm bảo các hiệu ứng không tràn ra ngoài */
+  }
+  
+  .product-card:hover {
+    transform: translateY(-5px); /* Nhấc card lên một chút khi hover */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; /* Tăng bóng đổ rõ hơn */
+  }
+  
+  .product-card-img {
+    height: 200px; /* Đặt chiều cao cố định cho ảnh */
+    object-fit: contain; /* Hiển thị toàn bộ ảnh, có thể chừa khoảng trắng */
+    /* hoặc dùng 'cover' nếu muốn ảnh lấp đầy khung và cắt bớt phần thừa */
+    padding: 0.5rem; /* Thêm chút padding quanh ảnh */
+    background-color: #f8f9fa; /* Màu nền nhẹ cho vùng ảnh */
+  }
+  
+  /* Đảm bảo link trong card hoạt động đúng với hover */
+  .product-card .stretched-link::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1;
+      content: "";
+  }

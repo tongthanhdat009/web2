@@ -1,0 +1,127 @@
+/* Basic styling for the mega menu dropdown */
+.mega-menu-dropdown .dropdown-menu {
+  width: 800px; /* Adjust width as needed, or use max-width */
+  max-width: 90vw; /* Prevent overflow on smaller viewports */
+  padding: 0; /* Remove default padding */
+  margin-top: 0; /* Align with navbar */
+  border-radius: 0 0 0.25rem 0.25rem;
+  border: 1px solid rgba(0,0,0,.15);
+}
+  
+.mega-menu-content {
+  padding: 1rem; /* Thêm padding chung */
+}
+
+/* Cột danh sách bên trái */
+.category-list-col {
+  padding-right: 1.5rem; /* Khoảng cách với cột ảnh */
+}
+
+.category-list-header {
+  border-bottom: 1px solid #eee; /* Đường kẻ dưới tiêu đề */
+  padding-bottom: 0.5rem;
+}
+
+.category-list-header h6 {
+  font-weight: bold;
+  color: #333;
+}
+
+.view-all-link {
+  font-size: 0.8rem;
+  color: #6c757d; /* Màu xám */
+  text-decoration: none;
+}
+.view-all-link:hover {
+  color: #0d6efd; /* Màu xanh khi hover */
+}
+
+.category-list-col .list-group {
+  margin-top: 0.5rem;
+}
+
+.category-list-col .list-group-item {
+  border: none; /* Bỏ border mặc định */
+  padding: 0.4rem 0; /* Điều chỉnh padding */
+  font-size: 0.9rem;
+  color: #495057;
+  background-color: transparent !important; /* Đảm bảo không có background */
+}
+
+.category-list-col .list-group-item:hover {
+  color: #0d6efd; /* Màu xanh khi hover */
+}
+
+/* Cột ảnh quảng cáo bên phải */
+.promo-image-col {
+  padding-left: 1.5rem; /* Khoảng cách với cột danh sách */
+  border-left: 1px solid #eee; /* Đường kẻ dọc phân cách */
+  display: flex;
+  align-items: center; /* Căn giữa ảnh theo chiều dọc nếu cần */
+}
+
+.promo-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.25rem; /* Bo góc nhẹ nếu muốn */
+}
+
+.category-modal .modal-content,
+.category-modal .modal-body {
+  width: 100%; /* Đảm bảo chúng chiếm đủ chiều rộng của dialog */
+  max-width: none; /* Gỡ bỏ giới hạn max-width nếu có */
+}
+
+/* Nếu bạn chỉ dùng size="lg" và không dùng dialogClassName */
+.modal-lg .modal-content,
+.modal-lg .modal-body {
+   width: 100%;
+   max-width: none;
+}
+
+
+/* Đảm bảo Row bên trong modal body cũng chiếm đủ rộng */
+.modal-body .row {
+    width: 100%;
+    margin-left: 0; /* Reset margin có thể có của Row */
+    margin-right: 0;
+}
+
+/* --- Giữ lại các style cũ cho nội dung bên trong Col --- */
+.category-list-col {
+  padding-right: 1.5rem;
+}
+/* ... */
+.promo-image-col {
+  padding-left: 1.5rem;
+  border-left: 1px solid #eee;
+  display: flex;
+  align-items: center;
+}
+.promo-image {
+  max-width: 100%;
+  height: auto;
+}
+
+@keyframes blink-effect {
+  0%, 100% {
+    color: red; /* Màu đỏ */
+    /* text-shadow: 0 0 5px yellow; */ /* Tùy chọn: thêm bóng mờ */
+  }
+  50% {
+    color: yellow; /* Màu vàng */
+    /* text-shadow: 0 0 10px red; */ /* Tùy chọn: thêm bóng mờ */
+  }
+}
+
+/* Áp dụng animation cho link khuyến mãi */
+.promo-highlight {
+  font-weight: bold; /* Làm chữ đậm hơn */
+  animation: blink-effect 2s linear infinite; /* Áp dụng animation: tên, thời gian, kiểu lặp, lặp vô hạn */
+}
+
+/* Tùy chỉnh thêm nếu cần */
+.promo-highlight:hover {
+  /* Có thể thay đổi màu khi hover nếu muốn */
+  /* animation-play-state: paused; */ /* Dừng animation khi hover */
+}
