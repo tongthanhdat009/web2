@@ -14,7 +14,6 @@ function TrangChiTietHangHoa() {
   const { maHangHoa } = useParams();
   const navigate = useNavigate(); // useNavigate hook for redirecting
   const idTaiKhoan = localStorage.getItem("IDTaiKhoan");
-
   useEffect(() => {
     async function fetchData() {
       const data = await chiTietHangHoa(maHangHoa) || [];

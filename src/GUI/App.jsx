@@ -33,6 +33,7 @@ function App() {
           <Route path="gio-hang" element={<TrangGioHang />} />
           <Route path="the-loai/:maTheLoai" element={<TrangSanPhamTheoTheLoai />} />
           <Route path="/the-loai/:maTheLoai/:maChungLoaiUrl?" element={<TrangSanPhamTheoTheLoai />} />
+          <Route path="/chi-tiet-san-pham/:maHangHoa" element={<TrangChiTietHangHoa />} />
         </Route>
         <Route path="/dang-nhap-dang-ky" element={<TrangDangNhapDangKy />} />
         <Route path="/admin/*" element={<AdminLayout />} />
