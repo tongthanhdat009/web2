@@ -210,18 +210,8 @@ function TrangDangNhapDangKy() {
           // --- Thông báo và chuyển hướng --- 
           setNotification({ show: true, type: 'success', message: 'Đăng nhập thành công!' });
           setTimeout(() => {
-            // Quyết định chuyển hướng dựa vào quyền
-            console.log("Redirecting with IDQuyen:", loginData.idQuyen, typeof loginData.idQuyen);
-            const idQuyen = parseInt(loginData.idQuyen);
-            if (idQuyen === 1) { // Admin
-                 console.log("Redirecting to admin page");
-                 navigate('/admin/trang-chu');
-            } else {
-                 console.log("Redirecting to home page");
-                 navigate('/');
-            }
+            navigate('/');
           }, 1500);
-
           // Chuyển hướng với tham số success
           navigate("/dang-nhap-dang-ky?success=true");
         } else {
@@ -270,7 +260,7 @@ function TrangDangNhapDangKy() {
       <div className="login-register-page">
         <Container>
           <Row className="justify-content-center">
-            <Col md={8} lg={6}>
+            <Col>
               <Card className="login-register-card">
                 <Card.Body>
                   {!showLogin ? (

@@ -41,6 +41,7 @@ export default function TrangGioHang() {
           });
           setCurrentCart(merged);
         }
+        console.log("Giỏ hàng:", data.sanpham);
       })
       .catch(console.error);
     getThongTinNguoiDung(idTaiKhoan)
@@ -98,7 +99,8 @@ export default function TrangGioHang() {
   const getOptionsByAttribute = (maHangHoa, attr) => {
     const filtered = productList.filter(p => p.MaHangHoa === maHangHoa);
     const unique = [...new Set(filtered.map(p => p[attr]))];
-    return unique.filter(v => v !== 0 && v !== null && v !== "");
+    console.log(unique.filter(v => v !== 0));
+    return unique.filter(v => v !== 0);
   };
 
   const handleSaveEdit = async () => {
@@ -279,48 +281,59 @@ export default function TrangGioHang() {
             <div className="edit-overlay">
               <div className="edit-form">
                 <h3>Chỉnh sửa sản phẩm</h3>
-                {getOptionsByAttribute(editingItem.MaHangHoa, "KhoiLuong").length > 0 && (
+                {getOptionsByAttribute(editingItem.MaHangHoa, "IDKhoiLuongTa")
+                  .filter(val => val !== 0).length > 0 && (
                   <div className="form-group">
                     <p>Khối lượng:</p>
                     <div className="options-grid">
-                      {getOptionsByAttribute(editingItem.MaHangHoa, "KhoiLuong").map(val => (
-                        <button
-                          key={val}
-                          type="button"
-                          className={editingItem.KhoiLuong === val ? "option-box selected" : "option-box"}
-                          onClick={() => setEditingItem({ ...editingItem, KhoiLuong: val })}
-                        >{val}</button>
-                      ))}
+                      {getOptionsByAttribute(editingItem.MaHangHoa, "KhoiLuong")
+                        .filter(val => val !== 0)
+                        .map(val => (
+                          <button
+                            key={val}
+                            type="button"
+                            className={editingItem.KhoiLuong === val ? "option-box selected" : "option-box"}
+                            onClick={() => setEditingItem({ ...editingItem, KhoiLuong: val })}
+                          >{val}</button>
+                        ))}
                     </div>
                   </div>
                 )}
-                {getOptionsByAttribute(editingItem.MaHangHoa, "KichThuocQuanAo").length > 0 && (
+
+                {getOptionsByAttribute(editingItem.MaHangHoa, "IDKichThuocQuanAo")
+                  .filter(val => val !== 0).length > 0 && (
                   <div className="form-group">
                     <p>Kích thước quần áo:</p>
                     <div className="options-grid">
-                      {getOptionsByAttribute(editingItem.MaHangHoa, "KichThuocQuanAo").map(val => (
-                        <button
-                          key={val}
-                          type="button"
-                          className={editingItem.KichThuocQuanAo === val ? "option-box selected" : "option-box"}
-                          onClick={() => setEditingItem({ ...editingItem, KichThuocQuanAo: val })}
-                        >{val}</button>
-                      ))}
+                      {getOptionsByAttribute(editingItem.MaHangHoa, "KichThuocQuanAo")
+                        .filter(val => val !== 0)
+                        .map(val => (
+                          <button
+                            key={val}
+                            type="button"
+                            className={editingItem.KichThuocQuanAo === val ? "option-box selected" : "option-box"}
+                            onClick={() => setEditingItem({ ...editingItem, KichThuocQuanAo: val })}
+                          >{val}</button>
+                        ))}
                     </div>
                   </div>
                 )}
-                {getOptionsByAttribute(editingItem.MaHangHoa, "KichThuocGiay").length > 0 && (
+
+                {getOptionsByAttribute(editingItem.MaHangHoa, "IDKichThuocGiay")
+                  .filter(val => val !== 0).length > 0 && (
                   <div className="form-group">
                     <p>Kích thước giày:</p>
                     <div className="options-grid">
-                      {getOptionsByAttribute(editingItem.MaHangHoa, "KichThuocGiay").map(val => (
-                        <button
-                          key={val}
-                          type="button"
-                          className={editingItem.KichThuocGiay === val ? "option-box selected" : "option-box"}
-                          onClick={() => setEditingItem({ ...editingItem, KichThuocGiay: val })}
-                        >{val}</button>
-                      ))}
+                      {getOptionsByAttribute(editingItem.MaHangHoa, "KichThuocGiay")
+                        .filter(val => val !== 0)
+                        .map(val => (
+                          <button
+                            key={val}
+                            type="button"
+                            className={editingItem.KichThuocGiay === val ? "option-box selected" : "option-box"}
+                            onClick={() => setEditingItem({ ...editingItem, KichThuocGiay: val })}
+                          >{val}</button>
+                        ))}
                     </div>
                   </div>
                 )}

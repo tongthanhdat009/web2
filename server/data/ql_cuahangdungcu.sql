@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 29, 2025 lúc 04:42 PM
+-- Thời gian đã tạo: Th5 01, 2025 lúc 11:30 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.1.25
 
@@ -60,7 +60,21 @@ INSERT INTO `chitietphieunhap` (`IDChiTietPhieuNhap`, `MaPhieuNhap`, `MaHangHoa`
 (1, 1, 22, 0, 3, 0, 200000, 250000, 5, 5),
 (2, 1, 22, 0, 2, 0, 200000, 250000, 5, 5),
 (3, 1, 22, 0, 1, 0, 150000, 200000, 5, 5),
-(4, 2, 22, 0, 1, 0, 200000, 250000, 5, 5);
+(4, 2, 22, 0, 1, 0, 200000, 250000, 5, 5),
+(5, 2, 23, 0, 1, 0, 100000, 150000, 2, 2),
+(6, 2, 23, 0, 2, 0, 100000, 150000, 2, 2),
+(7, 2, 23, 0, 3, 0, 100000, 150000, 2, 2),
+(8, 2, 24, 0, 1, 0, 100000, 150000, 2, 2),
+(9, 2, 24, 0, 2, 0, 100000, 150000, 2, 2),
+(10, 2, 24, 0, 3, 0, 100000, 150000, 2, 2),
+(11, 2, 25, 0, 1, 0, 100000, 150000, 2, 2),
+(12, 2, 25, 0, 2, 0, 100000, 150000, 2, 2),
+(13, 2, 25, 0, 3, 0, 100000, 150000, 2, 2),
+(29, 2, 1, 3, 0, 0, 70000, 100000, 2, 2),
+(30, 2, 2, 6, 0, 0, 90000, 130000, 2, 2),
+(31, 2, 3, 7, 0, 0, 110000, 150000, 2, 2),
+(32, 2, 4, 8, 0, 0, 130000, 170000, 2, 2),
+(33, 2, 5, 10, 0, 0, 150000, 190000, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -147,6 +161,15 @@ CREATE TABLE `giohang` (
   `IDKichThuocGiay` int(11) NOT NULL,
   `SoLuong` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `giohang`
+--
+
+INSERT INTO `giohang` (`IDTaiKhoan`, `MaHangHoa`, `IDKhoiLuongTa`, `IDKichThuocQuanAo`, `IDKichThuocGiay`, `SoLuong`) VALUES
+(1, 1, 3, 0, 0, 1),
+(1, 3, 7, 0, 0, 1),
+(1, 22, 0, 1, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -369,7 +392,35 @@ INSERT INTO `khohang` (`Seri`, `TinhTrang`, `IDChiTietPhieuNhap`) VALUES
 (17, 'Chưa bán', 4),
 (18, 'Chưa bán', 4),
 (19, 'Chưa bán', 4),
-(20, 'Chưa bán', 4);
+(20, 'Chưa bán', 4),
+(21, 'Chưa bán', 5),
+(22, 'Chưa bán', 5),
+(23, 'Chưa bán', 6),
+(24, 'Chưa bán', 6),
+(25, 'Chưa bán', 7),
+(26, 'Chưa bán', 7),
+(27, 'Chưa bán', 8),
+(28, 'Chưa bán', 8),
+(29, 'Chưa bán', 9),
+(30, 'Chưa bán', 9),
+(31, 'Chưa bán', 10),
+(32, 'Chưa bán', 10),
+(33, 'Chưa bán', 11),
+(34, 'Chưa bán', 11),
+(35, 'Chưa bán', 12),
+(36, 'Chưa bán', 12),
+(37, 'Chưa bán', 13),
+(38, 'Chưa bán', 13),
+(39, 'Chưa bán', 29),
+(40, 'Chưa bán', 29),
+(41, 'Chưa bán', 30),
+(42, 'Chưa bán', 30),
+(43, 'Chưa bán', 31),
+(44, 'Chưa bán', 31),
+(45, 'Chưa bán', 32),
+(46, 'Chưa bán', 32),
+(47, 'Chưa bán', 33),
+(48, 'Chưa bán', 33);
 
 -- --------------------------------------------------------
 
@@ -501,7 +552,9 @@ CREATE TABLE `nguoidung` (
 --
 
 INSERT INTO `nguoidung` (`MaNguoiDung`, `HoTen`, `GioiTinh`, `Email`, `SoDienThoai`, `IDTaiKhoan`, `Anh`) VALUES
-(1, 'Người dùng 1', 'Nam', 'nd1@gmail.com', '09000000', 1, NULL);
+(1, 'Người dùng 1', 'Nam', 'nd1@gmail.com', '09000000', 1, NULL),
+(2, 'Nguyên tuấn', 'Nam', 'nguyentuan06@gmail.com', '0903316095', 3, NULL),
+(3, 'Nguyễn Minh Tuấn', 'Nam', 'nguyentuan@gmail.com', '0397284705', 4, NULL);
 
 -- --------------------------------------------------------
 
@@ -630,6 +683,7 @@ CREATE TABLE `taikhoan` (
   `matKhau` varbinary(64) DEFAULT NULL,
   `IDQuyen` int(11) DEFAULT NULL,
   `TrangThai` tinyint(1) NOT NULL DEFAULT 0,
+  `HoatDong` int(11) NOT NULL,
   `SessionID` varchar(200) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -637,8 +691,10 @@ CREATE TABLE `taikhoan` (
 -- Đang đổ dữ liệu cho bảng `taikhoan`
 --
 
-INSERT INTO `taikhoan` (`IDTaiKhoan`, `TaiKhoan`, `matKhau`, `IDQuyen`, `TrangThai`, `SessionID`) VALUES
-(1, 'admin', 0x5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5, 1, 0, '');
+INSERT INTO `taikhoan` (`IDTaiKhoan`, `TaiKhoan`, `matKhau`, `IDQuyen`, `TrangThai`, `HoatDong`, `SessionID`) VALUES
+(1, 'admin', 0x5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5, 1, 0, 1, ''),
+(3, 'tuanminhtuan123', 0x2432792431302444585933594d736b3577316370337a6c59436a69704f367345765449716b6e5873654f4e7634587278573548626854574c6e656d79, 2, 1, 0, NULL),
+(4, 'nguyeminhtuan123', 0x243279243130246e76465851476558392e57576871554f3774633257654c45466c73324d324c6a3757584257374b456e6b724e2f35524c4a32346836, 2, 1, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -823,6 +879,12 @@ ALTER TABLE `theloai`
 --
 
 --
+-- AUTO_INCREMENT cho bảng `chitietphieunhap`
+--
+ALTER TABLE `chitietphieunhap`
+  MODIFY `IDChiTietPhieuNhap` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+
+--
 -- AUTO_INCREMENT cho bảng `chucnang`
 --
 ALTER TABLE `chucnang`
@@ -856,7 +918,7 @@ ALTER TABLE `hoadon`
 -- AUTO_INCREMENT cho bảng `khohang`
 --
 ALTER TABLE `khohang`
-  MODIFY `Seri` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `Seri` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT cho bảng `khoiluongta`
@@ -886,7 +948,7 @@ ALTER TABLE `kichthuocquanao`
 -- AUTO_INCREMENT cho bảng `nguoidung`
 --
 ALTER TABLE `nguoidung`
-  MODIFY `MaNguoiDung` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `MaNguoiDung` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT cho bảng `nhacungcap`
@@ -910,7 +972,7 @@ ALTER TABLE `quyen`
 -- AUTO_INCREMENT cho bảng `taikhoan`
 --
 ALTER TABLE `taikhoan`
-  MODIFY `IDTaiKhoan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `IDTaiKhoan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `theloai`
