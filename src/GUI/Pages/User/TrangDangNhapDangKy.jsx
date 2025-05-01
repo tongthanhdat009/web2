@@ -262,10 +262,12 @@ function TrangDangNhapDangKy() {
           <Row className="justify-content-center">
             <Col>
               <Card className="login-register-card">
+                <div className="card-header-gradient">
+                  {showLogin ? "Đăng Nhập" : "Đăng Ký"}
+                </div>
                 <Card.Body>
                   {!showLogin ? (
                     <>
-                      <h2 className="text-center mb-4">Đăng Ký</h2>
                       <Form onSubmit={handleSubmitRegister} noValidate>
                         <Form.Group className="mb-3" controlId="registerHoTen">
                           <Form.Label>Họ và tên<span className="text-danger">*</span></Form.Label>
@@ -332,7 +334,6 @@ function TrangDangNhapDangKy() {
                     </>
                   ) : (
                     <>
-                      <h2 className="text-center mb-4">Đăng Nhập</h2>
                       <Form onSubmit={handleSubmitLogin}>
                         <Form.Group className="mb-3" controlId="loginTenDangNhap">
                           <Form.Label>Tên đăng nhập</Form.Label>
