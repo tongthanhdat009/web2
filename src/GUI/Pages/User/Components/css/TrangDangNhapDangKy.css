@@ -21,36 +21,42 @@
   justify-content: center;
   align-items: center;
 }
+
 .login-register-page {
-  min-height: calc(100vh - 80px); /* Adjust height considering header height approx 80px */
-  background: linear-gradient(135deg, var(--body-bg-start), var(--body-bg-end));
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
   display: flex;
   align-items: center;
-  padding: 2rem 0; /* More vertical padding */
+  justify-content: center;
+  padding: 0;
 }
 
 .login-register-card {
-  background-color: var(--card-bg);
-  border: none;
-  border-radius: 1rem; /* Slightly larger radius */
-  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.08) !important;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
   overflow: hidden;
-  transition: transform 0.2s ease-in-out;
-}
-
-/* Optional: Add a slight lift effect on hover */
-.login-register-card:hover {
-  transform: translateY(-3px);
+  border: none;
+  max-width: 700px;
+  width: 50vw;
+  min-width: 320px;
+  margin: 0 auto;
 }
 
 .login-register-card .card-body {
-  padding: 2.5rem; /* Increase padding */
+  padding: 3rem 2.5rem 2.5rem 2.5rem;
 }
 
-.login-register-card h2 {
-  color: var(--heading-color);
+.login-register-card .card-body > h2 {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+  color: #fff;
+  border-radius: 20px 20px 0 0;
+  margin: -2.5rem -2.5rem 2rem -2.5rem;
+  padding: 38px 0 24px 0;
+  text-align: center;
+  font-size: 2.2rem;
   font-weight: 600;
-  margin-bottom: 1.8rem; /* Increase space below heading */
+  letter-spacing: 1px;
 }
 
 .form-label {
@@ -59,68 +65,46 @@
   margin-bottom: 0.6rem; /* Slightly more space */
 }
 
-.form-control,
-.form-select {
-  border: 1px solid var(--border-color);
-  background-color: var(--input-bg); /* Subtle background for inputs */
-  border-radius: 0.375rem;
-  padding: 0.75rem 1rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out;
+.form-control, .form-select {
+  border-radius: 24px !important;
+  padding: 16px 22px !important;
+  background: #fafafa !important;
+  border: 1.5px solid #eee !important;
+  font-size: 1.08rem;
+  margin-bottom: 0.5rem;
+  transition: border 0.2s;
 }
 
-.form-control:focus,
-.form-select:focus {
-  border-color: var(--primary-color);
-  background-color: var(--card-bg); /* White background on focus */
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-  outline: 0;
+.form-control:focus, .form-select:focus {
+  border: 1.5px solid #6a11cb !important;
+  background: #fff !important;
+  box-shadow: none !important;
 }
 
-/* Style buttons consistently */
-.btn {
-  padding: 0.8rem 1.3rem; /* Slightly larger buttons */
-  font-size: 1rem;
-  border-radius: 0.375rem;
+.btn-primary, .btn-primary:disabled {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%) !important;
+  border: none !important;
+  border-radius: 24px !important;
+  font-size: 1.18rem;
+  font-weight: 600;
+  padding: 16px 0 !important;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover, .btn-primary:active {
+  background: linear-gradient(90deg, #2575fc 0%, #6a11cb 100%) !important;
+}
+
+.btn-link, .login-register-card a {
+  color: #2575fc !important;
   font-weight: 500;
-  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.1s ease;
-}
-
-.btn:active {
-  transform: scale(0.98);
-}
-
-.btn-primary {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-}
-
-.btn-primary:hover {
-  background-color: var(--primary-hover-color);
-  border-color: var(--primary-hover-color);
-}
-
-/* Keep .btn-success rules removed or commented if Login button is primary */
-/* 
-.btn-success {
-  background-color: var(--success-color);
-  border-color: var(--success-color);
-}
-
-.btn-success:hover {
-  background-color: var(--success-hover-color);
-  border-color: var(--success-hover-color);
-}
-*/
-
-.btn-link {
-  color: var(--primary-color);
   text-decoration: none;
-  font-weight: 500;
-  padding: 0.25rem 0.5rem; /* Add some padding */
+  transition: color 0.2s;
+  padding: 0;
 }
 
-.btn-link:hover {
-  color: var(--primary-hover-color);
+.btn-link:hover, .login-register-card a:hover {
+  color: #6a11cb !important;
   text-decoration: underline;
 }
 
@@ -146,5 +130,46 @@
 
 .toast.show {
   animation: slideInRight 0.4s ease-out forwards;
+}
+
+@media (max-width: 900px) {
+  .login-register-card {
+    width: 80vw;
+    max-width: 98vw;
+  }
+}
+
+@media (max-width: 500px) {
+  .login-register-card {
+    width: 99vw;
+    max-width: 99vw;
+    padding: 0 1vw;
+  }
+  .login-register-card .card-body > h2 {
+    font-size: 1.4rem;
+    padding: 22px 0 14px 0;
+  }
+  .login-register-card .card-body {
+    padding: 1.2rem 0.5rem 1.5rem 0.5rem;
+  }
+}
+
+.card {
+  border: none !important;
+}
+
+.card-header-gradient {
+  background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+  color: #fff;
+  border-radius: 20px 20px 0 0;
+  padding: 38px 0 24px 0;
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  width: 100%;
+  margin: 0;
+  position: relative;
+  z-index: 2;
 }
   

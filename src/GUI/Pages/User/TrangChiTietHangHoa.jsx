@@ -68,43 +68,44 @@ function TrangChiTietHangHoa() {
     return current.GiaBan - giam;
   };
 
+ // ...existing code...
   return (
-    <div className="container">
-      <div className="product-image">
+    <div className="cthh-container">
+      <div className="cthh-product-image">
         <img src={current.Anh} alt={current.TenHangHoa} />
         {current.PhanTram && parseFloat(current.PhanTram) > 0 && (
-          <div className="sale-badge">
+          <div className="cthh-sale-badge">
             <FaTags /> SALE {parseFloat(current.PhanTram)}%
           </div>
         )}
       </div>
 
-      <div className="product-info">
+      <div className="cthh-product-info">
         <h1>{current.TenHangHoa}</h1>
         <p><strong>Mã:</strong> {maHangHoa}</p>
 
-        <div className="price-section">
+        <div className="cthh-price-section">
           {current.PhanTram && parseFloat(current.PhanTram) > 0 ? (
             <>
-              <p className="old-price">{current.GiaBan?.toLocaleString()} VND</p>
-              <p className="price">
+              <p className="cthh-old-price">{current.GiaBan?.toLocaleString()} VND</p>
+              <p className="cthh-price">
                 {tinhGiaSauKhuyenMai()?.toLocaleString()} VND
               </p>
             </>
           ) : (
-            <p className="price">{current.GiaBan?.toLocaleString()} VND</p>
+            <p className="cthh-price">{current.GiaBan?.toLocaleString()} VND</p>
           )}
         </div>
 
         {/* Khối lượng */}
         {chiTiet.some(i => i.IDKhoiLuongTa > 0) && (
-          <div className="option-group">
+          <div className="cthh-option-group">
             <h3>Chọn khối lượng:</h3>
-            <div className="select-size">
+            <div className="cthh-select-size">
               {[...new Set(chiTiet.map(i => i.IDKhoiLuongTa))].filter(v => v > 0).map(id => (
                 <div
                   key={id}
-                  className={`size-option ${selectedKL === id ? 'selected' : ''}`}
+                  className={`cthh-size-option ${selectedKL === id ? 'cthh-selected' : ''}`}
                   onClick={() => { setSelectedKL(id); setQuantity(1); setMessage(null); }}
                 >
                   {chiTiet.find(i => i.IDKhoiLuongTa === id).KhoiLuong}
@@ -116,13 +117,13 @@ function TrangChiTietHangHoa() {
 
         {/* Áo */}
         {chiTiet.some(i => i.IDKichThuocQuanAo > 0) && (
-          <div className="option-group">
+          <div className="cthh-option-group">
             <h3>Chọn kích thước áo:</h3>
-            <div className="select-size">
+            <div className="cthh-select-size">
               {[...new Set(chiTiet.map(i => i.IDKichThuocQuanAo))].filter(v => v > 0).map(id => (
                 <div
                   key={id}
-                  className={`size-option ${selectedAo === id ? 'selected' : ''}`}
+                  className={`cthh-size-option ${selectedAo === id ? 'cthh-selected' : ''}`}
                   onClick={() => { setSelectedAo(id); setQuantity(1); setMessage(null); }}
                 >
                   {chiTiet.find(i => i.IDKichThuocQuanAo === id).KichThuocQuanAo}
@@ -134,13 +135,13 @@ function TrangChiTietHangHoa() {
 
         {/* Giày */}
         {chiTiet.some(i => i.IDKichThuocGiay > 0) && (
-          <div className="option-group">
+          <div className="cthh-option-group">
             <h3>Chọn kích thước giày:</h3>
-            <div className="select-size">
+            <div className="cthh-select-size">
               {[...new Set(chiTiet.map(i => i.IDKichThuocGiay))].filter(v => v > 0).map(id => (
                 <div
                   key={id}
-                  className={`size-option ${selectedGiay === id ? 'selected' : ''}`}
+                  className={`cthh-size-option ${selectedGiay === id ? 'cthh-selected' : ''}`}
                   onClick={() => { setSelectedGiay(id); setQuantity(1); setMessage(null); }}
                 >
                   {chiTiet.find(i => i.IDKichThuocGiay === id).KichThuocGiay}
@@ -151,9 +152,9 @@ function TrangChiTietHangHoa() {
         )}
 
         {/* Quantity */}
-        <div className="quantity-row">
+        <div className="cthh-quantity-row">
           <label>Số lượng còn: {current.SoLuongTon}</label>
-          <div className="qty-control">
+          <div className="cthh-qty-control">
             <button onClick={() => adjustQty(-1)}>-</button>
             <input type="text" readOnly value={quantity} />
             <button onClick={() => adjustQty(1)}>+</button>
@@ -161,22 +162,23 @@ function TrangChiTietHangHoa() {
         </div>
 
         {/* Add to cart */}
-        <div className="add-cart-row">
+        <div className="cthh-add-cart-row">
           {current.TinhTrang === "Hết hàng" ? (
-            <button className="add-to-cart disabled" disabled>Sản phẩm đã hết</button>
+            <button className="cthh-add-to-cart cthh-disabled" disabled>Sản phẩm đã hết</button>
           ) : (
-            <button className="add-to-cart" onClick={handleAddToCart}>Thêm vào giỏ hàng</button>
+            <button className="cthh-add-to-cart" onClick={handleAddToCart}>Thêm vào giỏ hàng</button>
           )}
         </div>
-        {message && <div className={`message ${message.type}`}>{message.text}</div>}
+        {message && <div className={`cthh-message ${message.type}`}>{message.text}</div>}
       </div>
 
-      <div className="product-description">
+      <div className="cthh-product-description">
         <h3>Mô Tả Sản Phẩm:</h3>
-        <p className="description-content">{current.MoTa}</p>
+        <p className="cthh-description-content">{current.MoTa}</p>
       </div>
     </div>
   );
+// ...existing code...
 }
 
 export default TrangChiTietHangHoa;

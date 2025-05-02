@@ -55,13 +55,17 @@ const AdminSidebar = ({ menuItems = defaultMenuItems }) => {
     <div className="admin-sidebar">
       <ul>
         {(menuItems || []).map((item, index) => {
-          // Sử dụng path từ mapping hoặc tạo slug nếu không có
           const path = menuToPath[item] || toSlug(item);
+          const isActive = location.pathname === `/admin/${path}`;
           return (
-            <li onClick={() => navigate(`/admin/${path}`)} key={index}>
-              <img 
-                src={`/assets/icons/${item}.png`} 
-                alt={item} 
+            <li
+              onClick={() => navigate(`/admin/${path}`)}
+              key={index}
+              className={isActive ? "active" : ""}
+            >
+              <img
+                src={`/assets/icons/${item}.png`}
+                alt={item}
                 className="menu-icon"
                 onError={(e) => {
                   e.target.src = '/assets/icons/default.png';
