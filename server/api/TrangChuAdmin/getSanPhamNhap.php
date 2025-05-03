@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-require_once "../config/Database.php";
+require_once "../../config/Database.php";
 
 $database = new Database();
 $conn = $database->getConnection();
@@ -22,13 +22,14 @@ $limitClause = $limit > 0 ? "LIMIT $limit" : "";
 $sql = "SELECT 
             hh.TenHangHoa as TenSanPham,
             COUNT(hh.TenHangHoa) as SoLuong,
-            SUM(kh.GiaNhap) as TongGiaTri,
+            SUM(ctpn.GiaNhap) as TongGiaTri,
             h.TenHang as TenHang
-        FROM phieunhap pn
-        JOIN khohang kh ON pn.MaPhieuNhap = kh.MaPhieuNhap
-        JOIN hanghoa hh ON hh.MaHangHoa = kh.MaHangHoa
+        FROM phieunhap AS pn
+        JOIN chitietphieunhap ctpn ON ctpn.MaPhieuNhap = pn.MaPhieuNhap
+        JOIN khohang kh ON ctpn.IDChiTietPhieuNhap = kh.IDChiTietPhieuNhap
+        JOIN hanghoa AS hh ON hh.MaHangHoa = ctpn.MaHangHoa
         JOIN hang h ON hh.MaHang = h.MaHang
-        WHERE pn.TrangThai = N'Đã Nhập'
+        WHERE pn.TrangThai = N'Đã duyệt'
         GROUP BY hh.TenHangHoa, h.TenHang
         ORDER BY $orderBy
         $limitClause";

@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-require_once "../config/Database.php";
+require_once "../../config/Database.php";
 
 $database = new Database();
 $conn = $database->getConnection();
@@ -22,11 +22,12 @@ switch ($timeFrame) {
         $sql = "SELECT 
                     MONTH(pn.NgayNhap) as month,
                     YEAR(pn.NgayNhap) as year,
-                    SUM(kh.GiaNhap) as totalValue
+                    SUM(ctpn.GiaNhap) as totalValue
                 FROM phieunhap AS pn
-                JOIN khohang AS kh ON kh.MaPhieuNhap = pn.MaPhieuNhap
+                JOIN chitietphieunhap ctpn ON ctpn.MaPhieuNhap = pn.MaPhieuNhap
+                JOIN khohang kh ON ctpn.IDChiTietPhieuNhap = kh.IDChiTietPhieuNhap
                 JOIN nhacungcap AS ncc ON pn.MaNhaCungCap = ncc.MaNhaCungCap
-                WHERE pn.TrangThai = N'Đã Nhập'
+                WHERE pn.TrangThai = N'Đã duyệt'
                 AND pn.NgayNhap >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
                 GROUP BY YEAR(pn.NgayNhap), MONTH(pn.NgayNhap)
                 ORDER BY YEAR(pn.NgayNhap), MONTH(pn.NgayNhap)";
@@ -37,11 +38,12 @@ switch ($timeFrame) {
         $sql = "SELECT 
                     QUARTER(pn.NgayNhap) as quarter,
                     YEAR(pn.NgayNhap) as year,
-                    SUM(kh.GiaNhap) as totalValue
+                    SUM(ctpn.GiaNhap) as totalValue
                 FROM phieunhap AS pn
-                JOIN khohang AS kh ON kh.MaPhieuNhap = pn.MaPhieuNhap
+                JOIN chitietphieunhap ctpn ON ctpn.MaPhieuNhap = pn.MaPhieuNhap
+                JOIN khohang kh ON ctpn.IDChiTietPhieuNhap = kh.IDChiTietPhieuNhap
                 JOIN nhacungcap AS ncc ON pn.MaNhaCungCap = ncc.MaNhaCungCap
-                WHERE pn.TrangThai = N'Đã Nhập'
+                WHERE pn.TrangThai = N'Đã duyệt'
                 AND pn.NgayNhap >= DATE_SUB(NOW(), INTERVAL 4 QUARTER)
                 GROUP BY YEAR(pn.NgayNhap), QUARTER(pn.NgayNhap)
                 ORDER BY YEAR(pn.NgayNhap), QUARTER(pn.NgayNhap)";
@@ -51,11 +53,12 @@ switch ($timeFrame) {
         // Lấy dữ liệu theo năm (5 năm gần đây)
         $sql = "SELECT 
                     YEAR(pn.NgayNhap) as year,
-                    SUM(kh.GiaNhap) as totalValue
+                    SUM(ctpn.GiaNhap) as totalValue
                 FROM phieunhap AS pn
-                JOIN khohang AS kh ON kh.MaPhieuNhap = pn.MaPhieuNhap
+                JOIN chitietphieunhap ctpn ON ctpn.MaPhieuNhap = pn.MaPhieuNhap
+                JOIN khohang kh ON ctpn.IDChiTietPhieuNhap = kh.IDChiTietPhieuNhap
                 JOIN nhacungcap AS ncc ON pn.MaNhaCungCap = ncc.MaNhaCungCap
-                WHERE pn.TrangThai = N'Đã Nhập'
+                WHERE pn.TrangThai = N'Đã duyệt'
                 AND pn.NgayNhap >= DATE_SUB(NOW(), INTERVAL 5 YEAR)
                 GROUP BY YEAR(pn.NgayNhap)
                 ORDER BY YEAR(pn.NgayNhap)";

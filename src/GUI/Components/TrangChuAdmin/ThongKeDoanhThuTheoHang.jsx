@@ -46,7 +46,7 @@ const ThongKeDoanhThuTheoHang = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost/Web2/server/api/getThongKeHang.php?timeRange=${timeRange}`
+        `http://localhost/Web2/server/api/TrangChuAdmin/getThongKeHang.php?timeRange=${timeRange}`
       );
       
       console.log("API response:", response.data); // Debug

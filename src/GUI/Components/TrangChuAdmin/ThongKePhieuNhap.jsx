@@ -37,7 +37,7 @@ const ThongKePhieuNhap = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost/Web2/server/api/getPhieuNhap.php?timeFrame=${timeFrame}`);
+      const response = await axios.get(`http://localhost/Web2/server/api/TrangChuAdmin/getPhieuNhap.php?timeFrame=${timeFrame}`);
       
       if (response.data.success) {
         const data = response.data.data;

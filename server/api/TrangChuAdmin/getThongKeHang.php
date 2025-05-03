@@ -1,29 +1,26 @@
 <?php
-// filepath: f:\xampp\htdocs\web2\server\api\getTopUsers.php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-require_once "../config/Database.php";
+require_once "../../config/Database.php";
 
 $database = new Database();
 $conn = $database->getConnection();
 
 // Lấy tham số từ request
-$timeRange = isset($_GET['timeRange']) ? $_GET['timeRange'] : 'all';
-$limit = isset($_GET['limit']) && is_numeric($_GET['limit']) ? (int)$_GET['limit'] : 5;
-$viewType = isset($_GET['viewType']) ? $_GET['viewType'] : 'count';
+$timeRange = isset($_GET['timeRange']) ? $_GET['timeRange'] : 'month';
 
 // Xây dựng điều kiện thời gian
 $timeCondition = "";
 switch ($timeRange) {
+    case 'week':
+        $timeCondition = "AND DATE(hd.NgayDuyet) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+        break;
     case 'month':
         $timeCondition = "AND DATE(hd.NgayDuyet) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
-        break;
-    case 'quarter':
-        $timeCondition = "AND DATE(hd.NgayDuyet) >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)";
         break;
     case 'year':
         $timeCondition = "AND DATE(hd.NgayDuyet) >= DATE_SUB(CURDATE(), INTERVAL 365 DAY)";
@@ -33,23 +30,21 @@ switch ($timeRange) {
         break;
 }
 
-// Xác định trường sắp xếp
-$orderBy = $viewType === 'value' ? 'TongTien DESC' : 'SoLuongDonHang DESC';
-
-// SQL query để lấy người dùng mua nhiều nhất
+// SQL query để lấy doanh thu theo hãng
 $sql = "SELECT 
-            u.MaNguoiDung,
-            u.HoTen,
-            u.Email,
-            COUNT(hd.MaHoaDon) AS SoLuongDonHang,
-            SUM(cthd.GiaBan) AS TongTien
-        FROM nguoidung u
-        JOIN hoadon hd ON u.IDTaiKhoan = hd.IDTaiKhoan
-        JOIN chitiethoadon cthd ON cthd.MaHoaDon = hd.MaHoaDon
-        WHERE hd.TrangThai = '1' $timeCondition
-        GROUP BY u.MaNguoiDung, u.HoTen, u.Email
-        ORDER BY $orderBy
-        LIMIT $limit";
+            h.MaHang,
+            h.TenHang,
+            COUNT(cthd.Seri) AS SoLuong,
+            SUM(cthd.GiaBan) AS TongDoanhThu
+        FROM chitiethoadon cthd
+        JOIN khohang kh ON cthd.Seri = kh.Seri
+        JOIN chitietphieunhap ctpn ON ctpn.IDChiTietPhieuNhap = kh.IDChiTietPhieuNhap
+        JOIN hanghoa hh ON ctpn.MaHangHoa = hh.MaHangHoa
+        JOIN hang h ON hh.MaHang = h.MaHang
+        JOIN hoadon hd ON cthd.MaHoaDon = hd.MaHoaDon
+        WHERE hd.TrangThai = 'Đã Duyệt' $timeCondition AND kh.TinhTrang = 'Đã Bán'
+        GROUP BY h.MaHang, h.TenHang
+        ORDER BY TongDoanhThu DESC";
 
 // Debug SQL
 error_log("SQL Query: " . $sql);
@@ -70,7 +65,6 @@ $response = [
     "debug" => [
         "currentDate" => date("Y-m-d H:i:s"),
         "timeCondition" => $timeCondition,
-        "viewType" => $viewType,
         "totalRecords" => count($data)
     ]
 ];

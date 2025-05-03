@@ -22,7 +22,7 @@ const XemChiTiet = ({ show, onHide, maHoaDon }) => {
       setError(null);
       
       // Gọi API lấy chi tiết hóa đơn
-      const response = await axios.get(`http://localhost/Web2/server/api/getChiTietHoaDon.php?maHoaDon=${maHoaDon}`);
+      const response = await axios.get(`http://localhost/Web2/server/api/QuanLyHoaDon/getChiTietHoaDon.php?maHoaDon=${maHoaDon}`);
       
       if (response.data.success) {
         setChiTietHoaDon(response.data.chiTiet || []);

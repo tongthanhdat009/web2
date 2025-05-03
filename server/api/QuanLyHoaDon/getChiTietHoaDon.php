@@ -14,7 +14,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Kết nối database
-require_once "../config/Database.php";
+require_once "../../config/Database.php";
 $database = new Database();
 $conn = $database->getConnection();
 
@@ -73,7 +73,7 @@ try {
                     FROM chitiethoadon c
                     JOIN khohang k ON c.Seri = k.Seri
                     JOIN chitietphieunhap ctpn ON ctpn.IDChiTietPhieuNhap = k.IDChiTietPhieuNhap
-                    JOIN hanghoa h ON h.MaHangHoa = ctpn.IDChiTietPhieuNhap
+                    JOIN hanghoa h ON h.MaHangHoa = ctpn.MaHangHoa
                     WHERE c.MaHoaDon = ?";
     
     $stmtChiTiet = $conn->prepare($queryChiTiet);
