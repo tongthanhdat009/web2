@@ -10,7 +10,7 @@ require_once "../../config/Database.php";
 $database = new Database();
 $conn = $database->getConnection();
 
-$sql = "SELECT hoadon.MaHoaDon, hoadon.IDTaiKhoan, hoadon.NgayXuatHoaDon, hoadon.NgayDuyet, hoadon.TrangThai, SUM(chitiethoadon.Gia) AS TongTien
+$sql = "SELECT hoadon.MaHoaDon, hoadon.IDTaiKhoan, hoadon.NgayXuatHoaDon, hoadon.NgayDuyet, hoadon.TrangThai, SUM(chitiethoadon.GiaBan) AS TongTien
         FROM chitiethoadon, hoadon
         WHERE chitiethoadon.MaHoaDon = hoadon.MaHoaDon
         GROUP BY hoadon.MaHoaDon";

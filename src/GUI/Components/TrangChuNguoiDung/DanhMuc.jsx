@@ -123,7 +123,7 @@ function DanhMuc() {
 
     return (
         <>
-          <Navbar bg="light" expand="lg" className="danh-muc-navbar" style={{height: 'fit-content'}}>
+          <Navbar bg="light" expand="lg" className="danh-muc-navbar" style={{height: 'fit-content', maxHeight: '75px'}}>
               <Container>
                   <Navbar.Toggle aria-controls="basic-navbar-nav" />
                   <Navbar.Collapse id="basic-navbar-nav">
