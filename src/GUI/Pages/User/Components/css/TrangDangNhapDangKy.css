@@ -28,8 +28,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  padding-top: 60px;
+  padding: 2rem;
 }
 
 .dangnhap-dangky-card {
@@ -38,10 +37,8 @@
   box-shadow: 0 4px 24px rgba(0,0,0,0.08);
   overflow: hidden;
   border: none;
-  max-width: 700px;
-  width: 50vw;
+  width: 50%;
   min-width: 320px;
-  margin: 0 auto;
 }
 
 .dangnhap-dangky-card .card-body {
@@ -196,5 +193,126 @@
   font-size: 2.2rem;
   font-weight: 600;
   letter-spacing: 1px;
+}
+
+/* Responsive styles */
+@media (max-width: 767.98px) {
+  .dangnhap-dangky-page {
+    padding: 1rem;
+  }
+
+  .dangnhap-dangky-card {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .dangnhap-dangky-card-header-gradient {
+    padding: 1.5rem 1rem;
+  }
+
+  .dangnhap-dangky-card-header-gradient h2 {
+    font-size: 1.75rem;
+  }
+
+  .dangnhap-dangky-form-label {
+    font-size: 0.95rem;
+  }
+
+  .dangnhap-dangky-form-control,
+  .dangnhap-dangky-form-select {
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+  }
+
+  .dangnhap-dangky-btn-primary {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  .dangnhap-dangky-btn-link {
+    font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .dangnhap-dangky-card {
+    width: 50%;
+    max-width: 50%;
+    border-radius: 20px;
+    margin: 0 auto;
+  }
+
+  .dangnhap-dangky-card-header-gradient {
+    padding: 2rem 1.5rem;
+  }
+
+  .dangnhap-dangky-card-header-gradient h2 {
+    font-size: 2rem;
+  }
+
+  .dangnhap-dangky-form-label {
+    font-size: 1rem;
+  }
+
+  .dangnhap-dangky-form-control,
+  .dangnhap-dangky-form-select {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+
+  .dangnhap-dangky-btn-primary {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .dangnhap-dangky-btn-link {
+    font-size: 1rem;
+  }
+}
+
+/* Toast notification responsive */
+@media (max-width: 767.98px) {
+  .dangnhap-dangky-toast-container {
+    width: 90%;
+    left: 5%;
+    right: 5%;
+    top: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .dangnhap-dangky-toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+  }
+}
+
+/* Container responsive */
+@media (min-width: 576px) {
+  .container {
+    max-width: 540px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
 }
   
