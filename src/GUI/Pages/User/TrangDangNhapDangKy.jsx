@@ -257,26 +257,36 @@ function TrangDangNhapDangKy() {
         </Toast>
       </ToastContainer>
 
-      <div className="login-register-page">
+      <div className="dangnhap-dangky-page">
         <Container>
           <Row className="justify-content-center">
             <Col>
-              <Card className="login-register-card">
-                <div className="card-header-gradient">
-                  {showLogin ? "Đăng Nhập" : "Đăng Ký"}
+              <Card className="dangnhap-dangky-card">
+                <div className="dangnhap-dangky-card-header-gradient position-relative">
+                  <div className="w-100 text-center">
+                    <h2 className="mb-0">{showLogin ? "Đăng Nhập" : "Đăng Ký"}</h2>
+                  </div>
+                  <button
+                    type="button"
+                    className="dangnhap-dangky-close-btn"
+                    onClick={() => navigate('/')}
+                    aria-label="Đóng"
+                  >
+                    ×
+                  </button>
                 </div>
                 <Card.Body>
                   {!showLogin ? (
                     <>
                       <Form onSubmit={handleSubmitRegister} noValidate>
                         <Form.Group className="mb-3" controlId="registerHoTen">
-                          <Form.Label>Họ và tên<span className="text-danger">*</span></Form.Label>
-                          <Form.Control type="text" placeholder="Nhập họ và tên" value={registerHoTen} onChange={(e) => setRegisterHoTen(e.target.value)} required />
+                          <Form.Label className="dangnhap-dangky-form-label">Họ và tên<span className="dangnhap-dangky-text-danger">*</span></Form.Label>
+                          <Form.Control className="dangnhap-dangky-form-control" type="text" placeholder="Nhập họ và tên" value={registerHoTen} onChange={(e) => setRegisterHoTen(e.target.value)} required />
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="registerGioiTinh">
-                          <Form.Label>Giới tính<span className="text-danger">*</span></Form.Label>
-                          <Form.Select value={registerGioiTinh} onChange={(e) => setRegisterGioiTinh(e.target.value)} required>
+                          <Form.Label className="dangnhap-dangky-form-label">Giới tính<span className="dangnhap-dangky-text-danger">*</span></Form.Label>
+                          <Form.Select className="dangnhap-dangky-form-select" value={registerGioiTinh} onChange={(e) => setRegisterGioiTinh(e.target.value)} required>
                             <option value="Nam">Nam</option>
                             <option value="Nữ">Nữ</option>
                             <option value="Khác">Khác</option>
@@ -284,32 +294,32 @@ function TrangDangNhapDangKy() {
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="registerEmail">
-                          <Form.Label>Email<span className="text-danger">*</span></Form.Label>
-                          <Form.Control type="email" placeholder="Nhập địa chỉ email" value={registerEmail} onChange={(e) => setRegisterEmail(e.target.value)} required />
+                          <Form.Label className="dangnhap-dangky-form-label">Email<span className="dangnhap-dangky-text-danger">*</span></Form.Label>
+                          <Form.Control className="dangnhap-dangky-form-control" type="email" placeholder="Nhập địa chỉ email" value={registerEmail} onChange={(e) => setRegisterEmail(e.target.value)} required />
                         </Form.Group>
                         
                         <Form.Group className="mb-3" controlId="registerSoDienThoai">
-                          <Form.Label>Số điện thoại<span className="text-danger">*</span></Form.Label>
-                          <Form.Control type="tel" placeholder="Nhập số điện thoại" value={registerSoDienThoai} onChange={(e) => setRegisterSoDienThoai(e.target.value)} required pattern="[0-9]{10}" title="Số điện thoại phải gồm 10 chữ số"/>
+                          <Form.Label className="dangnhap-dangky-form-label">Số điện thoại<span className="dangnhap-dangky-text-danger">*</span></Form.Label>
+                          <Form.Control className="dangnhap-dangky-form-control" type="tel" placeholder="Nhập số điện thoại" value={registerSoDienThoai} onChange={(e) => setRegisterSoDienThoai(e.target.value)} required pattern="[0-9]{10}" title="Số điện thoại phải gồm 10 chữ số"/>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="registerTenDangNhap">
-                          <Form.Label>Tên đăng nhập<span className="text-danger">*</span></Form.Label>
-                          <Form.Control type="text" placeholder="Nhập tên đăng nhập" value={registerTenDangNhap} onChange={(e) => setRegisterTenDangNhap(e.target.value)} required />
+                          <Form.Label className="dangnhap-dangky-form-label">Tên đăng nhập<span className="dangnhap-dangky-text-danger">*</span></Form.Label>
+                          <Form.Control className="dangnhap-dangky-form-control" type="text" placeholder="Nhập tên đăng nhập" value={registerTenDangNhap} onChange={(e) => setRegisterTenDangNhap(e.target.value)} required />
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="registerMatKhau">
-                          <Form.Label>Mật khẩu<span className="text-danger">*</span></Form.Label>
-                          <Form.Control type="password" placeholder="Nhập mật khẩu" value={registerMatKhau} onChange={(e) => setRegisterMatKhau(e.target.value)} required />
+                          <Form.Label className="dangnhap-dangky-form-label">Mật khẩu<span className="dangnhap-dangky-text-danger">*</span></Form.Label>
+                          <Form.Control className="dangnhap-dangky-form-control" type="password" placeholder="Nhập mật khẩu" value={registerMatKhau} onChange={(e) => setRegisterMatKhau(e.target.value)} required />
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="registerConfirmMatKhau">
-                          <Form.Label>Nhập lại mật khẩu<span className="text-danger">*</span></Form.Label>
-                          <Form.Control type="password" placeholder="Nhập lại mật khẩu" value={registerConfirmMatKhau} onChange={(e) => setRegisterConfirmMatKhau(e.target.value)} required />
+                          <Form.Label className="dangnhap-dangky-form-label">Nhập lại mật khẩu<span className="dangnhap-dangky-text-danger">*</span></Form.Label>
+                          <Form.Control className="dangnhap-dangky-form-control" type="password" placeholder="Nhập lại mật khẩu" value={registerConfirmMatKhau} onChange={(e) => setRegisterConfirmMatKhau(e.target.value)} required />
                         </Form.Group>
 
                         <div className="d-grid gap-2 mt-4">
-                          <Button variant="primary" type="submit" size="lg" disabled={loading}>
+                          <Button className="dangnhap-dangky-btn-primary" variant="primary" type="submit" size="lg" disabled={loading}>
                             {loading ? (
                               <>
                                 <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2"/>
@@ -322,8 +332,8 @@ function TrangDangNhapDangKy() {
                       <div className="text-center mt-4">
                         <p className="mb-0">Đã có tài khoản? 
                           <Button 
+                            className="dangnhap-dangky-btn-link p-0 ms-1"
                             variant="link" 
-                            className="p-0 ms-1" 
                             onClick={() => { setShowLogin(true); handleCloseNotification(); }}
                             disabled={loading}
                           >
@@ -336,17 +346,17 @@ function TrangDangNhapDangKy() {
                     <>
                       <Form onSubmit={handleSubmitLogin}>
                         <Form.Group className="mb-3" controlId="loginTenDangNhap">
-                          <Form.Label>Tên đăng nhập</Form.Label>
-                          <Form.Control type="text" placeholder="Nhập tên đăng nhập" value={loginTenDangNhap} onChange={(e) => setLoginTenDangNhap(e.target.value)} required />
+                          <Form.Label className="dangnhap-dangky-form-label">Tên đăng nhập</Form.Label>
+                          <Form.Control className="dangnhap-dangky-form-control" type="text" placeholder="Nhập tên đăng nhập" value={loginTenDangNhap} onChange={(e) => setLoginTenDangNhap(e.target.value)} required />
                         </Form.Group>
 
                         <Form.Group className="mb-4">
-                          <Form.Label>Mật khẩu</Form.Label>
-                          <Form.Control type="password" placeholder="Nhập mật khẩu" value={loginMatKhau} onChange={(e) => setLoginMatKhau(e.target.value)} required />
+                          <Form.Label className="dangnhap-dangky-form-label">Mật khẩu</Form.Label>
+                          <Form.Control className="dangnhap-dangky-form-control" type="password" placeholder="Nhập mật khẩu" value={loginMatKhau} onChange={(e) => setLoginMatKhau(e.target.value)} required />
                         </Form.Group>
                         
                         <div className="d-grid gap-2">
-                          <Button variant="primary" type="submit" size="lg" disabled={loading}>
+                          <Button className="dangnhap-dangky-btn-primary" variant="primary" type="submit" size="lg" disabled={loading}>
                              {loading ? (
                               <>
                                 <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2"/>
@@ -359,8 +369,8 @@ function TrangDangNhapDangKy() {
                       <div className="text-center mt-4">
                         <p className="mb-0">Chưa có tài khoản? 
                           <Button 
+                            className="dangnhap-dangky-btn-link p-0 ms-1"
                             variant="link" 
-                            className="p-0 ms-1" 
                             onClick={() => { setShowLogin(false); handleCloseNotification(); }}
                             disabled={loading}
                           >
