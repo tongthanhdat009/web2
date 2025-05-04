@@ -93,7 +93,23 @@ export default function TrangGioHang() {
   };
 
   const handleRemoveItem = (id) => {
-    setCurrentCart(prevCart => prevCart.filter(item => item.IDChiTietPhieuNhap !== id));
+    setCurrentCart(prevCart => {
+        const updatedCart = prevCart.filter(item => item.IDChiTietPhieuNhap !== id);
+        const idTaiKhoan = localStorage.getItem("IDTaiKhoan");
+        capNhatGioHang(idTaiKhoan, updatedCart)
+          .then(result => {
+            if (result.success) {
+              console.log("Giỏ hàng đã được cập nhật");
+            } else {
+              console.error(result.message);
+            }
+          })
+          .catch(error => {
+            console.error("Lỗi khi cập nhật giỏ hàng:", error);
+          });
+
+        return updatedCart;
+    });
   };
 
   const getOptionsByAttribute = (maHangHoa, attr) => {
