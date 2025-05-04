@@ -1,53 +1,51 @@
 /* src/GUI/Pages/User/TrangDangNhapDangKy.css */
 
 :root {
-  --primary-color: #0d6efd; /* Bootstrap Blue */
-  --primary-hover-color: #0b5ed7;
+  --dangnhap-dangky-primary-color: #0d6efd; /* Bootstrap Blue */
+  --dangnhap-dangky-primary-hover-color: #0b5ed7;
   /* Remove success colors if not needed elsewhere or keep for other potential uses */
   /* --success-color: #198754; */
   /* --success-hover-color: #157347; */
-  --text-color: #495057;
-  --heading-color: #212529;
-  --border-color: #ced4da; /* Slightly darker border */
-  --input-bg: #f8f9fa; /* Subtle input background */
-  --card-bg: #ffffff;
-  --body-bg-start: #f8f9fa;
-  --body-bg-end: #e9ecef;
+  --dangnhap-dangky-text-color: #495057;
+  --dangnhap-dangky-heading-color: #212529;
+  --dangnhap-dangky-border-color: #ced4da; /* Slightly darker border */
+  --dangnhap-dangky-input-bg: #f8f9fa; /* Subtle input background */
+  --dangnhap-dangky-card-bg: #ffffff;
+  --dangnhap-dangky-body-bg-start: #f8f9fa;
+  --dangnhap-dangky-body-bg-end: #e9ecef;
 }
 
-.container {
+.dangnhap-dangky-container {
   max-width: 100%; /* Full width for the container */
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.login-register-page {
+.dangnhap-dangky-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  background: linear-gradient(135deg, var(--dangnhap-dangky-body-bg-start), var(--dangnhap-dangky-body-bg-end));
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  padding: 2rem;
 }
 
-.login-register-card {
-  background: #fff;
+.dangnhap-dangky-card {
+  background: var(--dangnhap-dangky-card-bg);
   border-radius: 20px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.08);
   overflow: hidden;
   border: none;
-  max-width: 700px;
-  width: 50vw;
+  width: 50%;
   min-width: 320px;
-  margin: 0 auto;
 }
 
-.login-register-card .card-body {
+.dangnhap-dangky-card .card-body {
   padding: 3rem 2.5rem 2.5rem 2.5rem;
 }
 
-.login-register-card .card-body > h2 {
+.dangnhap-dangky-card .card-body > h2 {
   background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
   color: #fff;
   border-radius: 20px 20px 0 0;
@@ -59,13 +57,13 @@
   letter-spacing: 1px;
 }
 
-.form-label {
+.dangnhap-dangky-form-label {
   font-weight: bold; /* Make labels bold */
-  color: var(--text-color);
+  color: var(--dangnhap-dangky-text-color);
   margin-bottom: 0.6rem; /* Slightly more space */
 }
 
-.form-control, .form-select {
+.dangnhap-dangky-form-control, .dangnhap-dangky-form-select {
   border-radius: 24px !important;
   padding: 16px 22px !important;
   background: #fafafa !important;
@@ -75,13 +73,13 @@
   transition: border 0.2s;
 }
 
-.form-control:focus, .form-select:focus {
+.dangnhap-dangky-form-control:focus, .dangnhap-dangky-form-select:focus {
   border: 1.5px solid #6a11cb !important;
   background: #fff !important;
   box-shadow: none !important;
 }
 
-.btn-primary, .btn-primary:disabled {
+.dangnhap-dangky-btn-primary, .dangnhap-dangky-btn-primary:disabled {
   background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%) !important;
   border: none !important;
   border-radius: 24px !important;
@@ -91,11 +89,11 @@
   transition: background 0.2s;
 }
 
-.btn-primary:hover, .btn-primary:active {
+.dangnhap-dangky-btn-primary:hover, .dangnhap-dangky-btn-primary:active {
   background: linear-gradient(90deg, #2575fc 0%, #6a11cb 100%) !important;
 }
 
-.btn-link, .login-register-card a {
+.dangnhap-dangky-btn-link, .dangnhap-dangky-card a {
   color: #2575fc !important;
   font-weight: 500;
   text-decoration: none;
@@ -103,21 +101,21 @@
   padding: 0;
 }
 
-.btn-link:hover, .login-register-card a:hover {
+.dangnhap-dangky-btn-link:hover, .dangnhap-dangky-card a:hover {
   color: #6a11cb !important;
   text-decoration: underline;
 }
 
-.toast-container {
+.dangnhap-dangky-toast-container {
   z-index: 1090 !important;
 }
 
-.text-danger {
+.dangnhap-dangky-text-danger {
   margin-left: 0.2rem;
   font-size: 0.875em; /* Make asterisk slightly smaller */
 }
 
-@keyframes slideInRight {
+@keyframes dangnhap-dangky-slideInRight {
   from {
     transform: translateX(100%);
     opacity: 0;
@@ -128,37 +126,37 @@
   }
 }
 
-.toast.show {
-  animation: slideInRight 0.4s ease-out forwards;
+.dangnhap-dangky-toast.show {
+  animation: dangnhap-dangky-slideInRight 0.4s ease-out forwards;
 }
 
 @media (max-width: 900px) {
-  .login-register-card {
+  .dangnhap-dangky-card {
     width: 80vw;
     max-width: 98vw;
   }
 }
 
 @media (max-width: 500px) {
-  .login-register-card {
+  .dangnhap-dangky-card {
     width: 99vw;
     max-width: 99vw;
     padding: 0 1vw;
   }
-  .login-register-card .card-body > h2 {
+  .dangnhap-dangky-card .card-body > h2 {
     font-size: 1.4rem;
     padding: 22px 0 14px 0;
   }
-  .login-register-card .card-body {
+  .dangnhap-dangky-card .card-body {
     padding: 1.2rem 0.5rem 1.5rem 0.5rem;
   }
 }
 
-.card {
+.dangnhap-dangky-card {
   border: none !important;
 }
 
-.card-header-gradient {
+.dangnhap-dangky-card-header-gradient {
   background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
   color: #fff;
   border-radius: 20px 20px 0 0;
@@ -171,5 +169,150 @@
   margin: 0;
   position: relative;
   z-index: 2;
+}
+
+.dangnhap-dangky-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.dangnhap-dangky-close-btn:hover {
+  color: #ffd6d6;
+}
+
+.dangnhap-dangky-card-header-gradient h2 {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* Responsive styles */
+@media (max-width: 767.98px) {
+  .dangnhap-dangky-page {
+    padding: 1rem;
+  }
+
+  .dangnhap-dangky-card {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .dangnhap-dangky-card-header-gradient {
+    padding: 1.5rem 1rem;
+  }
+
+  .dangnhap-dangky-card-header-gradient h2 {
+    font-size: 1.75rem;
+  }
+
+  .dangnhap-dangky-form-label {
+    font-size: 0.95rem;
+  }
+
+  .dangnhap-dangky-form-control,
+  .dangnhap-dangky-form-select {
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+  }
+
+  .dangnhap-dangky-btn-primary {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  .dangnhap-dangky-btn-link {
+    font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .dangnhap-dangky-card {
+    width: 50%;
+    max-width: 50%;
+    border-radius: 20px;
+    margin: 0 auto;
+  }
+
+  .dangnhap-dangky-card-header-gradient {
+    padding: 2rem 1.5rem;
+  }
+
+  .dangnhap-dangky-card-header-gradient h2 {
+    font-size: 2rem;
+  }
+
+  .dangnhap-dangky-form-label {
+    font-size: 1rem;
+  }
+
+  .dangnhap-dangky-form-control,
+  .dangnhap-dangky-form-select {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+
+  .dangnhap-dangky-btn-primary {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .dangnhap-dangky-btn-link {
+    font-size: 1rem;
+  }
+}
+
+/* Toast notification responsive */
+@media (max-width: 767.98px) {
+  .dangnhap-dangky-toast-container {
+    width: 90%;
+    left: 5%;
+    right: 5%;
+    top: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .dangnhap-dangky-toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+  }
+}
+
+/* Container responsive */
+@media (min-width: 576px) {
+  .container {
+    max-width: 540px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
 }
   

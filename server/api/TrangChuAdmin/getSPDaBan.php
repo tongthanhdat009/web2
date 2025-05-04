@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-require_once "../config/Database.php";
+require_once "../../config/Database.php";
 
 $database = new Database();
 $conn = $database->getConnection();
@@ -47,10 +47,11 @@ $sql = "SELECT
             SUM(cthd.GiaBan) AS TongDoanhThu
         FROM chitiethoadon cthd
         JOIN khohang kh ON cthd.Seri = kh.Seri
-        JOIN hanghoa hh ON kh.MaHangHoa = hh.MaHangHoa
+        JOIN chitietphieunhap ctpn ON ctpn.IDChiTietPhieuNhap = kh.IDChiTietPhieuNhap
+        JOIN hanghoa hh ON ctpn.MaHangHoa = hh.MaHangHoa
         JOIN hang h ON hh.MaHang = h.MaHang
         JOIN hoadon hd ON cthd.MaHoaDon = hd.MaHoaDon
-        WHERE hd.TrangThai = '1' $timeCondition AND kh.TinhTrang = '1'
+        WHERE hd.TrangThai = 'Đã Duyệt' $timeCondition AND kh.TinhTrang = 'Đã bán'
         GROUP BY hh.MaHangHoa, hh.TenHangHoa, h.TenHang
         ORDER BY $orderBy
         LIMIT $limit";

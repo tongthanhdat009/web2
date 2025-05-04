@@ -30,13 +30,13 @@ function Footer(){
     
     return (
         <footer className="footer py-3" style={{height: 'fit-content'}}>
-            <div className="container">
-                <div className="row gy-2">
+            <div className="container justify-content-center m-auto">
+                <div className="row gy-2 w-100">
                     <div className="col-12 col-md-4">
                         {isMobile ? (
-                            <div className="mb-2">
+                            <div className="mb-2 ">
                                 <div 
-                                    className="d-flex justify-content-between align-items-center py-2 border-bottom pointer"
+                                    className="d-fle justify-content-between align-items-center py-2 border-bottom pointer"
                                     onClick={() => toggleSection('contact')}
                                 >
                                     <h5 className="text-dark m-0">Liên hệ</h5>
@@ -131,13 +131,12 @@ function Footer(){
                         )}
                     </div>
                 </div>
-                
-                <div className="row mt-2">
-                    <div className="col-12 text-center">
-                        <p className="m-0 text-secondary small">
-                            &copy; {new Date().getFullYear()} Dụng Cụ Thể Thao. Tất cả quyền được bảo lưu.
-                        </p>
-                    </div>
+            </div>
+            <div className="row mt-2">
+                <div className="col-12 text-center">
+                    <p className="m-0 text-secondary small">
+                        &copy; {new Date().getFullYear()} Dụng Cụ Thể Thao. Tất cả quyền được bảo lưu.
+                    </p>
                 </div>
             </div>
         </footer>

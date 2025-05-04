@@ -14,7 +14,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Kết nối database
-require_once "../config/Database.php";
+require_once "../../config/Database.php";
 $database = new Database();
 $conn = $database->getConnection();
 
@@ -69,10 +69,11 @@ try {
     $hoaDon = $resultHoaDon->fetch_assoc();
 
     // Lấy chi tiết hóa đơn
-    $queryChiTiet = "SELECT c.*, h.TenHangHoa, k.GiaBan
+    $queryChiTiet = "SELECT c.*, h.TenHangHoa
                     FROM chitiethoadon c
-                    INNER JOIN khohang k ON c.Seri = k.Seri 
-                    INNER JOIN hanghoa h ON k.MaHangHoa = h.MaHangHoa
+                    JOIN khohang k ON c.Seri = k.Seri
+                    JOIN chitietphieunhap ctpn ON ctpn.IDChiTietPhieuNhap = k.IDChiTietPhieuNhap
+                    JOIN hanghoa h ON h.MaHangHoa = ctpn.MaHangHoa
                     WHERE c.MaHoaDon = ?";
     
     $stmtChiTiet = $conn->prepare($queryChiTiet);
@@ -87,10 +88,8 @@ try {
     }
     
     // lấy tổng tiền
-    $queryTongTien = "SELECT SUM(k.giaban) AS TongTien
+    $queryTongTien = "SELECT SUM(c.GiaBan) AS TongTien
                     FROM chitiethoadon c
-                    INNER JOIN khohang k ON c.Seri = k.Seri 
-                    INNER JOIN hanghoa h ON k.MaHangHoa = h.MaHangHoa 
                     WHERE c.MaHoaDon = ?";
     $stmtTongTien = $conn->prepare($queryTongTien);
     $stmtTongTien->bind_param("s", $maHoaDon);

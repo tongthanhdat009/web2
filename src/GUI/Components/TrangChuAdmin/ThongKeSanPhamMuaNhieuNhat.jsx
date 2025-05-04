@@ -53,7 +53,7 @@ const ThongKeSanPhamMuaNhieuNhat = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost/Web2/server/api/getSPDaBan.php?timeRange=${timeRange}&limit=${topCount}&mode=${viewMode}`
+        `http://localhost/Web2/server/api/TrangChuAdmin/getSPDaBan.php?timeRange=${timeRange}&limit=${topCount}&mode=${viewMode}`
       );
       
       console.log("API response:", response.data); // Debug

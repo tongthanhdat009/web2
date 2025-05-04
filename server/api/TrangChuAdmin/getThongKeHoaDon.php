@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-require_once "../config/Database.php";
+require_once "../../config/Database.php";
 
 $database = new Database();
 $conn = $database->getConnection();
@@ -20,13 +20,13 @@ $statusCondition = "";
 if ($status !== 'all') {
     switch ($status) {
         case 'completed':
-            $statusCondition = "AND hoadon.TrangThai = '1'";
+            $statusCondition = "AND hoadon.TrangThai = 'Đã Duyệt'";
             break;
         case 'pending':
-            $statusCondition = "AND hoadon.TrangThai = '2'";
+            $statusCondition = "AND hoadon.TrangThai = 'Chờ Duyệt'";
             break;
         case 'cancelled':
-            $statusCondition = "AND hoadon.TrangThai = '0'";
+            $statusCondition = "AND hoadon.TrangThai = 'Đã Hủy'";
             break;
     }
 }
