@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { chiTietHangHoa, addToCart } from "../../../DAL/apiChiTietHangHoa.jsx";
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaTags } from "react-icons/fa";
+import SanPhamGoiY from "./Components/SanPhamGoiY.jsx";
 import "./css/chiTietHangHoa.css";
 
 function TrangChiTietHangHoa() {
@@ -12,8 +13,9 @@ function TrangChiTietHangHoa() {
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState(null);
   const { maHangHoa } = useParams();
-  const navigate = useNavigate(); // useNavigate hook for redirecting
+  const navigate = useNavigate();
   const idTaiKhoan = localStorage.getItem("IDTaiKhoan");
+
   useEffect(() => {
     async function fetchData() {
       const data = await chiTietHangHoa(maHangHoa) || [];
@@ -33,6 +35,7 @@ function TrangChiTietHangHoa() {
     item.IDKichThuocQuanAo === selectedAo &&
     item.IDKichThuocGiay === selectedGiay
   ) || {};
+  console.log("current", current);
 
   const adjustQty = delta => {
     setQuantity(q => {
@@ -46,7 +49,6 @@ function TrangChiTietHangHoa() {
 
   const handleAddToCart = async () => {
     if (!idTaiKhoan) {
-      // Nếu chưa đăng nhập, điều hướng đến trang đăng nhập
       navigate("/dang-nhap-dang-ky");
       return;
     }
@@ -68,7 +70,6 @@ function TrangChiTietHangHoa() {
     return current.GiaBan - giam;
   };
 
- // ...existing code...
   return (
     <div className="cthh-container">
       <div className="cthh-product-image">
@@ -176,9 +177,16 @@ function TrangChiTietHangHoa() {
         <h3>Mô Tả Sản Phẩm:</h3>
         <p className="cthh-description-content">{current.MoTa}</p>
       </div>
+
+      {/* Sản phẩm gợi ý */}
+      <div className="cthh-goiy-section" style={{ background: "#fffff", width: "100%" }}>
+        <h3>Sản phẩm gợi ý</h3>
+        {current.MaChungLoai && (
+          <SanPhamGoiY maChungLoai={current.MaChungLoai} maHangHoaHienTai={maHangHoa} />
+        )}
+      </div>
     </div>
   );
-// ...existing code...
 }
 
 export default TrangChiTietHangHoa;

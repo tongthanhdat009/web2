@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { layGioHang, capNhatGioHang, getThongTinNguoiDung, ThanhToan } from "../../../DAL/apiGioHang.jsx";
+import { layGioHang, capNhatGioHang, getThongTinNguoiDung, ThanhToan, ThanhToanOnline } from "../../../DAL/apiGioHang.jsx";
 import "./css/GioHang.css";
 import FormXacNhanThanhToan from "./Components/FormXacNhanThanhToan.jsx";
 
@@ -59,7 +59,7 @@ export default function TrangGioHang() {
     return currentCart.reduce((sum, item) => {
       const basePrice = item.GiaBan || 0;
       const discount = item.PhanTram ? Number(item.PhanTram) : 0;
-      const finalPrice = discount > 0 ? basePrice * (1 - discount / 100) : basePrice;
+      const finalPrice = discount > 0 ? Math.ceil(basePrice * (1 - discount / 100)) : basePrice;
       return sum + finalPrice * item.SoLuong;
     }, 0);
   };
@@ -167,19 +167,41 @@ export default function TrangGioHang() {
   const handleFormSubmit = async (info) => {
     const IDTaiKhoan = localStorage.getItem("IDTaiKhoan");
     setShowForm(false);
-    const result = await ThanhToan(
-      IDTaiKhoan,
-      info.TenNguoiMua,
-      info.SoDienThoai,
-      info.DiaChi,
-      info.HinhThucThanhToan,
-      currentCart
-    );
-    if (result.success) {
-      alert("Thanh toán thành công!");
-      setCurrentCart([]);
-    } else {
-      alert("Thanh toán thất bại: " + result.message);
+    if(info.HinhThucThanhToan === "Tiền mặt") {
+      const result = await ThanhToan(
+        IDTaiKhoan,
+        info.TenNguoiMua,
+        info.SoDienThoai,
+        info.DiaChi,
+        info.HinhThucThanhToan,
+        currentCart
+      );
+      if (result.success) {
+        alert("Thanh toán thành công!");
+        setCurrentCart([]);
+        navigate(`/ket-qua-thanh-toan`);
+      } else {
+        alert("Thanh toán thất bại: " + result.message);
+      }
+    }
+    else {
+      const result = await ThanhToan(
+        IDTaiKhoan,
+        info.TenNguoiMua,
+        info.SoDienThoai,
+        info.DiaChi,
+        info.HinhThucThanhToan,
+        currentCart,
+      );
+      if (result.success) {
+        await ThanhToanOnline(
+          result.IDHoaDon,
+          info.TenNguoiMua,
+          calculateTotal()
+        );
+      } else {
+        alert("Thanh toán thất bại: " + result.message);
+      }
     }
   };
 
@@ -195,7 +217,7 @@ export default function TrangGioHang() {
               currentCart.map(item => {
                 const basePrice = item.GiaBan || 0;
                 const discount = item.PhanTram ? Number(item.PhanTram) : 0;
-                const finalPrice = discount > 0 ? basePrice * (1 - discount / 100) : basePrice;
+                const finalPrice = discount > 0 ? Math.ceil(basePrice * (1 - discount / 100)) : basePrice;
                 return (
                   <div key={item.IDChiTietPhieuNhap} className="giohang-item">
                     <div className="giohang-item-image">
@@ -246,26 +268,9 @@ export default function TrangGioHang() {
 
           {/* Tổng tiền */}
           <div className="tinh-tien">
-            <h3>Chi tiết đơn hàng:</h3>
-            <ul className="tinh-tien-chi-tiet">
-              {currentCart.map((item) => {
-                const basePrice = item.GiaBan || 0;
-                const discount = item.PhanTram ? Number(item.PhanTram) : 0;
-                const finalPrice = discount > 0 ? basePrice * (1 - discount / 100) : basePrice;
-
-                const chiTiet = [];
-                if (item.KichThuocGiay) chiTiet.push(`${item.KichThuocGiay}`);
-                if (item.KhoiLuong) chiTiet.push(`${item.KhoiLuong}`);
-                if (item.KichThuocQuanAo) chiTiet.push(`${item.KichThuocQuanAo}`);
-
-                return (
-                  <li key={item.IDChiTietPhieuNhap}>
-                    {item.TenHangHoa} ({chiTiet.join(" - ")}) × {item.SoLuong}: <strong>{formatPrice(finalPrice * item.SoLuong)}</strong>
-                  </li>
-                );
-              })}
-            </ul>
-            <h3 style={{ marginTop: "1rem" }}>Tổng tiền: {formatPrice(calculateTotal())}</h3>
+            <div className="tinh-tien-total">
+              <h4>Tổng tiền: {formatPrice(calculateTotal())}</h4>
+            </div>
             <button className="btn-checkout" onClick={handleShowForm}>Thanh toán</button>
           </div>
           {showForm && (

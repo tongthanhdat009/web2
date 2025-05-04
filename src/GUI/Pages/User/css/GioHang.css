@@ -1,251 +1,281 @@
+/* Container chính */
 .giohang-container {
-    width: 100%;
-    padding: 20px 0;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    font-family: 'Roboto', sans-serif;
-    font-size: 12px;
-    background-color: #fff;
-  }
-  
-  .giohang-main {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  }
-  
-  .giohang-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    width: 90%;
-    justify-content: center;
-  }
-  
-  /* Danh sách sản phẩm */
-  .giohang-list {
-    flex: 0 0 60%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #fafafa;
-  }
-  
-  /* Phần tính tiền */
+  width: 100%;
+  padding: 20px 0;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  background-color: #f7f7f7;
+}
+
+.giohang-main {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.giohang-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 90%;
+  justify-content: center;
+}
+
+/* Danh sách sản phẩm */
+.giohang-list {
+  flex: 0 0 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Phần tính tiền */
+.tinh-tien {
+  flex: 0 0 25%;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: fit-content;
+}
+
+/* Thông tin sản phẩm */
+.giohang-item {
+  display: flex;
+  gap: 20px;
+  padding: 15px 0;
+  border-bottom: 1px solid #f2f2f2;
+  font-size: 15px;
+}
+
+.giohang-item-image img {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.giohang-item-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Thông tin sản phẩm và chỉnh sửa số lượng trong 1 dòng */
+.giohang-item-info-and-quantity {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* Thông tin sản phẩm */
+.giohang-item-info {
+  display: block;
+}
+
+.giohang-item-price {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.old-price {
+  text-decoration: line-through;
+  color: #888;
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.new-price {
+  color: #e74c3c;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.discount-percent {
+  color: #27ae60;
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Chỉnh sửa số lượng */
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.quantity-controls button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: #3498db;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.quantity-controls button:hover {
+  background: #2980b9;
+}
+
+.quantity-controls span {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Phần xóa, sửa */
+.giohang-item-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.giohang-item-actions button {
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  width: 100px;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.giohang-item-actions button:hover {
+  background-color: #f4f4f4;
+  transform: scale(1.05);
+}
+
+/* Nút Thanh toán */
+.btn-checkout {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #2ecc71;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: auto;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.btn-checkout:hover {
+  background: #27ae60;
+  transform: scale(1.05);
+}
+
+/* Form chỉnh sửa sản phẩm */
+.edit-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.edit-form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.option-box {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #f9f9f9;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.option-box.selected {
+  border-color: #007bff;
+  background: #e7f1ff;
+}
+
+.option-box:hover {
+  background: #f4f4f4;
+  transform: scale(1.05);
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.tinh-tien-chi-tiet {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 1rem;
+}
+
+.tinh-tien-chi-tiet li {
+  margin-bottom: 0.5rem;
+  font-size: 15px;
+}
+
+.out-of-stock {
+  color: #e53935;
+  font-weight: bold;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Responsive: khi <800px xếp dọc */
+@media (max-width: 800px) {
+  .giohang-list,
   .tinh-tien {
-    flex: 0 0 25%;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #f9f9f9;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex: 0 0 100%;
   }
-  
-  /* Thông tin sản phẩm */
+
   .giohang-item {
-    display: flex;
-    gap: 20px;
-    padding: 15px 0;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .giohang-item-image img {
-    width: 250px;
-    height: 250px;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  .giohang-item-details {
-    display: flex;
     flex-direction: column;
-    flex: 1;
-  }
-  
-  /* Thông tin sản phẩm và chỉnh sửa số lượng trong 1 dòng */
-  .giohang-item-info-and-quantity {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start; /* Căn phần chỉnh số lượng lên trên */
-  }
-  
-  /* Thông tin sản phẩm */
-  .giohang-item-info {
-    display: block;
-  }
-  
-  .giohang-item-price {
-    font-size: 14px;
-    margin-bottom: 8px;
-  }
-  
-  .old-price {
-    text-decoration: line-through;
-    color: #888;
-    margin-right: 8px;
-  }
-  
-  .new-price {
-    color: #e74c3c;
-    font-weight: bold;
-  }
-  
-  .discount-percent {
-    color: #27ae60;
-    margin-left: 8px;
-    font-size: 12px;
-  }
-  
-  /* Chỉnh sửa số lượng */
-  .quantity-controls {
-    display: flex;
     align-items: center;
-    gap: 8px;
   }
-  
-  .quantity-controls {
-    display: flex;
+
+  .giohang-item-info,
+  .giohang-item-edit-actions {
+    width: 100%;
     align-items: center;
-    gap: 8px;
-    justify-content: flex-end; /* Căn phải */
   }
-  
-  .quantity-controls button {
-    width: 28px;
-    height: 28px;
-    border: none;
-    border-radius: 4px;
-    background: #3498db;
-    color: #fff;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  .quantity-controls button:hover {
-    background: #2980b9;
-  }
-  
-  .quantity-controls span {
-    font-size: 14px;
-  }
-  /* Phần xóa, sửa */
+
+  .quantity-controls,
   .giohang-item-actions {
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end; /* Căn phải */
-  }
-  
-  .giohang-item-actions button {
-    border: none;
-    padding: 8px;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    background-color: #ffffff;
-    border: 1px solid black;
-    width: 100px;
-  }
-  
-  /* Nút Thanh toán */
-  .btn-checkout {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 4px;
-    background: #2ecc71;
-    color: #fff;
-    font-size: 14px;
-    cursor: pointer;
-    margin-top: auto;
-  }
-  
-  .btn-checkout:hover {
-    background: #27ae60;
-  }
-  .edit-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
     justify-content: center;
-    z-index: 1000;
   }
-  .edit-form {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 400px;
-    width: 100%;
-  }
-  .options-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 8px 0;
-  }
-  .option-box {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background: #f9f9f9;
-    cursor: pointer;
-  }
-  .option-box.selected {
-    border-color: #007bff;
-    background: #e7f1ff;
-  }
-  .edit-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 16px;
-  }
-  .tinh-tien-chi-tiet {
-    list-style: none;
-    padding-left: 0;
-    margin-top: 1rem;
-  }
-  
-  .tinh-tien-chi-tiet li {
-    margin-bottom: 0.5rem;
-  }
-  .out-of-stock {
-    color: #e53935;
-    font-weight: bold;
-    font-size: 1.2rem;
-    letter-spacing: 1px;
-  }
-  
-  /* Responsive: khi <800px xếp dọc */
-  @media (max-width: 800px) {
-    .giohang-list,
-    .tinh-tien {
-      flex: 0 0 100%;
-    }
-  
-    .giohang-item {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .giohang-item-info,
-    .giohang-item-edit-actions {
-      width: 100%;
-      align-items: center;
-    }
-  
-    .quantity-controls,
-    .giohang-item-actions {
-      justify-content: center;
-    }
-  }
-  
+}

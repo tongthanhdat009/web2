@@ -6,6 +6,9 @@ const KIEM_TRA_DU_HANG = "http://localhost/web2/server/api/GioHang/checkDuHangTh
 const TAO_HOA_DON = "http://localhost/web2/server/api/GioHang/createHoaDon.php";
 const LAY_SERI = "http://localhost/web2/server/api/GioHang/getSeri.php";
 const TAO_CHI_TIET_HOA_DON = "http://localhost/web2/server/api/GioHang/addChiTietHoaDon.php";
+const API_VNPAY = "http://localhost/web2/server/api/vnpay_php/vnpay_create_payment.php.php";
+const GET_HOA_DON = "http://localhost/web2/server/api/GioHang/getHoaDon.php";
+const XOA_HOA_DON = "http://localhost/web2/server/api/GioHang/deleteHoaDon.php";
 export async function layGioHang(idTaiKhoan) {
   try {
     const response = await fetch(`${LAY_GIO_HANG}?IDTaiKhoan=${idTaiKhoan}`, {
@@ -234,22 +237,103 @@ export async function ThanhToan(IDTaiKhoan, HoTen, SoDienThoai, DiaChi, HinhThuc
     if (!addChiTietResult.success) {
       throw new Error(addChiTietResult.message || "Lỗi khi thêm chi tiết hóa đơn.");
     }
+    localStorage.setItem("maHoaDonThanhToan", JSON.stringify(data.IDHoaDon));
+    return { success: true, message: "Hóa đơn đã được tạo thành công.", IDHoaDon: data.IDHoaDon };
 
-    // Xóa giỏ hàng nếu thành công
-    await fetch(XOA_GIO_HANG, {
+  } catch (error) {
+    console.error("Lỗi khi thanh toán:", error);
+    return { success: false, message: error.message };
+  }
+}
+export async function ThanhToanOnline(maHoaDon ,HoTen, tongTien) {
+  try {
+    const response = await fetch("http://localhost/web2/server/api/vnpay_php/vnpay_create_payment.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        amount: Math.round(tongTien),
+        orderInfo: `Thanh toán đơn hàng cho ${HoTen}`,
+      }),
+    });
+
+    const data = await response.json();
+    if (!response.ok || !data.url) {
+      throw new Error(data.message || "Lỗi khi tạo link thanh toán VNPay.");
+    }
+
+    // Chuyển hướng sang trang thanh toán VNPay
+    window.location.href = data.url;
+    return { success: true };
+
+  } catch (error) {
+    console.error("Lỗi khi thanh toán online:", error);
+    return { success: false, message: error.message };
+  }
+}
+export async function getHoaDon(maHoaDon) {
+  try {
+    const response = await fetch(`${GET_HOA_DON}?MaHoaDon=${maHoaDon}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || "Lỗi khi lấy thông tin hóa đơn.");
+    }
+    return data.data; // Trả về mảng thông tin hóa đơn và chi tiết
+
+  } catch (error) {
+    console.error("Lỗi khi lấy hóa đơn:", error);
+    return null;
+  }
+}
+export async function XoaGioHang(idTaiKhoan) {
+  try {
+    const response = await fetch(XOA_GIO_HANG, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        IDTaiKhoan: IDTaiKhoan,
+        IDTaiKhoan: idTaiKhoan,
       }),
     });
 
-    return { success: true, message: "Hóa đơn đã được tạo thành công.", seriArr };
-
+    const data = await response.json();
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || "Lỗi khi xóa giỏ hàng.");
+    }
+    return { success: true, message: data.message };
   } catch (error) {
-    console.error("Lỗi khi thanh toán:", error);
+    console.error("Lỗi khi xóa giỏ hàng:", error);
+    return { success: false, message: error.message };
+  }
+}
+export async function XoaHoaDon(maHoaDon) {
+  try {
+    const response = await fetch(XOA_HOA_DON, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        MaHoaDon: maHoaDon,
+      }),
+    });
+
+    const data = await response.json();
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || "Lỗi khi xóa hóa đơn.");
+    }
+
+    return { success: true, message: data.message };
+  } catch (error) {
+    console.error("Lỗi khi xóa hóa đơn:", error);
     return { success: false, message: error.message };
   }
 }

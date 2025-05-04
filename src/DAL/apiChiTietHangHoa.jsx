@@ -1,5 +1,6 @@
 const LAY_CHI_TIET_HANG_HOA = "http://localhost/web2/server/api/ChiTietHangHoa/getChiTietHangHoa.php";
 const THEM_VAO_GIO_HANG = "http://localhost/web2/server/api/ChiTietHangHoa/addToCart.php";
+const LAY_GOI_Y = "http://localhost/web2/server/api/ChiTietHangHoa/getDanhSachGoiY.php";
 export async function chiTietHangHoa(maHangHoa) {   
     try {
         const response = await fetch(LAY_CHI_TIET_HANG_HOA, {
@@ -32,7 +33,6 @@ export async function addToCart(
     IDKichThuocGiay = 0
   ) 
 {
-  console.log(IDTaiKhoan, MaHangHoa, SoLuong, IDKhoiLuongTa, IDKichThuocQuanAo, IDKichThuocGiay);
     try {
       const response = await fetch(THEM_VAO_GIO_HANG, {
         method: "POST",
@@ -59,5 +59,26 @@ export async function addToCart(
     } catch (error) {
       console.error("Lỗi addToCart:", error);
       return { success: false, error: error.message };
+    }
+}
+export async function getGoiY(MaChungLoai) {
+    try {
+        const response = await fetch(`${LAY_GOI_Y}?maChungLoai=${MaChungLoai}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Lỗi khi gọi API gợi ý");
+        }
+
+        const data = await response.json();
+        console.log("Dữ liệu gợi ý:", data);
+        return data;
+    } catch (error) {
+        console.error("Lỗi gọi API gợi ý:", error);
+        return null;
     }
 }
