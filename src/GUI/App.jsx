@@ -15,39 +15,38 @@ import TrangTraCuuSanPham from "./Pages/User/TrangGioiThieu/TrangTraCuuSanPham";
 import TrangGioHang from "./Pages/User/TrangGioHang";
 import TrangDangNhapDangKy from "./Pages/User/TrangDangNhapDangKy";
 import TrangChuUser from "./Pages/User/TrangChuUser";
+import TrangChiTietHangHoa from "./Pages/User/TrangChiTietHangHoa";
+import TrangSanPhamTheoTheLoai from "./Pages/User/TrangSanPhamTheoTheLoai";
+import KetQuaThanhToanOnline from "./Pages/User/KetQuaThanhToanOnline";
+import KetQuaThanhToan from "./Pages/User/KetQuaThanhToan";
 import TrangXemThongTinCaNhan from "./Pages/User/TrangXemThongTinCaNhan";
 
 function App() {
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          motion: false,
-        },
-      }}
-    >
-      <AntApp>
-        <Router>
-          <Routes>
-            <Route path="/" element={<UserLayout />} >
-              <Route index element={<TrangChuUser />} />
-              <Route path="gioi-thieu" element={<TrangGioiThieu />} />
-              <Route path="van-chuyen" element={<TrangVanChuyen />} />
-              <Route path="thanh-toan" element={<TrangThanhToan />} />
-              <Route path="lien-he" element={<TrangLienHe />} />
-              <Route path="huong-dan-mua-hang" element={<TrangHuongDanMuaHang />} />
-              <Route path="chinh-sach-bao-hanh" element={<TrangChinhSachBaoHanh />} />
-              <Route path="tra-cuu-san-pham" element={<TrangTraCuuSanPham />} />
-              <Route path="gio-hang" element={<TrangGioHang />} />
-              <Route path="thong-tin-tai-khoan" element={<TrangXemThongTinCaNhan />} />
-            </Route>
-            <Route path="/dang-nhap-dang-ky" element={<TrangDangNhapDangKy />} />
-            <Route path="/admin/*" element={<AdminLayout />} />
-            <Route path="/admin/dang-nhap-admin" element={<DangNhapAdmin />} />
-          </Routes>
-        </Router>
-      </AntApp>
-    </ConfigProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<UserLayout />} >
+          <Route index element={<TrangChuUser />} />
+          <Route path="gioi-thieu" element={<TrangGioiThieu />} />
+          <Route path="van-chuyen" element={<TrangVanChuyen />} />
+          <Route path="thanh-toan" element={<TrangThanhToan />} />
+          <Route path="lien-he" element={<TrangLienHe />} />
+          <Route path="huong-dan-mua-hang" element={<TrangHuongDanMuaHang />} />
+          <Route path="chinh-sach-bao-hanh" element={<TrangChinhSachBaoHanh />} />
+          <Route path="tra-cuu-san-pham" element={<TrangTraCuuSanPham />} />
+          <Route path="gio-hang" element={<TrangGioHang />} />
+          <Route path="the-loai/:maTheLoai" element={<TrangSanPhamTheoTheLoai />} />
+          <Route path="/the-loai/:maTheLoai/:maChungLoaiUrl?" element={<TrangSanPhamTheoTheLoai />} />
+          <Route path="/chi-tiet-san-pham/:maHangHoa" element={<TrangChiTietHangHoa />} />
+          <Route path="/ket-qua-thanh-toan-online" element={<KetQuaThanhToanOnline />} />
+          <Route path="/ket-qua-thanh-toan" element={<KetQuaThanhToan />} />
+          <Route path="/thong-tin-tai-khoan" element={<TrangXemThongTinCaNhan />} />
+        </Route>
+        <Route path="/dang-nhap-dang-ky" element={<TrangDangNhapDangKy />} />
+        <Route path="/admin/*" element={<AdminLayout />} />
+        <Route path="/admin/dang-nhap-admin" element={<DangNhapAdmin />} />
+      </Routes>
+    </Router>
   );
 }
 

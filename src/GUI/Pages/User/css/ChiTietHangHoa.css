@@ -1,0 +1,181 @@
+/* chiTietHangHoa.css */
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f7f7f7;
+  margin: 0; padding: 0;
+}
+
+.cthh-container {
+  width: 80%;
+  margin: 30px auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* Ảnh to hơn */
+.cthh-product-image {
+  flex: 0 0 65%;
+  max-height: 800px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative; /* Để thêm icon sale */
+}
+.cthh-product-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Thêm icon sale */
+.cthh-sale-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: red;
+  color: white;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.9rem;
+  z-index: 10;
+}
+
+/* Info thu gọn */
+.cthh-product-info {
+  flex: 0 0 30%;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.cthh-product-info h1 {
+  margin-top: 0;
+  font-size: 32px; /* Tăng kích thước chữ */
+  font-weight: bold; /* In đậm chữ */
+}
+.cthh-price-section {
+  margin: 10px 0 20px;
+}
+
+.cthh-price {
+  font-size: 28px;
+  color: #e53935;
+  margin-bottom: 10px;
+}
+
+.cthh-old-price {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+/* Khối lượng */
+.cthh-option-group {
+  margin-bottom: 20px;
+}
+
+.cthh-select-size {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.cthh-size-option {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.cthh-size-option:hover {
+  background: #f0f0f0;
+}
+
+.cthh-size-option.cthh-selected {
+  background: #f44336;
+  color: #fff;
+  border-color: #f44336;
+}
+
+/* Số lượng */
+.cthh-quantity-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cthh-qty-control {
+  display: inline-flex;
+  align-items: center;
+}
+
+.cthh-qty-control button {
+  width: 32px; height: 32px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 4px;
+}
+
+.cthh-qty-control input {
+  width: 50px;
+  text-align: center;
+  margin: 0 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f9f9f9;
+}
+
+/* Thêm vào giỏ hàng */
+.cthh-add-cart-row {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.cthh-add-to-cart {
+  background: #f44336;
+  color: #fff;
+  border: none;
+  padding: 16px 0;
+  width: 100%;
+  font-size: 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cthh-add-to-cart:hover {
+  background: #d32f2f;
+}
+
+/* Mô tả */
+.cthh-product-description {
+  width: 100%;
+  background: #fff;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.cthh-product-description h3 {
+  margin-top: 0;
+}
+
+.cthh-description-content {
+  margin-top: 10px;
+  line-height: 1.6;
+  color: #333;
+}

@@ -22,7 +22,7 @@ const XemChiTiet = ({ show, onHide, maHoaDon }) => {
       setError(null);
       
       // Gọi API lấy chi tiết hóa đơn
-      const response = await axios.get(`http://localhost/Web2/server/api/getChiTietHoaDon.php?maHoaDon=${maHoaDon}`);
+      const response = await axios.get(`http://localhost/Web2/server/api/QuanLyHoaDon/getChiTietHoaDon.php?maHoaDon=${maHoaDon}`);
       
       if (response.data.success) {
         setChiTietHoaDon(response.data.chiTiet || []);
@@ -51,20 +51,10 @@ const XemChiTiet = ({ show, onHide, maHoaDon }) => {
     return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
   };
 
-  // Chuyển đổi trạng thái số thành text
-  const getTrangThaiText = (statusCode) => {
-    switch(statusCode) {
-      case "0": return "Đã hủy";
-      case "1": return "Đã giao";
-      case "2": return "Đang chờ duyệt";
-      case "3": return "Đang giao";
-      default: return "Không xác định";
-    }
-  };
 
   return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton style={{ backgroundColor: "#d2a679" }}>
+    <Modal show={show} onHide={onHide} size="lg">
+      <Modal.Header closeButton style={{ backgroundColor: "#d2a679"}}>
         <Modal.Title>Chi tiết đơn hàng #{maHoaDon}</Modal.Title>
       </Modal.Header>
       
@@ -90,7 +80,7 @@ const XemChiTiet = ({ show, onHide, maHoaDon }) => {
                   </div>
                   <div className="col-md-6">
                     <p><strong>Mã đơn hàng:</strong> {thongTinHoaDon.MaHoaDon}</p>
-                    <p><strong>Trạng thái:</strong> {getTrangThaiText(thongTinHoaDon.TrangThai)}</p>
+                    <p><strong>Trạng thái:</strong> {thongTinHoaDon.TrangThai}</p>
                     <p><strong>Ngày đặt:</strong> {formatDate(thongTinHoaDon.NgayXuatHoaDon)}</p>
                     <p><strong>Ngày duyệt:</strong> {formatDate(thongTinHoaDon.NgayDuyet) || "Chưa duyệt"}</p>
                     <p><strong>Tổng tiền:</strong> {formatCurrency(tongtien)}</p>

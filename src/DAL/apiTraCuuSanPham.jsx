@@ -14,6 +14,7 @@ export async function traCuuSanPham() {
     }
 
     const data = await response.json();
+    console.log("Dữ liệu từ API:", data);
     return data;
   } catch (error) {
     console.error("Error fetching data:", error);

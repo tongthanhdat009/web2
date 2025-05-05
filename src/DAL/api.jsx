@@ -11,13 +11,27 @@ const API_UPDATE_CL = "http://localhost/web2/server/api/updateChungLoai.php"
 //API endpoints for PhieuNhap
 const API_URL_PHIEUNHAP = "http://localhost/web2/server/api/getPhieuNhap.php";
 const API_ADD_PHIEUNHAP = "http://localhost/web2/server/api/addPhieuNhap.php";
+const API_UPDATE_PHIEUNHAP = "http://localhost/web2/server/api/updatePhieuNhap.php";
 const API_URL_KHOHANG = "http://localhost/web2/server/api/getKhoHang.php";
 const API_ADD_KHOHANG = "http://localhost/web2/server/api/addKhoHang.php";
 
+//API endpoints for ChiTietPhieuNhap
+const API_URL_CHITIETPHIEUNHAP = "http://localhost/web2/server/api/getChiTietPhieuNhap.php";
+const API_ADD_CHITIETPHIEUNHAP = "http://localhost/web2/server/api/addChiTietPhieuNhap.php";
+
+//API endpoints for KhoiLuongTa
+const API_URL_KHOILUONGTA = "http://localhost/web2/server/api/getKhoiLuongTa.php";
+const API_ADD_KHOILUONGTA = "http://localhost/web2/server/api/addKhoiLuongTa.php";
+
+//API endpoints for KichThuocQuanAo
+const API_URL_KICHTHUOCQUANAO = "http://localhost/web2/server/api/getKichThuocQuanAo.php";
+const API_ADD_KICHTHUOCQUANAO = "http://localhost/web2/server/api/addKichThuocQuanAo.php";
+
+//API endpoints for KichThuocGiay
+const API_URL_KICHTHUOCGIAY = "http://localhost/web2/server/api/getKichThuocGiay.php";
+const API_ADD_KICHTHUOCGIAY = "http://localhost/web2/server/api/addKichThuocGiay.php";
+
 //API endpoints for KhuyenMai
-
-// API endpoints cho KhuyenMai
-
 const API_URL_KM = "http://localhost/web2/server/api/getKhuyenMai.php";
 const API_ADD_KM = "http://localhost/web2/server/api/addKhuyenMai.php";
 const API_DELETE_KM = "http://localhost/web2/server/api/deleteKhuyenMai.php";
@@ -38,14 +52,17 @@ const API_UPDATE_NCC = "http://localhost/web2/server/api/updateNCC.php";
 
 
 import KhuyenMaiDTO from "../DTO/KhuyenMaiDTO";
-
 import NhaCungCapDTO from "../DTO/NhaCungCapDTO";
 import HangHoaDTO from "../DTO/HangHoaDTO";
-
 import ChungLoaiDTO from "../DTO/ChungLoaiDTO";
 import PhieuNhapDTO from "../DTO/PhieuNhapDTO";
 import KhoHangDTO from "../DTO/KhoHangDTO";
 import TheLoaiDTO from "../DTO/TheLoaiDTO";
+import ChiTietPhieuNhapDTO from "../DTO/ChiTietPhieuNhapDTO";
+import KhoiLuongTaDTO from "../DTO/KhoiLuongTaDTO";
+import KichThuocQuanAoDTO from "../DTO/KichThuocQuanAoDTO";
+import KichThuocGiayDTO from "../DTO/KichThuocGiayDTO";
+
 
 
 
@@ -591,6 +608,27 @@ export async function deleteHang(maHang) {
         return { success: false, message: "Lỗi khi xóa hàng: " + error.message };
     }
 }
+// Lấy danh sách thể loại
+export async function fetchTheLoai() {
+    try {
+        const response = await fetch(API_URL_THELOAI);
+        const data = await response.json();
+        console.log("API response TheLoai:", data);
+        
+        if (data.success && Array.isArray(data.data)) {
+            return data.data.map(item => new TheLoaiDTO({
+                MaTheLoai: item.MaTheLoai,
+                TenTheLoai: item.TenTheLoai
+            }));
+        } else {
+            console.error("Invalid data format:", data);
+            return [];
+        }
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách thể loại:", error);
+        return [];
+    }
+}
 
 
 // Lấy danh sách phiếu nhập
@@ -660,11 +698,41 @@ export async function addPhieuNhap(phieuNhapDTO) {
     }
 }
 
-// Lấy danh sách kho hàng
-export async function fetchKhoHang(MaPhieuNhap) {
+// Cập nhật phiếu nhập
+export async function updatePhieuNhap(phieuNhapDTO) {
     try {
-        const url = MaPhieuNhap 
-            ? `${API_URL_KHOHANG}?MaPhieuNhap=${MaPhieuNhap}`
+        console.log("Sending update request:", phieuNhapDTO);
+        const response = await fetch(API_UPDATE_PHIEUNHAP, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+                MaPhieuNhap: phieuNhapDTO.MaPhieuNhap,
+                TrangThai: phieuNhapDTO.TrangThai
+            })
+        });
+
+        const data = await response.json();
+        console.log("Update response:", data);
+        
+        if (data.success) {
+            return { success: true, message: "Cập nhật phiếu nhập thành công!" };
+        } else {
+            return { success: false, message: data.message || "Lỗi khi cập nhật phiếu nhập" };
+        }
+    } catch (error) {
+        console.error("Lỗi khi cập nhật phiếu nhập:", error);
+        return { success: false, message: "Lỗi khi cập nhật phiếu nhập: " + error.message };
+    }
+}
+
+// Lấy danh sách kho hàng
+export async function fetchKhoHang(IDChiTietPhieuNhap) {
+    try {
+        const url = IDChiTietPhieuNhap 
+            ? `${API_URL_KHOHANG}?IDChiTietPhieuNhap=${IDChiTietPhieuNhap}`
             : API_URL_KHOHANG;
             
         const response = await fetch(url);
@@ -674,15 +742,9 @@ export async function fetchKhoHang(MaPhieuNhap) {
             return data.data.map(item => ({
                 ...new KhoHangDTO({
                     Seri: item.Seri,
-                    MaPhieuNhap: item.MaPhieuNhap,
-                    MaHangHoa: item.MaHangHoa,
-                    GiaNhap: item.GiaNhap,
-                    GiaBan: item.GiaBan,
-                    TinhTrang: item.TinhTrang
+                    TinhTrang: item.TinhTrang,
+                    IDChiTietPhieuNhap: item.IDChiTietPhieuNhap,
                 }),
-                TenHangHoa: item.TenHangHoa,
-                TenHang: item.TenHang,
-                TenNhaCungCap: item.TenNhaCungCap
             }));
         } else {
             console.error("Invalid data format:", data);
@@ -698,7 +760,7 @@ export async function fetchKhoHang(MaPhieuNhap) {
 export async function addKhoHang(khoHangDTO) {
     try {
         // Kiểm tra dữ liệu đầu vào
-        if (!khoHangDTO.MaPhieuNhap || !khoHangDTO.MaHangHoa || !khoHangDTO.GiaNhap || !khoHangDTO.GiaBan) {
+        if (!khoHangDTO.IDChiTietPhieuNhap || !khoHangDTO.TinhTrang) {
             console.error("Dữ liệu không hợp lệ:", khoHangDTO);
             return { success: false, message: "Dữ liệu không hợp lệ hoặc thiếu thông tin" };
         }
@@ -711,11 +773,9 @@ export async function addKhoHang(khoHangDTO) {
                 "Accept": "application/json"
             },
             body: JSON.stringify({
-                MaPhieuNhap: khoHangDTO.MaPhieuNhap,
-                MaHangHoa: khoHangDTO.MaHangHoa,
-                GiaNhap: khoHangDTO.GiaNhap,
-                GiaBan: khoHangDTO.GiaBan,
-                TinhTrang: khoHangDTO.TinhTrang || 0 // Mặc định là 0 nếu không có giá trị
+                Seri: khoHangDTO.Seri,
+                TinhTrang: khoHangDTO.TinhTrang,
+                IDChiTietPhieuNhap: khoHangDTO.IDChiTietPhieuNhap
             })
         });
 
@@ -737,28 +797,171 @@ export async function addKhoHang(khoHangDTO) {
     }
 }
 
-
-// Lấy danh sách thể loại
-export async function fetchTheLoai() {
+// Lấy danh sách khối lượng tạ
+export async function fetchKhoiLuongTa() {
     try {
-        const response = await fetch(API_URL_THELOAI);
+        const response = await fetch(API_URL_KHOILUONGTA);
         const data = await response.json();
-        console.log("API response TheLoai:", data);
-        
+        console.log("API response KhoiLuongTa:", data);
         if (data.success && Array.isArray(data.data)) {
-            return data.data.map(item => new TheLoaiDTO({
-                MaTheLoai: item.MaTheLoai,
-                TenTheLoai: item.TenTheLoai
+            return data.data.map(item => ({
+                ...new KhoiLuongTaDTO({
+                    IDKhoiLuongTa: item.IDKhoiLuongTa,
+                    KhoiLuong: item.KhoiLuong
+                }),
             }));
         } else {
             console.error("Invalid data format:", data);
             return [];
         }
     } catch (error) {
-        console.error("Lỗi khi lấy danh sách thể loại:", error);
+        console.error("Lỗi khi lấy danh sách khối lượng tạ:", error);
         return [];
     }
 }
+
+// Lấy danh sách kích thước quần áo
+export async function fetchKichThuocQuanAo() {
+    try {
+        const response = await fetch(API_URL_KICHTHUOCQUANAO);
+        const data = await response.json();
+        console.log("API response KichThuocQuanAo:", data);
+        if (data.success && Array.isArray(data.data)) {
+            return data.data.map(item => ({
+                ...new KichThuocQuanAoDTO({
+                    IDKichThuocQuanAo: item.IDKichThuocQuanAo,
+                    KichThuocQuanAo: item.KichThuocQuanAo
+                }),
+            }));
+        } else {
+            console.error("Invalid data format:", data);
+            return [];
+        }
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách kích thước quần áo:", error);
+        return [];
+    }
+}
+
+// Lấy danh sách kích thước giày
+export async function fetchKichThuocGiay() {
+    try {
+        const response = await fetch(API_URL_KICHTHUOCGIAY);
+        const data = await response.json();
+        console.log("API response KichThuocGiay:", data);
+        if (data.success && Array.isArray(data.data)) {
+            return data.data.map(item => ({
+                ...new KichThuocGiayDTO({
+                    IDKichThuocGiay: item.IDKichThuocGiay,
+                    KichThuocGiay: item.KichThuocGiay
+                }),
+            }));
+        } else {
+            console.error("Invalid data format:", data);
+            return [];
+        }
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách kích thước giày:", error);
+        return [];
+    }
+}
+
+// Lấy danh sách chi tiết phiếu nhập
+export async function fetchChiTietPhieuNhap(MaPhieuNhap) {
+    try {
+        const url = MaPhieuNhap 
+            ? `${API_URL_CHITIETPHIEUNHAP}?MaPhieuNhap=${MaPhieuNhap}`
+            : API_URL_CHITIETPHIEUNHAP;
+
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log("API response ChiTietPhieuNhap:", data);
+        if (data.success && Array.isArray(data.data)) {
+            return data.data.map(item => ({
+                ...new ChiTietPhieuNhapDTO({
+                    IDChiTietPhieuNhap: item.IDChiTietPhieuNhap,
+                    MaPhieuNhap: item.MaPhieuNhap,
+                    MaHangHoa: item.MaHangHoa,
+                    IDKhoiLuongTa: item.IDKhoiLuongTa,
+                    IDKichThuocQuanAo: item.IDKichThuocQuanAo,
+                    IDKichThuocGiay: item.IDKichThuocGiay,
+                    GiaNhap: item.GiaNhap,
+                    GiaBan: item.GiaBan,
+                    SoLuongNhap: item.SoLuongNhap,
+                    SoLuongTon: item.SoLuongTon
+                }),
+                TenHangHoa: item.TenHangHoa,
+                TenHang: item.TenHang,
+                KhoiLuong: item.KhoiLuong,
+                KichThuocQuanAo: item.KichThuocQuanAo,
+                KichThuocGiay: item.KichThuocGiay
+            }));
+        } else {
+            console.error("Invalid data format:", data);
+            return [];
+        }
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách chi tiết phiếu nhập:", error);
+        return [];
+    }
+}
+
+// Thêm chi tiết phiếu nhập
+export async function addChiTietPhieuNhap(chiTietPhieuNhapDTO) {
+    try {
+        // Kiểm tra dữ liệu đầu vào
+        if (!chiTietPhieuNhapDTO.MaPhieuNhap || !chiTietPhieuNhapDTO.MaHangHoa || !chiTietPhieuNhapDTO.GiaNhap || !chiTietPhieuNhapDTO.GiaBan || !chiTietPhieuNhapDTO.SoLuongNhap || !chiTietPhieuNhapDTO.SoLuongTon) {
+            console.error("Dữ liệu không hợp lệ:", chiTietPhieuNhapDTO);
+            return { success: false, message: "Dữ liệu không hợp lệ hoặc thiếu thông tin" };
+        }
+
+        console.log("Sending add request:", chiTietPhieuNhapDTO);
+        const response = await fetch(API_ADD_CHITIETPHIEUNHAP, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+                IDChiTietPhieuNhap: chiTietPhieuNhapDTO.IDChiTietPhieuNhap,
+                MaPhieuNhap: chiTietPhieuNhapDTO.MaPhieuNhap,
+                MaHangHoa: chiTietPhieuNhapDTO.MaHangHoa,
+                IDKhoiLuongTa: chiTietPhieuNhapDTO.IDKhoiLuongTa,
+                IDKichThuocQuanAo: chiTietPhieuNhapDTO.IDKichThuocQuanAo,
+                IDKichThuocGiay: chiTietPhieuNhapDTO.IDKichThuocGiay,
+                GiaNhap: chiTietPhieuNhapDTO.GiaNhap,
+                GiaBan: chiTietPhieuNhapDTO.GiaBan,
+                SoLuongNhap: chiTietPhieuNhapDTO.SoLuongNhap,
+                SoLuongTon: chiTietPhieuNhapDTO.SoLuongTon
+            })
+        });
+
+        const data = await response.json();
+        console.log("Add response:", data);
+        
+        if (data.success) {
+            return { 
+                success: true, 
+                message: "Thêm chi tiết phiếu nhập thành công!",
+                data: new ChiTietPhieuNhapDTO(data.data)
+            };
+        } else {
+            return { success: false, message: data.message || "Lỗi khi thêm chi tiết phiếu nhập" };
+        }
+    } catch (error) {
+        console.error("Lỗi khi thêm chi tiết phiếu nhập:", error);
+        return { success: false, message: "Lỗi khi thêm chi tiết phiếu nhập: " + error.message };
+    }
+}
+            
+
+
+
+            
+
+
+
+
 
 
 

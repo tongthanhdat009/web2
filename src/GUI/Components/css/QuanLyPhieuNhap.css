@@ -129,6 +129,21 @@
   background-color: #da190b;
 }
 
+.button-approve {
+  background-color: #4CAF50;
+  color: white;
+  margin-left: 8px;
+}
+
+.button-approve:hover {
+  background-color: #45a049;
+}
+
+.button-approve:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
 .items-container {
   margin: 20px 0;
   padding: 15px;

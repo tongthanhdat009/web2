@@ -1,27 +1,34 @@
-.nhom-input {
+/* Prefix tcsp- cho tất cả class để tránh ảnh hưởng global */
+
+/* Nhóm input và form */
+.tcsp-nhom-input {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.o-nhap {
+.tcsp-o-nhap {
   display: flex;
   flex-direction: column;
-  width: 48%;
+  flex: 1;
+  min-width: 180px;
 }
 
-.o-nhap label {
+.tcsp-o-nhap label {
   font-weight: bold;
   margin-bottom: 5px;
 }
 
-.o-nhap input {
+.tcsp-o-nhap input {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
-.nut-tra-cuu {
+/* Nút tra cứu */
+.tcsp-nut-tra-cuu {
   background-color: #007bff;
   color: white;
   padding: 10px 15px;
@@ -29,45 +36,50 @@
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+  margin-top: 10px;
+  transition: background 0.2s;
 }
 
-.nut-tra-cuu:hover {
+.tcsp-nut-tra-cuu:hover {
   background-color: #0056b3;
 }
 
-.error-message {
+/* Thông báo lỗi */
+.tcsp-error-message {
   color: red;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-.bang-ket-qua {
+/* Bảng kết quả */
+.tcsp-bang-ket-qua {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  overflow-x: auto;
 }
 
-.bang-ket-qua th, .bang-ket-qua td {
+.tcsp-bang-ket-qua th, .tcsp-bang-ket-qua td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
 }
 
-.bang-ket-qua th {
+.tcsp-bang-ket-qua th {
   background-color: #f2f2f2;
   font-weight: bold;
 }
 
-.bang-ket-qua img {
+.tcsp-bang-ket-qua img {
   border-radius: 5px;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
 }
 
-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-.con-bao-hanh {
-  background-color: green;
+/* Trạng thái bảo hành */
+.tcsp-con-bao-hanh {
+  background-color: #28a745;
   color: white;
   font-weight: bold;
   padding: 5px 10px;
@@ -75,16 +87,8 @@ button:disabled {
   display: inline-block;
 }
 
-.het-bao-hanh {
-  background-color: red;
-  color: white;
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
-  display: inline-block;
-}
-.khong-bao-hanh {
-  background-color: orange;
+.tcsp-het-bao-hanh {
+  background-color: #dc3545;
   color: white;
   font-weight: bold;
   padding: 5px 10px;
@@ -92,11 +96,17 @@ button:disabled {
   display: inline-block;
 }
 
-.close-button:hover {
-  color: red;
+.tcsp-khong-bao-hanh {
+  background-color: #ffc107;
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: inline-block;
 }
 
-.close-button {
+/* Nút đóng chi tiết */
+.tcsp-close-button {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -106,42 +116,166 @@ button:disabled {
   font-weight: bold;
   cursor: pointer;
   color: #555;
+  z-index: 10;
 }
 
-.product-details {
+.tcsp-close-button:hover {
+  color: red;
+}
+
+/* Popup chi tiết sản phẩm */
+.tcsp-product-details {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 650px;
+  width: 900px;
+  max-width: 98vw;
   background: white;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-
+  overflow-y: auto;
+  max-height: 95vh;
 }
 
-.product-details-header {
+/* Header chi tiết sản phẩm */
+.tcsp-product-details-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+}
+
+/* Ảnh sản phẩm trong popup */
+.tcsp-product-image-wrapper {
+  width: 220px;
+  min-width: 220px;
+  height: 220px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 15px;
-  width: 100%;
+  justify-content: center;
+  background: #f8f8f8;
+  border-radius: 8px;
+  border: 1px solid #eee;
 }
 
-.product-image {
-  width: 200px;
-  height: 200px;
+.tcsp-product-image {
+  width: 200px !important;
+  height: 200px !important;
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid #ddd;
+  display: block;
+  max-width: 200px !important;
+  max-height: 200px !important;
 }
-.product-detail-table {
+
+/* Bảng chi tiết sản phẩm */
+.tcsp-product-detail-table {
   width: 100%;
-  margin-top: 20px;
+  margin-top: 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+  word-break: break-word;
 }
-.product-detail-table th, .product-detail-table td {
-  padding: 10px;
+
+.tcsp-product-detail-table th, .tcsp-product-detail-table td {
+  padding: 10px 8px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+
+/* Nút bị disable */
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .tcsp-product-details {
+    width: 98vw;
+    max-width: 98vw;
+    padding: 10px;
+  }
+  .tcsp-product-details-header {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  .tcsp-product-image-wrapper {
+    margin: 0 auto 16px auto;
+  }
+  .tcsp-product-detail-table {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .tcsp-nhom-input {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .tcsp-o-nhap {
+    width: 100%;
+    min-width: unset;
+  }
+  .tcsp-bang-ket-qua th, .tcsp-bang-ket-qua td {
+    padding: 4px;
+    font-size: 13px;
+  }
+  .tcsp-product-details {
+    width: 100vw;
+    min-width: 0;
+    padding: 5px;
+  }
+  .tcsp-product-image-wrapper {
+    width: 140px;
+    min-width: 140px;
+    height: 140px;
+  }
+  .tcsp-product-image {
+    width: 120px !important;
+    height: 120px !important;
+    max-width: 120px !important;
+    max-height: 120px !important;
+  }
+  .tcsp-product-detail-table th, .tcsp-product-detail-table td {
+    padding: 6px 4px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 500px) {
+  .tcsp-product-details {
+    width: 100vw;
+    min-width: 0;
+    padding: 2px;
+  }
+  .tcsp-product-image-wrapper {
+    width: 90px;
+    min-width: 90px;
+    height: 90px;
+  }
+  .tcsp-product-image {
+    width: 70px !important;
+    height: 70px !important;
+    max-width: 70px !important;
+    max-height: 70px !important;
+  }
+  .tcsp-product-detail-table th, .tcsp-product-detail-table td {
+    padding: 3px 2px;
+    font-size: 11px;
+  }
+  .tcsp-nut-tra-cuu {
+    font-size: 14px;
+    padding: 7px 10px;
+  }
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { fetchPhieuNhap, fetchNCC, fetchKhoHang, fetchHangHoa, addPhieuNhap, addKhoHang } from "../../../DAL/api";
+import { fetchPhieuNhap, fetchNCC, fetchChiTietPhieuNhap, fetchHangHoa, addPhieuNhap, addKhoHang, addChiTietPhieuNhap, 
+  fetchKhoiLuongTa, fetchKichThuocQuanAo, fetchKichThuocGiay, fetchChungLoai, fetchTheLoai, updatePhieuNhap } from "../../../DAL/api";
 import "../../../GUI/Components/css/QuanLyPhieuNhap.css";
 
 const ITEMS_PER_PAGE = 10;
@@ -20,6 +21,12 @@ const QuanLyPhieuNhap = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedNCC, setSelectedNCC] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
+  const [chiTietPhieuNhapItems, setChiTietPhieuNhapItems] = useState([]);
+  const [khoiLuongTas, setKhoiLuongTas] = useState([]);
+  const [kichThuocQuanAos, setKichThuocQuanAos] = useState([]);
+  const [kichThuocGiays, setKichThuocGiays] = useState([]);
+  const [chungLoais, setChungLoais] = useState([]);
+  const [theLoais, setTheLoais] = useState([]);
 
   useEffect(() => {
     loadData();
@@ -37,15 +44,25 @@ const QuanLyPhieuNhap = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [phieuNhapData, nccData, hangHoaData] = await Promise.all([
+      const [phieuNhapData, nccData, hangHoaData, khoiLuongTaData, kichThuocQuanAoData, kichThuocGiayData, chungLoaiData, theLoaiData] = await Promise.all([
         fetchPhieuNhap(),
         fetchNCC(),
-        fetchHangHoa()
+        fetchHangHoa(),
+        fetchKhoiLuongTa(),
+        fetchKichThuocQuanAo(),
+        fetchKichThuocGiay(),
+        fetchChungLoai(),
+        fetchTheLoai()
       ]);
       
       setPhieuNhaps(phieuNhapData);
       setNhaCungCaps(nccData);
       setHangHoas(hangHoaData);
+      setKhoiLuongTas(khoiLuongTaData);
+      setKichThuocQuanAos(kichThuocQuanAoData);
+      setKichThuocGiays(kichThuocGiayData);
+      setChungLoais(chungLoaiData);
+      setTheLoais(theLoaiData);
     } catch (error) {
       setNotification({
         message: "Lỗi khi tải dữ liệu: " + error.message,
@@ -110,11 +127,11 @@ const QuanLyPhieuNhap = () => {
     setShowModal(true);
     
     try {
-      const items = await fetchKhoHang(phieuNhap.MaPhieuNhap);
-      setKhoHangItems(items);
+      const items = await fetchChiTietPhieuNhap(phieuNhap.MaPhieuNhap);
+      setChiTietPhieuNhapItems(items);
     } catch (error) {
       setNotification({
-        message: "Lỗi khi tải chi tiết kho hàng: " + error.message,
+        message: "Lỗi khi tải chi tiết phiếu nhập: " + error.message,
         type: 'error'
       });
     } finally {
@@ -225,36 +242,42 @@ const QuanLyPhieuNhap = () => {
 
     setLoading(true);
     try {
-      let IDTKAdmin = localStorage.getItem("IDTKAdmin");
+      let IDTKAdmin = localStorage.getItem("IDTaiKhoan");
       console.log("IDTKAdmin:", IDTKAdmin);
-      // Tạo phiếu nhập
+      
+      // Tạo phiếu nhập với trạng thái "Chưa duyệt"
       const phieuNhapResult = await addPhieuNhap({
-        TrangThai: "Đã nhập",
-        IDTaiKhoan: IDTKAdmin.toString(),
+        TrangThai: "Chưa duyệt",
+        IDTaiKhoan: String(IDTKAdmin || ""),
         MaNhaCungCap: selectedNCC,
         NgayNhap: new Date().toISOString().split('T')[0]
       });
-      console.log(phieuNhapResult);
-      loadData();
+
+      if (!phieuNhapResult.success) {
+        throw new Error(phieuNhapResult.message);
+      }
+
+      // Lấy mã phiếu nhập vừa tạo
       const phieunhap = await fetchPhieuNhap();
-     
-      let MaPhieuNhap1 = phieunhap[phieunhap.length - 1].MaPhieuNhap;
-      console.log(MaPhieuNhap1);
+      const MaPhieuNhap1 = phieunhap[phieunhap.length - 1].MaPhieuNhap;
+      console.log("Mã phiếu nhập mới:", MaPhieuNhap1);
 
-      // Thêm từng mặt hàng vào kho
+      // Thêm từng mặt hàng vào chi tiết phiếu nhập
       for (const item of selectedItems) {
-        for (let i = 0; i < item.SoLuong; i++) {
-          const khoHangResult = await addKhoHang({
-            MaPhieuNhap: parseFloat(MaPhieuNhap1),
-            MaHangHoa: item.MaHangHoa,
-            GiaNhap: item.GiaNhap,
-            GiaBan: item.GiaBan,
-            TinhTrang: "0"
-          });
+        const chiTietPhieuNhapResult = await addChiTietPhieuNhap({
+          MaPhieuNhap: Number(MaPhieuNhap1),
+          MaHangHoa: Number(item.MaHangHoa),
+          IDKhoiLuongTa: Number(item.IDKhoiLuongTa) || null,
+          IDKichThuocQuanAo: Number(item.IDKichThuocQuanAo) || null,
+          IDKichThuocGiay: Number(item.IDKichThuocGiay) || null,
+          GiaNhap: Number(item.GiaNhap),
+          GiaBan: Number(item.GiaBan),
+          SoLuongNhap: Number(item.SoLuong),
+          SoLuongTon: Number(item.SoLuong)
+        });
 
-          if (!khoHangResult.success) {
-            throw new Error(khoHangResult.message);
-          }
+        if (!chiTietPhieuNhapResult.success) {
+          throw new Error(chiTietPhieuNhapResult.message);
         }
       }
 
@@ -271,6 +294,54 @@ const QuanLyPhieuNhap = () => {
     } catch (error) {
       setNotification({
         message: "Lỗi khi thêm phiếu nhập: " + error.message,
+        type: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDuyetPhieuNhap = async (phieuNhap) => {
+    setLoading(true);
+    try {
+      // Cập nhật trạng thái phiếu nhập thành "Đã duyệt"
+      const updateResult = await updatePhieuNhap({
+        MaPhieuNhap: phieuNhap.MaPhieuNhap,
+        TrangThai: "Đã duyệt"
+      });
+
+      if (!updateResult.success) {
+        throw new Error(updateResult.message);
+      }
+
+      // Lấy chi tiết phiếu nhập
+      const chiTietPhieuNhapItems = await fetchChiTietPhieuNhap(phieuNhap.MaPhieuNhap);
+      
+      // Duyệt qua từng chi tiết phiếu nhập và tạo kho hàng
+      for (const item of chiTietPhieuNhapItems) {
+        // Tạo số lượng kho hàng tương ứng với số lượng nhập
+        for (let i = 0; i < item.SoLuongNhap; i++) {
+          const khoHangResult = await addKhoHang({
+            IDChiTietPhieuNhap: item.IDChiTietPhieuNhap,
+            TinhTrang: "Chưa bán"
+          });
+
+          if (!khoHangResult.success) {
+            throw new Error(khoHangResult.message);
+          }
+        }
+      }
+
+      setNotification({
+        message: "Duyệt phiếu nhập thành công!",
+        type: 'success'
+      });
+
+      // Load lại dữ liệu
+      loadData();
+    } catch (error) {
+      setNotification({
+        message: "Lỗi khi duyệt phiếu nhập: " + error.message,
         type: 'error'
       });
     } finally {
@@ -301,7 +372,7 @@ const QuanLyPhieuNhap = () => {
 
       {showAddForm && (
         <div className="modal-container">
-          <div className="modal-content" style={{ maxWidth: '800px' }}>
+          <div className="modal-content" style={{ maxWidth: '1500px' }}>
             <h2 className="modal-title">Thêm phiếu nhập mới</h2>
             
             <form onSubmit={handleSubmitAddForm}>
@@ -332,70 +403,134 @@ const QuanLyPhieuNhap = () => {
                   Thêm mặt hàng
                 </button>
 
-                {selectedItems.map((item, index) => (
-                  <div key={index} className="item-row">
-                    <div className="form-group">
-                      <label>Mặt hàng:</label>
-                      <select
-                        value={item.MaHangHoa}
-                        onChange={(e) => handleItemChange(index, 'MaHangHoa', e.target.value)}
-                        required
-                        className="modal-input"
+                {selectedItems.map((item, index) => {
+                  // Tìm chủng loại và thể loại của hàng hóa đã chọn
+                  const selectedHangHoa = hangHoas.find(hh => hh.MaHangHoa === item.MaHangHoa);
+                  const maChungLoai = selectedHangHoa?.MaChungLoai;
+                  const selectedChungLoai = chungLoais.find(cl => cl.MaChungLoai === maChungLoai);
+                  const maTheLoai = selectedChungLoai?.MaTheLoai;
+                  const selectedTheLoai = theLoais.find(tl => tl.MaTheLoai === maTheLoai);
+                  const tenTheLoai = selectedTheLoai?.TenTheLoai;
+
+                  return (
+                    <div key={index} className="item-row">
+                      <div className="form-group">
+                        <label>Mặt hàng:</label>
+                        <select
+                          value={item.MaHangHoa}
+                          onChange={(e) => handleItemChange(index, 'MaHangHoa', e.target.value)}
+                          required
+                          className="modal-input"
+                        >
+                          <option value="">Chọn mặt hàng</option>
+                          {hangHoas.map(hh => (
+                            <option key={hh.MaHangHoa} value={hh.MaHangHoa}>
+                              {hh.TenHangHoa}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {tenTheLoai === "Các thiết bị tạ" && (
+                        <div className="form-group">
+                          <label>Khối lượng:</label>
+                          <select
+                            value={item.IDKhoiLuongTa || ""}
+                            onChange={(e) => handleItemChange(index, 'IDKhoiLuongTa', e.target.value)}
+                            className="modal-input"
+                          >
+                            <option value="">Chọn khối lượng</option>
+                            {khoiLuongTas.map(klt => (
+                              <option key={klt.IDKhoiLuongTa} value={klt.IDKhoiLuongTa}>
+                                {klt.KhoiLuong}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+
+                      {tenTheLoai === "Thời trang thể thao" && (
+                        <div className="form-group">
+                          <label>Kích thước quần áo:</label>
+                          <select
+                            value={item.IDKichThuocQuanAo || ""}
+                            onChange={(e) => handleItemChange(index, 'IDKichThuocQuanAo', e.target.value)}
+                            className="modal-input"
+                          >
+                            <option value="">Chọn kích thước</option>
+                            {kichThuocQuanAos.map(ktqa => (
+                              <option key={ktqa.IDKichThuocQuanAo} value={ktqa.IDKichThuocQuanAo}>
+                                {ktqa.KichThuocQuanAo}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+
+                      {tenTheLoai === "Giày thể thao" && (
+                        <div className="form-group">
+                          <label>Kích thước giày:</label>
+                          <select
+                            value={item.IDKichThuocGiay || ""}
+                            onChange={(e) => handleItemChange(index, 'IDKichThuocGiay', e.target.value)}
+                            className="modal-input"
+                          >
+                            <option value="">Chọn kích thước</option>
+                            {kichThuocGiays.map(ktg => (
+                              <option key={ktg.IDKichThuocGiay} value={ktg.IDKichThuocGiay}>
+                                {ktg.KichThuocGiay}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+
+                      <div className="form-group">
+                        <label>Giá nhập:</label>
+                        <input
+                          type="number"
+                          value={item.GiaNhap}
+                          onChange={(e) => handleItemChange(index, 'GiaNhap', e.target.value)}
+                          required
+                          min="0"
+                          className="modal-input"
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Giá bán:</label>
+                        <input
+                          type="number"
+                          value={item.GiaBan}
+                          onChange={(e) => handleItemChange(index, 'GiaBan', e.target.value)}
+                          required
+                          min="0"
+                          className="modal-input"
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Số lượng:</label>
+                        <input
+                          type="number"
+                          value={item.SoLuong}
+                          onChange={(e) => handleItemChange(index, 'SoLuong', e.target.value)}
+                          required
+                          min="1"
+                          className="modal-input"
+                        />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveItem(index)}
+                        className="button-common button-delete"
                       >
-                        <option value="">Chọn mặt hàng</option>
-                        {hangHoas.map(hh => (
-                          <option key={hh.MaHangHoa} value={hh.MaHangHoa}>
-                            {hh.TenHangHoa}
-                          </option>
-                        ))}
-                      </select>
+                        Xóa
+                      </button>
                     </div>
-
-                    <div className="form-group">
-                      <label>Giá nhập:</label>
-                      <input
-                        type="number"
-                        value={item.GiaNhap}
-                        onChange={(e) => handleItemChange(index, 'GiaNhap', e.target.value)}
-                        required
-                        min="0"
-                        className="modal-input"
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Giá bán:</label>
-                      <input
-                        type="number"
-                        value={item.GiaBan}
-                        onChange={(e) => handleItemChange(index, 'GiaBan', e.target.value)}
-                        required
-                        min="0"
-                        className="modal-input"
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Số lượng:</label>
-                      <input
-                        type="number"
-                        value={item.SoLuong}
-                        onChange={(e) => handleItemChange(index, 'SoLuong', e.target.value)}
-                        required
-                        min="1"
-                        className="modal-input"
-                      />
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveItem(index)}
-                      className="button-common button-delete"
-                    >
-                      Xóa
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="modal-buttons">
@@ -484,7 +619,7 @@ const QuanLyPhieuNhap = () => {
                         <td>{formatDate(phieuNhap.NgayNhap)}</td>
                         <td>{nhaCungCap ? nhaCungCap.TenNhaCungCap : phieuNhap.MaNhaCungCap}</td>
                         <td>
-                          <span className={`status-badge status-active` }>
+                          <span className={`status-badge ${phieuNhap.TrangThai === "Đã duyệt" ? 'status-active' : 'status-inactive'}`}>
                             {phieuNhap.TrangThai}
                           </span>
                         </td>
@@ -495,6 +630,15 @@ const QuanLyPhieuNhap = () => {
                           >
                             Xem chi tiết
                           </button>
+                          {phieuNhap.TrangThai === "Chưa duyệt" && (
+                            <button
+                              className="button-common button-approve"
+                              onClick={() => handleDuyetPhieuNhap(phieuNhap)}
+                              disabled={loading}
+                            >
+                              Duyệt
+                            </button>
+                          )}
                         </td>
                       </tr>
                     );
@@ -509,8 +653,8 @@ const QuanLyPhieuNhap = () => {
 
       {showModal && (
         <div className="modal-container">
-          <div className="modal-content" style={{ maxWidth: '800px' }}>
-            <h2 className="modal-title">Chi tiết kho hàng</h2>
+          <div className="modal-content" style={{ maxWidth: '1500px' }}>
+            <h2 className="modal-title">Chi tiết phiếu nhập</h2>
             <div className="modal-header-info">
               <p><strong>Mã phiếu nhập:</strong> {selectedPhieuNhap?.MaPhieuNhap}</p>
               <p><strong>Ngày nhập:</strong> {formatDate(selectedPhieuNhap?.NgayNhap)}</p>
@@ -527,27 +671,29 @@ const QuanLyPhieuNhap = () => {
               <table className="table-container">
                 <thead>
                   <tr>
-                    <th className="table-header">Seri</th>
                     <th className="table-header">Tên hàng hóa</th>
                     <th className="table-header">Hãng</th>
+                    <th className="table-header">Khối lượng</th>
+                    <th className="table-header">Kích thước quần áo</th>
+                    <th className="table-header">Kích thước giày</th>
                     <th className="table-header">Giá nhập</th>
                     <th className="table-header">Giá bán</th>
-                    <th className="table-header">Tình trạng</th>
+                    <th className="table-header">Số lượng nhập</th>
+                    <th className="table-header">Số lượng tồn</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {khoHangItems.map((item, index) => (
-                    <tr key={`kho-${item.Seri}`} className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}>
-                      <td>{item.Seri}</td>
+                  {chiTietPhieuNhapItems.map((item, index) => (
+                    <tr key={`ctpn-${item.IDChiTietPhieuNhap}`} className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}>
                       <td>{item.TenHangHoa}</td>
                       <td>{item.TenHang}</td>
+                      <td>{item.KhoiLuong + "kg" && item.KhoiLuong !== null && item.KhoiLuong !== 0 && item.KhoiLuong !== "0" ? item.KhoiLuong + "kg" : '-'}</td>
+                      <td>{item.KichThuocQuanAo && item.KichThuocQuanAo !== null && item.KichThuocQuanAo !== 0 && item.KichThuocQuanAo !== "0" ? item.KichThuocQuanAo : '-'}</td>
+                      <td>{item.KichThuocGiay && item.KichThuocGiay !== null && item.KichThuocGiay !== 0 && item.KichThuocGiay !== "0" ? item.KichThuocGiay : '-'}</td>
                       <td>{formatCurrency(item.GiaNhap)}</td>
                       <td>{formatCurrency(item.GiaBan)}</td>
-                      <td>
-                        <span className={`status-badge ${item.TinhTrang === 1 ? 'status-active' : 'status-inactive'}`}>
-                          {item.TinhTrang === 1 ? 'Bán rồi' : 'Chưa bán'}
-                        </span>
-                      </td>
+                      <td>{item.SoLuongNhap}</td>
+                      <td>{item.SoLuongTon}</td>
                     </tr>
                   ))}
                 </tbody>

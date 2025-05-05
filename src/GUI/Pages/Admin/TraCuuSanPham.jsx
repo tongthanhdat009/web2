@@ -36,16 +36,11 @@ const TraCuuSanPham = () => {
       setError("Vui lòng nhập ít nhất một trường để tra cứu.");
       return;
     }
-    console.log("seri", seri);
-    console.log("tenSanPham", tenSanPham);
-    console.log("maPhieuNhap", maPhieuNhap);
-    console.log("maHangHoa", maHangHoa);
-    console.log("maTaiKhoan", maTaiKhoan);
     setError("");
     try {
       const filteredData = data.filter((item) => {
         return (
-          (seri ? item.Seri?.includes(seri) : true) &&
+          (seri ? item.Seri === seri : true) &&
           (tenSanPham ? item.TenHangHoa?.toLowerCase().includes(tenSanPham.toLowerCase()) : true) &&
           (maPhieuNhap ? item.MaPhieuNhap?.includes(maPhieuNhap) : true) &&
           (maHangHoa ? item.MaHangHoa?.includes(maHangHoa) : true) &&
@@ -72,11 +67,12 @@ const TraCuuSanPham = () => {
     return end;
   };
 
+  // ...existing code...
   return (
-    <div style={{ backgroundColor: "#ffffff", borderRadius: "10px", padding: "20px" }}>
+    <div style={{ backgroundColor: "#ffffff", borderRadius: "10px", padding: "20px" }} className="tcsp-page">
       <form onSubmit={handleSubmit}>
-        <div className="nhom-input">
-          <div className="o-nhap">
+        <div className="tcsp-nhom-input">
+          <div className="tcsp-o-nhap">
             <label htmlFor="seri">Seri</label>
             <input
               type="text"
@@ -86,7 +82,7 @@ const TraCuuSanPham = () => {
               placeholder="Nhập seri"
             />
           </div>
-          <div className="o-nhap">
+          <div className="tcsp-o-nhap">
             <label htmlFor="tenSanPham">Tên sản phẩm</label>
             <input
               type="text"
@@ -98,8 +94,8 @@ const TraCuuSanPham = () => {
           </div>
         </div>
 
-        <div className="nhom-input">
-          <div className="o-nhap">
+        <div className="tcsp-nhom-input">
+          <div className="tcsp-o-nhap">
             <label htmlFor="maPhieuNhap">Mã phiếu nhập</label>
             <input
               type="text"
@@ -109,7 +105,7 @@ const TraCuuSanPham = () => {
               placeholder="Nhập mã phiếu nhập"
             />
           </div>
-          <div className="o-nhap">
+          <div className="tcsp-o-nhap">
             <label htmlFor="maHangHoa">Mã hàng hóa</label>
             <input
               type="text"
@@ -121,8 +117,8 @@ const TraCuuSanPham = () => {
           </div>
         </div>
 
-        <div className="nhom-input">
-          <div className="o-nhap">
+        <div className="tcsp-nhom-input">
+          <div className="tcsp-o-nhap">
             <label htmlFor="maTaiKhoan">Mã tài khoản</label>
             <input
               type="text"
@@ -134,14 +130,14 @@ const TraCuuSanPham = () => {
           </div>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
-        <button type="submit" className="nut-tra-cuu">
+        {error && <div className="tcsp-error-message">{error}</div>}
+        <button type="submit" className="tcsp-nut-tra-cuu">
           Tra cứu
         </button>
       </form>
 
       {results.length > 0 && (
-        <table className="bang-ket-qua">
+        <table className="tcsp-bang-ket-qua">
           <thead>
             <tr>
               <th>Seri</th>
@@ -160,7 +156,7 @@ const TraCuuSanPham = () => {
               const conBaoHanh = item.TinhTrang === "0" || ngayHetHan > new Date();
               return (
                 <tr key={index}>
-                  <td>{item.SeriKho}</td>
+                  <td>{item.Seri}</td>
                   <td>
                     <img src={item.Anh} alt={item.TenHangHoa} width="50" />
                   </td>
@@ -170,21 +166,21 @@ const TraCuuSanPham = () => {
                     <div
                       className={
                         item.ThoiGianBaoHanh === "0"
-                          ? "khong-bao-hanh"
+                          ? "tcsp-khong-bao-hanh"
                           : conBaoHanh
-                            ? "con-bao-hanh"
-                            : "het-bao-hanh"
+                          ? "tcsp-con-bao-hanh"
+                          : "tcsp-het-bao-hanh"
                       }
                     >
                       {item.ThoiGianBaoHanh === "0"
                         ? "Không bảo hành"
                         : conBaoHanh
-                          ? "Còn bảo hành"
-                          : "Hết bảo hành"}
+                        ? "Còn bảo hành"
+                        : "Hết bảo hành"}
                     </div>
                   </td>
                   <td>
-                    {item.TinhTrang === "0" ? (
+                    {item.TinhTrang !== "Đã bán" ? (
                       <button disabled style={{ cursor: "not-allowed" }}>
                         Xem đơn hàng
                       </button>
@@ -203,15 +199,17 @@ const TraCuuSanPham = () => {
 
       {/* Hiển thị chi tiết sản phẩm nếu ChiTietMoKhong là true */}
       {ChiTietMoKhong && selectedProduct && (
-        <div className="product-details">
-          <button className="close-button" onClick={() => setChiTietMoKhong(false)}>x</button>
-          <div className="product-details-header">
-            <img
-              src={selectedProduct.Anh}
-              alt={selectedProduct.TenHangHoa}
-              className="product-image"
-            />
-            <table className="product-detail-table">
+        <div className="tcsp-product-details">
+          <button className="tcsp-close-button" onClick={() => setChiTietMoKhong(false)}>x</button>
+          <div className="tcsp-product-details-header">
+            <div className="tcsp-product-image-wrapper">
+              <img
+                src={selectedProduct.Anh}
+                alt={selectedProduct.TenHangHoa}
+                className="tcsp-product-image"
+              />
+            </div>
+            <table className="tcsp-product-detail-table">
               <tbody>
                 <tr>
                   <td><strong>Tên sản phẩm:</strong></td>
@@ -226,13 +224,35 @@ const TraCuuSanPham = () => {
                   <td>{selectedProduct.SoDienThoai}</td>
                 </tr>
                 <tr>
+                  <td><strong>Địa chỉ</strong></td>
+                  <td>{selectedProduct.DiaChi}</td>
+                </tr>
+                <tr>
                   <td><strong>Ngày duyệt đơn:</strong></td>
-                  <td>{new Date(selectedProduct.NgayDuyet).toLocaleDateString()}</td>
+                  <td>{selectedProduct.NgayDuyet ? new Date(selectedProduct.NgayDuyet).toLocaleDateString() : ""}</td>
                 </tr>
                 <tr>
                   <td><strong>Hạn bảo hành:</strong></td>
-                  <td>{calculateWarrantyEndDate(selectedProduct.NgayDuyet, selectedProduct.ThoiGianBaoHanh).toLocaleDateString()}</td>
+                  <td>{selectedProduct.NgayDuyet ? calculateWarrantyEndDate(selectedProduct.NgayDuyet, selectedProduct.ThoiGianBaoHanh).toLocaleDateString() : ""}</td>
                 </tr>
+                {selectedProduct.IDKhoiLuongTa && selectedProduct.IDKhoiLuongTa !== "0" && (
+                  <tr>
+                    <td><strong>Khối lượng:</strong></td>
+                    <td>{selectedProduct.KhoiLuong}</td>
+                  </tr>
+                )}
+                {selectedProduct.IDKichThuocQuanAo && selectedProduct.IDKichThuocQuanAo !== "0" && (
+                  <tr>
+                    <td><strong>Kích thước quần áo:</strong></td>
+                    <td>{selectedProduct.KichThuocQuanAo}</td>
+                  </tr>
+                )}
+                {selectedProduct.IDKichThuocGiay && selectedProduct.IDKichThuocGiay !== "0" && (
+                  <tr>
+                    <td><strong>Kích thước giày:</strong></td>
+                    <td>{selectedProduct.KichThuocGiay}</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -240,6 +260,7 @@ const TraCuuSanPham = () => {
       )}
     </div>
   );
+  // ...existing code...
 };
 
 export default TraCuuSanPham;

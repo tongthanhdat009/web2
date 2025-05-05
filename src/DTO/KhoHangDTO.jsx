@@ -1,11 +1,8 @@
 class KhoHangDTO{
-    constructor({Seri, MaPhieuNhap, MaHangHoa, GiaNhap, GiaBan, TinhTrang}){
+    constructor({Seri, TinhTrang, IDChiTietPhieuNhap}){
         this.Seri = Seri;
-        this.MaPhieuNhap = MaPhieuNhap;
-        this.MaHangHoa = MaHangHoa;
-        this.GiaNhap = GiaNhap;
-        this.GiaBan = GiaBan;
         this.TinhTrang = TinhTrang;
+        this.IDChiTietPhieuNhap = IDChiTietPhieuNhap;
     }
 }
 
