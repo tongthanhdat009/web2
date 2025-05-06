@@ -240,6 +240,26 @@ const QuanLyPhieuNhap = () => {
       return;
     }
 
+    // Check for duplicate items
+    const hasDuplicates = selectedItems.some((item, index) => {
+      return selectedItems.slice(index + 1).some(otherItem => {
+        return (
+          item.MaHangHoa === otherItem.MaHangHoa &&
+          item.IDKhoiLuongTa === otherItem.IDKhoiLuongTa &&
+          item.IDKichThuocGiay === otherItem.IDKichThuocGiay &&
+          item.IDKichThuocQuanAo === otherItem.IDKichThuocQuanAo
+        );
+      });
+    });
+
+    if (hasDuplicates) {
+      setNotification({
+        message: "Không được thêm các mặt hàng trùng lặp (cùng mã hàng hóa, khối lượng, kích thước quần áo và kích thước giày)",
+        type: 'error'
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       let IDTKAdmin = localStorage.getItem("IDTaiKhoan");
@@ -267,9 +287,9 @@ const QuanLyPhieuNhap = () => {
         const chiTietPhieuNhapResult = await addChiTietPhieuNhap({
           MaPhieuNhap: Number(MaPhieuNhap1),
           MaHangHoa: Number(item.MaHangHoa),
-          IDKhoiLuongTa: Number(item.IDKhoiLuongTa) || null,
-          IDKichThuocQuanAo: Number(item.IDKichThuocQuanAo) || null,
-          IDKichThuocGiay: Number(item.IDKichThuocGiay) || null,
+          IDKhoiLuongTa: Number(item.IDKhoiLuongTa) || 0,
+          IDKichThuocQuanAo: Number(item.IDKichThuocQuanAo) || 0,
+          IDKichThuocGiay: Number(item.IDKichThuocGiay) || 0,
           GiaNhap: Number(item.GiaNhap),
           GiaBan: Number(item.GiaBan),
           SoLuongNhap: Number(item.SoLuong),
@@ -375,6 +395,23 @@ const QuanLyPhieuNhap = () => {
           <div className="modal-content" style={{ maxWidth: '1500px' }}>
             <h2 className="modal-title">Thêm phiếu nhập mới</h2>
             
+            {notification && (
+              <div className="form-notification-overlay">
+                <div className={`form-notification notification-${notification.type}`}>
+                  <span className="notification-icon" style={{ fontSize: '20px' }}>
+                    {notification.type === 'success' ? '✓' : notification.type === 'error' ? '✕' : '⚠'}
+                  </span>
+                  <p className="notification-message">{notification.message}</p>
+                  <button 
+                    className="notification-close-button"
+                    onClick={() => setNotification(null)}
+                  >
+                    Đóng
+                  </button>
+                </div>
+              </div>
+            )}
+            
             <form onSubmit={handleSubmitAddForm}>
               <div className="form-group">
                 <label>Nhà cung cấp:</label>
@@ -440,7 +477,7 @@ const QuanLyPhieuNhap = () => {
                             className="modal-input"
                           >
                             <option value="">Chọn khối lượng</option>
-                            {khoiLuongTas.map(klt => (
+                            {khoiLuongTas.filter(klt => klt.IDKhoiLuongTa !== "0").map(klt => (
                               <option key={klt.IDKhoiLuongTa} value={klt.IDKhoiLuongTa}>
                                 {klt.KhoiLuong}
                               </option>
@@ -458,7 +495,7 @@ const QuanLyPhieuNhap = () => {
                             className="modal-input"
                           >
                             <option value="">Chọn kích thước</option>
-                            {kichThuocQuanAos.map(ktqa => (
+                            {kichThuocQuanAos.filter(ktqa => ktqa.IDKichThuocQuanAo !== "0").map(ktqa => (
                               <option key={ktqa.IDKichThuocQuanAo} value={ktqa.IDKichThuocQuanAo}>
                                 {ktqa.KichThuocQuanAo}
                               </option>
@@ -476,7 +513,7 @@ const QuanLyPhieuNhap = () => {
                             className="modal-input"
                           >
                             <option value="">Chọn kích thước</option>
-                            {kichThuocGiays.map(ktg => (
+                            {kichThuocGiays.filter(ktg => ktg.IDKichThuocGiay !== "0").map(ktg => (
                               <option key={ktg.IDKichThuocGiay} value={ktg.IDKichThuocGiay}>
                                 {ktg.KichThuocGiay}
                               </option>
