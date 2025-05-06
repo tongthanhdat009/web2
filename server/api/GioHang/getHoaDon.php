@@ -30,7 +30,7 @@ if ($maHoaDon <= 0) {
 }
 
 $sql = "
-SELECT * 
+SELECT hd.*, cthd.*, kh.*, ctpn.*, klt.*, ktqa.*, ktg.*, hh.MaHangHoa, hh.TenHangHoa, hh.Anh
 FROM hoadon hd
 JOIN chitiethoadon cthd ON cthd.MaHoaDon = hd.MaHoaDon
 JOIN khohang kh ON kh.Seri = cthd.Seri

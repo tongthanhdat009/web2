@@ -21,6 +21,7 @@ export default function HoaDon({ maHoaDon }) {
         });
     }
   }, [maHoaDon]);
+  console.log(hoaDon);
 
   if (loading) return <div className="loading">Đang tải hóa đơn...</div>;
   if (!hoaDon || hoaDon.length === 0) return <div className="not-found">Không tìm thấy hóa đơn.</div>;
@@ -53,7 +54,7 @@ export default function HoaDon({ maHoaDon }) {
 
   const hd = hoaDon[0];
   const totalAmount = groupedItems.reduce((acc, item) => acc + item.GiaBan * item.count, 0);
-
+  console.log("Tổng tiền:", hoaDon);
   return (
     <div className="hoa-don-container">
       <div className="hoa-don-header">
@@ -64,7 +65,7 @@ export default function HoaDon({ maHoaDon }) {
           <p><strong>SĐT:</strong> {hd.SoDienThoai}</p>
         </div>
         <div className="right">
-          <p><strong>Tình trạng:</strong> {hd.TinhTrang}</p>
+          <p><strong>Trạng thái:</strong> {hd.TrangThai}</p>
           <p><strong>Ngày xuất:</strong> {hd.NgayXuatHoaDon}</p>
           <p><strong>Ngày duyệt:</strong> {hd.NgayDuyet || "Chưa duyệt"}</p>
         </div>

@@ -75,4 +75,8 @@
     .hoa-don-table td:nth-child(7) {
       display: none;
     }
+    .hoa-don-table th:nth-child(2),
+    .hoa-don-table td:nth-child(2) {
+      display: none;
+    }
   }
