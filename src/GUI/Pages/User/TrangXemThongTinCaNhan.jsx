@@ -42,7 +42,7 @@ function TrangXemThongTinCaNhan() {
           gioiTinh: user.GioiTinh,
           email: user.Email,
           soDienThoai: user.SoDienThoai,
-          anh: user.Anh
+          anh: user.Anh 
         });
         if (user.Anh) {
           setPreviewImage(`http://localhost/web2/server/uploads/avatars/${user.Anh}`);
@@ -144,7 +144,7 @@ function TrangXemThongTinCaNhan() {
             <div className="text-center mb-4">
               <div className="d-flex flex-column align-items-center">
                 <Image
-                  src={previewImage || '/assets/default-avatar.png'}
+                  src={previewImage || '/assets/avatar/0.png'}
                   roundedCircle
                   style={{ width: '150px', height: '150px', objectFit: 'cover' }}
                   className="mb-3"

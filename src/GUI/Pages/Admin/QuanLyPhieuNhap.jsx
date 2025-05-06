@@ -262,7 +262,7 @@ const QuanLyPhieuNhap = () => {
 
     setLoading(true);
     try {
-      let IDTKAdmin = localStorage.getItem("IDTaiKhoan");
+      let IDTKAdmin = localStorage.getItem("IDTaiKhoanAdmin");
       console.log("IDTKAdmin:", IDTKAdmin);
       
       // Tạo phiếu nhập với trạng thái "Chưa duyệt"
