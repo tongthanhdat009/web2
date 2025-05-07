@@ -31,125 +31,70 @@ $conn = $database->getConnection();
 if (!$conn) {
     echo json_encode([
         "success" => false,
-        "message" => "Lỗi kết nối cơ sở dữ liệu",
-        "debug_info" => $debug_info
+        "message" => "Lỗi kết nối cơ sở dữ liệu"
     ]);
     exit();
 }
 
-// Debug: Hiển thị thông tin về request
-$debug_info = [
-    "request_method" => $_SERVER['REQUEST_METHOD'],
-    "content_type" => isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : 'Not set',
-    "raw_input" => file_get_contents("php://input"),
-    "post_data" => $_POST,
-    "headers" => getallheaders()
-];
-
-// Log request data
-error_log("Request data: " . print_r($debug_info, true));
-
 // Lấy dữ liệu từ request
-$data = [];
 $raw_data = file_get_contents("php://input");
+$data = json_decode($raw_data, true);
 
-// Parse JSON data
-if (!empty($raw_data)) {
-    $json_data = json_decode($raw_data, true);
-    if ($json_data !== null) {
-        $data = $json_data;
-        $debug_info["parsed_json"] = $json_data;
-        error_log("Parsed JSON data: " . print_r($json_data, true));
-    } else {
-        $debug_info["json_error"] = json_last_error_msg();
-        error_log("JSON parse error: " . json_last_error_msg());
-    }
+if (!$data) {
+    echo json_encode([
+        "success" => false,
+        "message" => "Dữ liệu không hợp lệ"
+    ]);
+    exit();
 }
-
-// Nếu không có JSON data, thử lấy từ POST
-if (empty($data)) {
-    $data = $_POST;
-    $debug_info["using_post"] = true;
-    error_log("Using POST data: " . print_r($_POST, true));
-}
-
-error_log("Final data for processing: " . print_r($data, true));
 
 // Kiểm tra các trường bắt buộc
-$required_fields = ["MaPhieuNhap", "MaHangHoa", "GiaNhap", "GiaBan"];
+$required_fields = ["IDChiTietPhieuNhap", "TinhTrang"];
 $missing_fields = [];
 
 foreach ($required_fields as $field) {
     if (!isset($data[$field]) || trim($data[$field]) === '') {
         $missing_fields[] = $field;
-        error_log("Missing or empty field: " . $field);
-        if (isset($data[$field])) {
-            error_log("Field value: '" . $data[$field] . "'");
-        } else {
-            error_log("Field not set");
-        }
     }
 }
 
-// Nếu thiếu trường
 if (!empty($missing_fields)) {
-    $response = [
+    echo json_encode([
         "success" => false,
         "message" => "Thiếu dữ liệu, vui lòng nhập đầy đủ",
-        "missing_fields" => $missing_fields,
-        "received_data" => $data,
-        "debug_info" => $debug_info
-    ];
-    error_log("Error response: " . print_r($response, true));
-    echo json_encode($response);
+        "missing_fields" => $missing_fields
+    ]);
     exit();
 }
 
 // Validate và sanitize dữ liệu
-$maPhieuNhap = trim($data['MaPhieuNhap']);
-$maHangHoa = trim($data['MaHangHoa']);
-$giaNhap = filter_var($data['GiaNhap'], FILTER_VALIDATE_FLOAT);
-$giaBan = filter_var($data['GiaBan'], FILTER_VALIDATE_FLOAT);
-$tinhTrang = isset($data['TinhTrang']) ? trim($data['TinhTrang']) : "0";
-
-// Kiểm tra giá trị số
-if ($giaNhap === false || $giaNhap < 0) {
-    echo json_encode([
-        "success" => false,
-        "message" => "Giá nhập không hợp lệ",
-        "debug_info" => $debug_info
-    ]);
-    exit();
-}
-
-if ($giaBan === false || $giaBan < 0) {
-    echo json_encode([
-        "success" => false,
-        "message" => "Giá bán không hợp lệ",
-        "debug_info" => $debug_info
-    ]);
-    exit();
-}
+$idChiTietPhieuNhap = trim($data['IDChiTietPhieuNhap']);
+$tinhTrang = trim($data['TinhTrang']);
 
 // Tạo truy vấn SQL sử dụng prepared statement
-$sql = "INSERT INTO khohang (MaPhieuNhap, MaHangHoa, GiaNhap, GiaBan, TinhTrang) VALUES (?, ?, ?, ?, ?)";
+$sql = "INSERT INTO khohang (IDChiTietPhieuNhap, TinhTrang) VALUES (?, ?)";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ssddi", $maPhieuNhap, $maHangHoa, $giaNhap, $giaBan, $tinhTrang);
+$stmt->bind_param("is", $idChiTietPhieuNhap, $tinhTrang);
 
 // Thực hiện truy vấn và kiểm tra lỗi
 if ($stmt->execute()) {
-    // Lấy ID vừa được tạo
+    // Lấy Seri vừa được tạo
     $seri = $conn->insert_id;
 
     echo json_encode([
         "success" => true,
         "message" => "Thêm kho hàng thành công",
         "data" => [
-            "Seri" => $seri
+            "Seri" => $seri,
+            "TinhTrang" => $tinhTrang,
+            "IDChiTietPhieuNhap" => $idChiTietPhieuNhap
         ]
     ]);
 } else {
-    echo json_encode(["success" => false, "message" => "Lỗi khi thêm kho hàng: " . $stmt->error]);
+    echo json_encode([
+        "success" => false,
+        "message" => "Lỗi khi thêm kho hàng: " . $stmt->error
+    ]);
 }
 
 // Đóng statement và kết nối

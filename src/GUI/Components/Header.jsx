@@ -15,7 +15,9 @@ const Header = ({ user, toggleMenu }) => {
     localStorage.removeItem("HoTen");
     localStorage.removeItem("Anh");
     localStorage.removeItem("IDTKAdmin");
-    navigate("/");
+    localStorage.removeItem("TaiKhoanAdmin");
+    localStorage.removeItem("MatKhauAdmin");
+    navigate("/admin/dang-nhap-admin");
   };
 
   return (

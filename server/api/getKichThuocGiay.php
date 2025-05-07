@@ -12,30 +12,29 @@ $conn = $database->getConnection();
 
 
 // Chuẩn bị SQL query
-$sql = "SELECT * FROM khohang";
+$sql = "SELECT * FROM kichthuocgiay";
 
 // Thêm điều kiện nếu có IDChiTietPhieuNhap
-$sql .= " ORDER BY Seri ASC";
+$sql .= " ORDER BY IDKichThuocGiay ASC";
 
 $result = $conn->query($sql);
 
 if ($result) {
-    $hangs = [];
+    $ktg = [];
     while ($row = $result->fetch_assoc()) {
-        $hangs[] = [
-            "Seri" => $row["Seri"],
-            "TinhTrang" => $row["TinhTrang"],
-            "IDChiTietPhieuNhap" => $row["IDChiTietPhieuNhap"],
+        $ktg[] = [
+            "IDKichThuocGiay" => $row["IDKichThuocGiay"],
+            "KichThuocGiay" => $row["KichThuocGiay"],
         ];
     }
     echo json_encode([
         "success" => true,
-        "data" => $hangs
+        "data" => $ktg
     ]);
 } else {
     echo json_encode([
         "success" => false,
-        "message" => "Lỗi khi lấy danh sách kho hàng: " . $conn->error
+        "message" => "Lỗi khi lấy danh sách kích thước giày: " . $conn->error
     ]);
 }
 

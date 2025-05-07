@@ -50,7 +50,7 @@ const AdminLayout = () => {
       try {
         // Đăng nhập và nhận thông tin tài khoản
         const result = await dangNhap(tenTaiKhoan, matKhau);
-        
+        localStorage.setItem("IDTaiKhoanAdmin", result.idTaiKhoan);
         // Nếu đăng nhập thành công, lấy thông tin tài khoản
         const thongTin = await layThongTinTaiKhoan(result.idTaiKhoan);
         setThongTinTKAdmin(thongTin);

@@ -107,8 +107,7 @@ const QuanLyHangHoa = () => {
     const file = e.target.files[0];
     if (file) {
       setSelectedImage(file);
-      const imageUrl = URL.createObjectURL(file);
-      setEditingHangHoa(prev => ({ ...prev, Anh: imageUrl }));
+      setEditingHangHoa(prev => ({ ...prev, Anh: URL.createObjectURL(file) }));
     }
   };
 
@@ -169,26 +168,43 @@ const QuanLyHangHoa = () => {
     }
 
     try {
-      const hangHoaDTO = {
-        ...editingHangHoa,
-        TenHangHoa: editingHangHoa.TenHangHoa.trim(),
-        MaChungLoai: editingHangHoa.MaChungLoai.trim(),
-        MaHang: editingHangHoa.MaHang.trim(),
-        MaKhuyenMai: editingHangHoa.MaKhuyenMai?.trim() || null,
-        MoTa: editingHangHoa.MoTa?.trim() || null,
-        ThoiGianBaoHanh: editingHangHoa.ThoiGianBaoHanh?.trim() || null,
-        Anh: editingHangHoa.Anh?.trim() || null,
-        TrangThai: editingHangHoa.TrangThai?.trim() || "1"
-      };
+      const formData = new FormData();
+      
+      // Thêm các trường dữ liệu vào FormData
+      Object.keys(editingHangHoa).forEach(key => {
+        // Chỉ thêm các trường có giá trị
+        if (editingHangHoa[key] !== null && editingHangHoa[key] !== undefined) {
+          formData.append(key, editingHangHoa[key].toString().trim());
+        }
+      });
+
+      // Thêm file ảnh nếu có
+      if (selectedImage) {
+        formData.append('Anh', selectedImage);
+      }
+
+      // Log FormData để debug
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+      }
       
       let response;
       if (modalType === "edit") {
-        response = await updateHangHoa(hangHoaDTO);
+        response = await fetch('http://localhost/web2/server/api/updateHangHoa.php', {
+          method: 'POST',
+          body: formData
+        });
       } else {
-        response = await addHangHoa(hangHoaDTO);
+        response = await fetch('http://localhost/web2/server/api/addHangHoa.php', {
+          method: 'POST',
+          body: formData
+        });
       }
 
-      if (response.success) {
+      const data = await response.json();
+      console.log("Server response:", data); // Log phản hồi từ server
+
+      if (data.success) {
         setNotification({
           message: modalType === "edit" ? "Cập nhật hàng hóa thành công" : "Thêm hàng hóa thành công",
           type: 'success'
@@ -197,11 +213,12 @@ const QuanLyHangHoa = () => {
         await loadData();
       } else {
         setNotification({
-          message: response.message || "Có lỗi xảy ra",
+          message: data.message || "Có lỗi xảy ra",
           type: 'error'
         });
       }
     } catch (error) {
+      console.error("Error:", error); // Log lỗi nếu có
       setNotification({
         message: "Có lỗi xảy ra: " + (error.message || "Không xác định"),
         type: 'error'

@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { App as AntApp, ConfigProvider } from 'antd';
 import UserLayout from "./Components/UserLayout";
 import AdminLayout from "./Components/AdminLayout";
 import DangNhapAdmin from "./Pages/Admin/DangNhapAdmin";
@@ -18,6 +19,7 @@ import TrangChiTietHangHoa from "./Pages/User/TrangChiTietHangHoa";
 import TrangSanPhamTheoTheLoai from "./Pages/User/TrangSanPhamTheoTheLoai";
 import KetQuaThanhToanOnline from "./Pages/User/KetQuaThanhToanOnline";
 import KetQuaThanhToan from "./Pages/User/KetQuaThanhToan";
+import TrangXemThongTinCaNhan from "./Pages/User/TrangXemThongTinCaNhan";
 import LichSuMuaHang from "./Pages/User/LichSuMuaHang";
 
 function App() {
@@ -39,6 +41,7 @@ function App() {
           <Route path="/chi-tiet-san-pham/:maHangHoa" element={<TrangChiTietHangHoa />} />
           <Route path="/ket-qua-thanh-toan-online" element={<KetQuaThanhToanOnline />} />
           <Route path="/ket-qua-thanh-toan" element={<KetQuaThanhToan />} />
+          <Route path="/thong-tin-tai-khoan" element={<TrangXemThongTinCaNhan />} />
           <Route path="/don-hang-cua-toi" element={<LichSuMuaHang />} />
         </Route>
         <Route path="/dang-nhap-dang-ky" element={<TrangDangNhapDangKy />} />

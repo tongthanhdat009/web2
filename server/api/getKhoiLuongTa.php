@@ -12,30 +12,29 @@ $conn = $database->getConnection();
 
 
 // Chuẩn bị SQL query
-$sql = "SELECT * FROM khohang";
+$sql = "SELECT * FROM khoiluongta";
 
 // Thêm điều kiện nếu có IDChiTietPhieuNhap
-$sql .= " ORDER BY Seri ASC";
+$sql .= " ORDER BY IDKhoiLuongTa ASC";
 
 $result = $conn->query($sql);
 
 if ($result) {
-    $hangs = [];
+    $klts = [];
     while ($row = $result->fetch_assoc()) {
-        $hangs[] = [
-            "Seri" => $row["Seri"],
-            "TinhTrang" => $row["TinhTrang"],
-            "IDChiTietPhieuNhap" => $row["IDChiTietPhieuNhap"],
+        $klts[] = [
+            "IDKhoiLuongTa" => $row["IDKhoiLuongTa"],
+            "KhoiLuong" => $row["KhoiLuong"],
         ];
     }
     echo json_encode([
         "success" => true,
-        "data" => $hangs
+        "data" => $klts
     ]);
 } else {
     echo json_encode([
         "success" => false,
-        "message" => "Lỗi khi lấy danh sách kho hàng: " . $conn->error
+        "message" => "Lỗi khi lấy danh sách khối lượng tạ: " . $conn->error
     ]);
 }
 
