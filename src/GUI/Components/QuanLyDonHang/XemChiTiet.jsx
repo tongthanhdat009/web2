@@ -51,6 +51,9 @@ const XemChiTiet = ({ show, onHide, maHoaDon }) => {
     return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
   };
 
+  const handleAddress = (dh) => {
+    return dh.replace(/\$\$/g, ", ");
+  }
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
@@ -74,7 +77,7 @@ const XemChiTiet = ({ show, onHide, maHoaDon }) => {
                 <div className="row">
                   <div className="col-md-6">
                     <p><strong>Khách hàng:</strong> {thongTinHoaDon.IDTaiKhoan}</p>
-                    <p><strong>Địa chỉ giao hàng:</strong> {thongTinHoaDon.DiaChi}</p>
+                    <p><strong>Địa chỉ giao hàng:</strong> {handleAddress(thongTinHoaDon.DiaChi)}</p>
                     <p><strong>Số điện thoại:</strong> {thongTinHoaDon.SoDienThoai}</p>
                     <p><strong>Tên người mua:</strong> {thongTinHoaDon.TenNguoiMua}</p>
                   </div>

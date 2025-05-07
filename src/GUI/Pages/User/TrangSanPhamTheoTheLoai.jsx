@@ -7,6 +7,7 @@ import LocTheoThietBiCardio from '../../Components/TrangHienThiSanPhamTheoTheLoa
 import LocTheoThoiTrang from '../../Components/TrangHienThiSanPhamTheoTheLoai/Filters/LocTheoThoiTrang';
 import LocTheoThucPham from '../../Components/TrangHienThiSanPhamTheoTheLoai/Filters/LocTheoThucPham';
 import LocTheoCacThietBiKhac from '../../Components/TrangHienThiSanPhamTheoTheLoai/Filters/LocTheoCacThietBiKhac';
+import LocTheoSizeGiay from '../../Components/TrangHienThiSanPhamTheoTheLoai/Filters/LocTheoSizeGiay';
 import { getHangHoaTheoTheLoai } from '../../../DAL/apiTrangChuUser.jsx';
 import SanPhamCardLayout from '../../Components/SanPhamCardLayout';
 import { Funnel } from 'react-bootstrap-icons'; // Import the icon
@@ -16,7 +17,8 @@ const MA_THE_LOAI = {
     CARDIO: 2,
     THOI_TRANG: 3,
     THUCPHAM: 4,
-    KHAC: 5
+    KHAC: 5,
+    GIAY: 6,
 };
 
 function TrangSanPhamTheoTheLoai() {
@@ -38,6 +40,9 @@ function TrangSanPhamTheoTheLoai() {
 
     const [selectedShoeSizes, setSelectedShoeSizes] = useState([]);       
     
+    const [selectedShoeTypes, setSelectedShoeTypes] = useState([]);       
+
+
     // --- State mới cho bộ lọc giá ---
     const [overallMinPrice, setOverallMinPrice] = useState(0);
     const [overallMaxPrice, setOverallMaxPrice] = useState(10000000); // Giá trị mặc định lớn
@@ -122,8 +127,7 @@ function TrangSanPhamTheoTheLoai() {
         let filtered = [...listSanPham]; 
 
         if (selectedChungLoai.length > 0) {
-            // Chuyển đổi selectedChungLoai sang cùng kiểu với sp.MaChungLoai để so sánh chính xác
-            const selectedIds = selectedChungLoai.map(id => id.toString()); // Giả sử MaChungLoai trong sản phẩm là number hoặc string
+            const selectedIds = selectedChungLoai.map(id => id.toString()); //MaChungLoai trong sản phẩm là number hoặc string
             filtered = filtered.filter(sp =>
                 sp.MaChungLoai && selectedIds.includes(sp.MaChungLoai.toString())
             );
@@ -150,14 +154,21 @@ function TrangSanPhamTheoTheLoai() {
             );
         }
 
-        // 4. Lọc theo Size Giày (chỉ cho Thời Trang)
-        if (maTheLoai === MA_THE_LOAI.THOI_TRANG && selectedShoeSizes.length > 0) {
+        // 4. Lọc theo Size Giày (chỉ cho Giày)
+        if (maTheLoai === MA_THE_LOAI.GIAY && selectedShoeSizes.length > 0) {
             filtered = filtered.filter(sp =>
-                sp.IDKichThuocGiay != null && selectedShoeSizes.includes(sp.IDKichThuocGiay.toString()) // Dòng 111 (đã sửa)
+                sp.IDKichThuocGiay != null && selectedShoeSizes.includes(sp.IDKichThuocGiay.toString()) 
             );
         }
 
-        // --- 5. Lọc theo Giá ---
+        // 4. Lọc theo Size Giày (chỉ cho Giày)
+        if (maTheLoai === MA_THE_LOAI.GIAY && selectedShoeTypes.length > 0) {
+            filtered = filtered.filter(sp =>
+                sp.MaChungLoai != null && selectedShoeTypes.includes(sp.MaChungLoai.toString()) 
+            );
+        }
+
+        // --- 6. Lọc theo Giá ---
         // Chỉ lọc nếu minPrice hoặc maxPrice khác với giới hạn tổng thể
         if (minPrice > overallMinPrice || maxPrice < overallMaxPrice) {
             filtered = filtered.filter(sp =>
@@ -216,7 +227,8 @@ function TrangSanPhamTheoTheLoai() {
         selectedKhoiLuong, 
         maTheLoai, 
         selectedClothingSizes,
-        selectedShoeSizes, 
+        selectedShoeSizes,
+        selectedShoeTypes, 
         minPrice, 
         maxPrice, 
         overallMinPrice, 
@@ -267,7 +279,9 @@ function TrangSanPhamTheoTheLoai() {
             selectedClothingSizes:selectedClothingSizes,
             setSelectedClothingSizes:setSelectedClothingSizes,
             selectedShoeSizes:selectedShoeSizes,
-            setSelectedShoeSizes:setSelectedShoeSizes
+            setSelectedShoeSizes:setSelectedShoeSizes,
+            selectedShoeTypes:selectedShoeTypes,
+            setSelectedShoeTypes:setSelectedShoeTypes
         };
 
         switch (maTheLoai) {
@@ -282,6 +296,8 @@ function TrangSanPhamTheoTheLoai() {
                 return <LocTheoThucPham {...filterProps} />;
             case MA_THE_LOAI.KHAC:
                 return <LocTheoCacThietBiKhac {...filterProps} />;
+            case MA_THE_LOAI.GIAY:
+                return <LocTheoSizeGiay {...filterProps} />;
             default:
                 return <p>Thể loại không hợp lệ.</p>;
         }
@@ -304,6 +320,9 @@ function TrangSanPhamTheoTheLoai() {
                 break;
             case MA_THE_LOAI.KHAC:
                 title = title + " Khác";
+                break;
+            case MA_THE_LOAI.GIAY:
+                title = title + " Giày thể thao";
                 break;
             default:
                 title = title + " Danh sách sản phẩm";

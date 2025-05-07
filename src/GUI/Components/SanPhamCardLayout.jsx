@@ -28,6 +28,7 @@ function SanPhamCardLayout({MaHangHoa, Anh, TenHangHoa, GiaGoc, PhanTramKM = 0, 
                 <img
                     src={Anh || '/path/to/placeholder-image.png'}
                     className="card-img-top product-card-img p-0"
+                    style={{ width: '100%', height: 'auto' }}
                     alt={TenHangHoa || "Sản phẩm"}
                     />
                 {/* Badge giảm giá (nếu có) */}
