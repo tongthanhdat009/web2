@@ -61,7 +61,7 @@ export default function HoaDon({ maHoaDon }) {
         <div className="left">
           <p><strong>Mã hóa đơn:</strong> {hd.MaHoaDon}</p>
           <p><strong>Tên người mua:</strong> {hd.TenNguoiMua}</p>
-          <p><strong>Địa chỉ:</strong> {hd.DiaChi}</p>
+          <p><strong>Địa chỉ:</strong> {hd.DiaChi.split('$$').join(', ')}</p>
           <p><strong>SĐT:</strong> {hd.SoDienThoai}</p>
         </div>
         <div className="right">

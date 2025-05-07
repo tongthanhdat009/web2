@@ -17,13 +17,21 @@
   .hoa-don-header p {
     margin: 5px 0;
   }
+  .hoa-don-header .left {
+    width: 70%;
+    text-align: left;
+  }
+  .hoa-don-header .right {
+    width: 30%;
+    text-align: right;
+  }
   
   .hoa-don-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
   }
-  
+
   .hoa-don-table th,
   .hoa-don-table td {
     border: 1px solid #ddd;

@@ -1,101 +1,91 @@
-.form-xac-nhan-thanh-toan {
-  background-color: #fff;
-  padding: 20px;
-  margin: 0 auto;
-  max-width: 600px; /* Mở rộng chiều rộng */
-  min-width: 400px; /* Đảm bảo form không quá nhỏ */
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  position: fixed; /* Giữ form cố định trên màn hình */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Căn giữa màn hình */
-  z-index: 1000; /* Đảm bảo form hiển thị trên các phần tử khác */
-}
+/* FormXacNhanThanhToan.css */
 
-.form-xac-nhan-thanh-toan h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-}
-
-.form-xac-nhan-thanh-toan .form-group {
-  margin-bottom: 15px;
-}
-
-.form-xac-nhan-thanh-toan .form-group label {
-  display: block;
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #555;
-}
-
-.form-xac-nhan-thanh-toan .form-group input,
-.form-xac-nhan-thanh-toan .form-group select {
-  width: 100%;
-  padding: 12px; /* Tăng kích thước padding để form rộng hơn */
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
-
-.form-xac-nhan-thanh-toan .form-group input[type="tel"] {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-.form-xac-nhan-thanh-toan button[type="submit"] {
-  background-color: #007bff;
-  color: #fff;
-  padding: 12px 20px; /* Tăng padding cho nút */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 15px;
-}
-
-.form-xac-nhan-thanh-toan button[type="submit"]:hover {
-  background-color: #0056b3;
-}
-.form-xac-nhan-thanh-toan button[type="button"] {
-  background-color: red;
-  color: #fff;
-  padding: 12px 20px; /* Tăng padding cho nút */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 15px;
-}
-
-.form-xac-nhan-thanh-toan .form-group input:focus,
-.form-xac-nhan-thanh-toan .form-group select:focus {
-  outline: none;
-  border-color: #007bff;
-}
-
-.form-xac-nhan-thanh-toan .form-group input,
-.form-xac-nhan-thanh-toan .form-group select {
-  margin-bottom: 10px;
-}
-/* Lớp phủ làm xám phần bên ngoài form */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Màu đen với độ trong suốt */
-  z-index: 999; /* Đảm bảo lớp phủ này nằm trên các phần tử khác */
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 999;
 }
 
+.form-xac-nhan-thanh-toan {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px 30px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Scrollbar styling for better look */
+.form-xac-nhan-thanh-toan::-webkit-scrollbar {
+  width: 6px;
+}
+.form-xac-nhan-thanh-toan::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.form-xac-nhan-thanh-toan h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 24px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.error-message {
+  color: red;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+}
+
+.form-actions {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.form-actions button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.form-actions button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+}
+
+.form-actions button[type="button"] {
+  background-color: #ccc;
+}
