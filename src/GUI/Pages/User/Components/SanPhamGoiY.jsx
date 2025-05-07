@@ -23,7 +23,7 @@ function SanPhamGoiY({ maChungLoai, maHangHoaHienTai }) {
                     });
                     // Chuyển PhanTram sang số
                     const result = Object.values(map)
-                        .slice(0, 6)
+                        .slice(0, 5)
                         .map(sp => ({
                             ...sp,
                             PhanTramKM: sp.PhanTram ? Number(sp.PhanTram) : 0
@@ -35,17 +35,25 @@ function SanPhamGoiY({ maChungLoai, maHangHoaHienTai }) {
     }, [maChungLoai, maHangHoaHienTai]);
 
     return (
-        <div className="d-flex flex-wrap" style={{ width: "100%"  }}>
-            {goiYNhoNhat.map((sp, idx) => (
-                <SanPhamCardLayout
-                    key={sp.MaHangHoa + "-min"}
-                    MaHangHoa={sp.MaHangHoa}
-                    Anh={sp.Anh}
-                    TenHangHoa={sp.TenHangHoa}
-                    GiaGoc={sp.GiaBan}
-                    PhanTramKM={sp.PhanTramKM}
-                    MoTa={sp.MoTa}
-                />
+        <div className="d-flex flex-wrap" style={{ width: "100%", height: "fit-content" }}>
+            {[...goiYNhoNhat, ...Array(5 - goiYNhoNhat.length).fill(null)].map((sp, idx) => (
+                <div className="col p-2" key={sp ? sp.MaHangHoa + "-min" : "empty-" + idx}>
+                    {sp ? (
+                        <SanPhamCardLayout
+                            MaHangHoa={sp.MaHangHoa}
+                            Anh={sp.Anh}
+                            TenHangHoa={sp.TenHangHoa}
+                            GiaGoc={sp.GiaBan}
+                            PhanTramKM={sp.PhanTramKM}
+                            MoTa={sp.MoTa}
+                        />
+                    ) : (
+                        <div style={{ width: "100%", height: "100%", visibility: "hidden" }}>
+                            {/* Chỗ trống giữ layout */}
+                            <SanPhamCardLayout />
+                        </div>
+                    )}
+                </div>
             ))}
         </div>
     );
