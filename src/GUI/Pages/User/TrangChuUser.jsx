@@ -12,7 +12,8 @@ const MA_THE_LOAI = {
     CARDIO: 2,
     THOI_TRANG: 3,
     THUCPHAM: 4,
-    KHAC: 5
+    KHAC: 5,
+    GIAY: 6
 };
 
 function TrangChuUser() {
@@ -22,6 +23,7 @@ function TrangChuUser() {
     const [thoiTrang, setThoiTrang] = useState([]);
     const [thucPham, setThucPham] = useState([]);
     const [thietBiKhac, setThietBiKhac] = useState([]);
+    const [giay, setGiay] = useState([]);
 
     // State cho trạng thái loading và lỗi
     const [loading, setLoading] = useState(true);
@@ -49,7 +51,8 @@ function TrangChuUser() {
                     fetchDataForCategory(MA_THE_LOAI.CARDIO, setThietBiCardio),
                     fetchDataForCategory(MA_THE_LOAI.THOI_TRANG, setThoiTrang),
                     fetchDataForCategory(MA_THE_LOAI.THUCPHAM, setThucPham),
-                    fetchDataForCategory(MA_THE_LOAI.KHAC, setThietBiKhac)
+                    fetchDataForCategory(MA_THE_LOAI.KHAC, setThietBiKhac),
+                    fetchDataForCategory(MA_THE_LOAI.GIAY, setGiay)
                 ]);
             } catch (err) {
                 console.error("Lỗi khi tải dữ liệu trang chủ:", err);
@@ -201,13 +204,21 @@ function TrangChuUser() {
             </div>
             {renderXemTatCaButton(MA_THE_LOAI.THUCPHAM, thucPham)}
 
-
+            {/* Giày thể thao */}
+            <TieuDeDanhSach TieuDeDanhSach="Giày thể thao" MoTa="Giày tập thể thao nhiều loại" />
+            <div style={{ marginLeft: "10%", marginRight: "10%" }} className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 mb-3" id="GiayTheThao">
+                {renderSanPhamList(giay, MA_THE_LOAI.GIAY)}
+            </div>
+             {renderXemTatCaButton(MA_THE_LOAI.GIAY, giay)}
+            
+            
             {/* Các thiết bị khác */}
             <TieuDeDanhSach TieuDeDanhSach="Các thiết bị khác" MoTa="Ghế tập, xà đơn, xà kép,..." />
             <div style={{ marginLeft: "10%", marginRight: "10%" }} className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 mb-3" id="CacThietBiKhac">
                 {renderSanPhamList(thietBiKhac, MA_THE_LOAI.KHAC)}
             </div>
              {renderXemTatCaButton(MA_THE_LOAI.KHAC, thietBiKhac)}
+
 
         </>
     );
