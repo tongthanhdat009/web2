@@ -139,10 +139,16 @@ const BangHoaDon = () => {
           dh.MaHoaDon === id ? {...dh, TrangThai: "Đã Duyệt", NgayDuyet: new Date().toISOString().split('T')[0]} : dh
         ));
         
-        setNotification({
-          message: "Đã duyệt đơn hàng thành công!",
-          type: 'success'
+        const responseUpdateKhoHang = await axios.post(`http://localhost/Web2/server/api/QuanLyHoaDon/updateKhoHang.php?maHoaDon=${id}`, {
+          maHoaDon: id,
         });
+        
+        if (responseUpdateKhoHang.data.success) {
+          setNotification({
+            message: "Đã duyệt đơn hàng thành công!",
+            type: 'success'
+          });
+        }
       } else {
         setNotification({
           message: "Duyệt đơn hàng thất bại: " + response.data.message,
