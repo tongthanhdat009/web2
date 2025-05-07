@@ -1,0 +1,88 @@
+/* Lịch sử mua hàng */
+.lsmh-container {
+  margin: 20px;
+}
+
+.lsmh-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.lsmh-table th, .lsmh-table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.lsmh-table th {
+  background-color: #FF6347; /* Màu sắc nổi bật */
+  color: white;
+}
+
+.lsmh-table td {
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease; /* Màu nền chuyển động mượt mà khi hover */
+}
+
+/* Khi hover vào từng hàng */
+.lsmh-table tr:hover td {
+  background-color: #FFDDC1; /* Màu nền sáng hơn khi hover vào hàng */
+}
+
+.lsmh-table td button {
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.lsmh-table td button:hover {
+  background-color: #45a049;
+}
+
+/* Modal */
+.lsmh-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.lsmh-modal-content {
+  background-color: white;
+  padding: 20px;
+  width: 1000px; /* Đã chỉnh sửa lại chiều rộng modal */
+  max-width: 90%;
+  height: auto;
+  max-height: 80%;
+  overflow-y: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative; /* Thêm để có thể đặt vị trí của nút đóng */
+}
+
+/* Nút đóng nằm trong modal */
+.lsmh-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  color: red;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.lsmh-close-btn:hover {
+  color: darkred;
+}
