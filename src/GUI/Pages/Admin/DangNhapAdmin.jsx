@@ -14,7 +14,7 @@ const DangNhapAdmin = () => {
       const result = await dangNhap(taiKhoan, matKhau);
       localStorage.setItem("TaiKhoanAdmin", taiKhoan);
       localStorage.setItem("MatKhauAdmin", matKhau);
-      navigate("/admin/trang-chu");
+      navigate("/admin");
     } catch (error) {
       setError(error.message);
     }

@@ -1,6 +1,6 @@
 import "./css/AdminSidebar.css";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // Hàm chuyển đổi chuỗi thành slug URL
 const toSlug = (str) => {
@@ -17,28 +17,13 @@ const toSlug = (str) => {
     .trim();
 };
 
-// Menu items mặc định
-const defaultMenuItems = [
-  "Trang chủ",
-  "Quản lý khuyến mãi",
-  "Quản lý hãng",
-  "Quản lý nhà cung cấp",
-  "Quản lý phiếu nhập",
-  "Quản lý hàng hóa",
-  "Quản lý chủng loại",
-  "Quản lý đơn hàng",
-  "Quản lý người dùng",
-  "Quản lý phân quyền",
-  "Tra cứu sản phẩm"
-];
-
-const AdminSidebar = ({ menuItems = defaultMenuItems }) => {
+const AdminSidebar = ({ menuItems = [] }) => {
   const navigate = useNavigate();
+  const location = useLocation();  // Thêm useLocation để lấy thông tin đường dẫn hiện tại
 
   // Mapping tên menu với đường dẫn
   const menuToPath = {
     "Trang chủ": "trang-chu",
-  
     "Quản lý khuyến mãi": "quan-ly-khuyen-mai",
     "Quản lý hãng": "quan-ly-hang",
     "Quản lý nhà cung cấp": "quan-ly-nha-cung-cap",
