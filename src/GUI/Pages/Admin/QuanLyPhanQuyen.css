@@ -9,19 +9,21 @@
 }
 
 .table-header {
-  background: #2c3e50;
+  background: #3498db; /* Updated header background color */
   color: white;
   padding: 15px;
   font-weight: 600;
   text-align: left;
+  text-transform: uppercase; /* Added uppercase transformation */
+  letter-spacing: 1px; /* Added letter spacing */
 }
 
 .table-row-even {
-  background-color: #f8f9fa;
+  background-color: #f9f9f9; /* Light gray for even rows */
 }
 
 .table-row-odd {
-  background-color: white;
+  background-color: #ffffff; /* White for odd rows */
 }
 
 .table-container td {
@@ -31,39 +33,38 @@
 
 .button-common {
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 10px 20px;
+  border-radius: 5px;
   cursor: pointer;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .button-add {
-  background-color: #3498db;
+  background-color: #2ecc71; /* Updated add button color */
   color: white;
 }
 
 .button-add:hover {
-  background-color: #2980b9;
-  transform: translateY(-2px);
+  background-color: #27ae60; /* Darker shade on hover */
 }
 
 .button-edit {
-  background-color: #2ecc71;
+  background-color: #3498db; /* Updated edit button color */
   color: white;
 }
 
 .button-edit:hover {
-  background-color: #27ae60;
+  background-color: #2980b9; /* Darker shade on hover */
 }
 
 .button-delete {
-  background-color: #e74c3c;
+  background-color: #e74c3c; /* Updated delete button color */
   color: white;
 }
 
 .button-delete:hover {
-  background-color: #c0392b;
+  background-color: #c0392b; /* Darker shade on hover */
 }
 
 .modal-container {
@@ -215,6 +216,8 @@
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  background-color: #f5f5f5; /* Light gray background */
+  border-radius: 10px; /* Rounded corners */
 }
 
 .header-section {
@@ -222,12 +225,16 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .page-title {
-  font-size: 24px;
+  font-size: 28px;
   color: #333;
-  margin: 0;
+  margin-bottom: 20px;
 }
 
 .action-section {
@@ -243,10 +250,11 @@
 }
 
 .search-input {
-  padding: 8px 12px;
+  padding: 10px 16px;
   border: 1px solid #ddd;
   border-radius: 4px;
   min-width: 200px;
+  font-size: 16px;
 }
 
 .system-roles-toggle {

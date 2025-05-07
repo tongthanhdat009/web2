@@ -33,7 +33,7 @@ const ThongKeHangDaNhap = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost/Web2/server/api/getSanPhamNhap.php?mode=${displayMode}&limit=${displayLimit}`);
+      const response = await axios.get(`http://localhost/Web2/server/api/TrangChuAdmin/getSanPhamNhap.php?mode=${displayMode}&limit=${displayLimit}`);
       
       if (response.data.success) {
         const data = response.data.data;

@@ -15,6 +15,7 @@
   border-bottom: 2px solid #ccc;
   padding-bottom: 8px;
   margin-bottom: 20px; /* Khoảng cách giữa h2 và nội dung */
+  text-align: left;
 }
 .admin-header h2 {
   font-size: 24px;

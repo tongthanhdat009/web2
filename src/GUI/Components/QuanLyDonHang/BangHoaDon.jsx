@@ -57,22 +57,13 @@ const BangHoaDon = () => {
     }
   }, [notification]);
 
-  const getTrangThaiText = (statusCode) => {
-    switch(statusCode) {
-      case "0": return "Đã hủy";
-      case "1": return "Đã giao";
-      case "2": return "Đang chờ duyệt";
-      default: return "Không xác định";
-    }
-  };
-
   const filteredDonHang = donHang.filter(dh => {
     const matchesSearch = 
       searchTerm === "" || 
       dh.MaHoaDon.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dh.IDTaiKhoan.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const currentStatus = getTrangThaiText(dh.TrangThai);
+    const currentStatus = dh.TrangThai;
     const matchesStatus = statusFilter === "" || currentStatus === statusFilter;
     
     // Lọc theo ngày đặt (NgayXuatHoaDon)
@@ -138,20 +129,26 @@ const BangHoaDon = () => {
       setLoading(true);
       const response = await axios.post("http://localhost/Web2/server/api/updateHoaDon.php", {
         maHoaDon: id,
-        trangThai: "1", 
+        trangThai: "Đã Duyệt", 
         ngayDuyet: new Date().toISOString().split('T')[0] // Ngày hiện tại định dạng YYYY-MM-DD
       });
       
       if (response.data.success) {
         // Cập nhật state để hiển thị UI mà không cần tải lại
         setDonHang(donHang.map(dh => 
-          dh.MaHoaDon === id ? {...dh, TrangThai: "1", NgayDuyet: new Date().toISOString().split('T')[0]} : dh
+          dh.MaHoaDon === id ? {...dh, TrangThai: "Đã Duyệt", NgayDuyet: new Date().toISOString().split('T')[0]} : dh
         ));
         
-        setNotification({
-          message: "Đã duyệt đơn hàng thành công!",
-          type: 'success'
+        const responseUpdateKhoHang = await axios.post(`http://localhost/Web2/server/api/QuanLyHoaDon/updateKhoHang.php?maHoaDon=${id}`, {
+          maHoaDon: id,
         });
+        
+        if (responseUpdateKhoHang.data.success) {
+          setNotification({
+            message: "Đã duyệt đơn hàng thành công!",
+            type: 'success'
+          });
+        }
       } else {
         setNotification({
           message: "Duyệt đơn hàng thất bại: " + response.data.message,
@@ -178,14 +175,14 @@ const BangHoaDon = () => {
       setLoading(true);
       const response = await axios.post("http://localhost/Web2/server/api/updateHoaDon.php", {
         maHoaDon: id,
-        trangThai: "0",
+        trangThai: "Đã Hủy",
         ngayDuyet: new Date().toISOString().split('T')[0] // Ngày hiện tại định dạng YYYY-MM-DD
       });
       
       if (response.data.success) {
         // Cập nhật state để hiển thị UI mà không cần tải lại
         setDonHang(donHang.map(dh => 
-          dh.MaHoaDon === id ? {...dh, TrangThai: "0", NgayDuyet: new Date().toISOString().split('T')[0]} : dh
+          dh.MaHoaDon === id ? {...dh, TrangThai: "Đã Hủy", NgayDuyet: new Date().toISOString().split('T')[0]} : dh
         ));
         
         // Thay thế alert bằng notification
@@ -335,12 +332,12 @@ const BangHoaDon = () => {
                       <td className="text-center">{parseInt(dh.TongTien).toLocaleString('vi-VN')} đ</td>
                       <td className="text-center">
                         <span className={`badge ${
-                          dh.TrangThai === "1" ? "bg-success" :
-                          dh.TrangThai === "2" ? "bg-warning" :
-                          dh.TrangThai === "3" ? "bg-info" :
-                          "bg-danger"
+                          dh.TrangThai === "Đã Duyệt" ? "bg-success" :
+                          dh.TrangThai === "Chờ Duyệt" ? "bg-warning" :
+                          dh.TrangThai === "Đã Hủy" ? "bg-danger" :
+                          "bg-info"
                         }`}>
-                          {getTrangThaiText(dh.TrangThai)}
+                          {dh.TrangThai}
                         </span>
                       </td>
                       <td>
@@ -350,7 +347,7 @@ const BangHoaDon = () => {
                         </div>
                       </td>
                       <td className="text-center">
-                        {dh.TrangThai === "2" && (
+                        {dh.TrangThai === "Chờ Duyệt" && (
                           <>
                             <button className="btn btn-sm btn-success m-1"
                               onClick={() => handleAprove(dh.MaHoaDon)}>Duyệt</button>

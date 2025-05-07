@@ -3,6 +3,8 @@ import { fetchHang, addHang, updateHang, deleteHang } from "../../../DAL/api.jsx
 import HangDTO from "../../../DTO/HangDTO";
 import "../../../GUI/Components/css/QuanLyHang.css";
 
+const ITEMS_PER_PAGE = 10;
+
 const QuanLyHang = () => {
   const [hangs, setHangs] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -15,6 +17,9 @@ const QuanLyHang = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchCriteria, setSearchCriteria] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     loadHangs();
@@ -154,6 +159,98 @@ const QuanLyHang = () => {
     setShowConfirm(true);
   };
 
+  const filterHangs = () => {
+    if (!searchTerm.trim()) return hangs;
+
+    return hangs.filter(hang => {
+      const searchLower = searchTerm.toLowerCase();
+      
+      switch (searchCriteria) {
+        case "MaHang":
+          return hang.MaHang.toLowerCase().includes(searchLower);
+        case "TenHang":
+          return hang.TenHang.toLowerCase().includes(searchLower);
+        case "all":
+          return (
+            hang.MaHang.toLowerCase().includes(searchLower) ||
+            hang.TenHang.toLowerCase().includes(searchLower)
+          );
+        default:
+          return true;
+      }
+    });
+  };
+
+  const filteredHangs = filterHangs();
+  const totalPages = Math.ceil(filteredHangs.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentHangs = filteredHangs.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const renderPagination = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <button
+          key={i}
+          className={`pagination-button ${currentPage === i ? 'active' : ''}`}
+          onClick={() => handlePageChange(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return (
+      <div className="pagination-container">
+        <button
+          className="pagination-button"
+          onClick={() => handlePageChange(1)}
+          disabled={currentPage === 1}
+        >
+          &laquo;
+        </button>
+        <button
+          className="pagination-button"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          &lsaquo;
+        </button>
+        {pages}
+        <button
+          className="pagination-button"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          &rsaquo;
+        </button>
+        <button
+          className="pagination-button"
+          onClick={() => handlePageChange(totalPages)}
+          disabled={currentPage === totalPages}
+        >
+          &raquo;
+        </button>
+        <span className="pagination-info">
+          Trang {currentPage} / {totalPages}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div style={{ padding: "40px", fontFamily: "Arial", backgroundColor: "#ffffff", borderRadius: "10px", minHeight: "500px" }}>
       {notification && (
@@ -165,6 +262,34 @@ const QuanLyHang = () => {
         </div>
       )}
       <h2 style={{ textAlign: "center", color: "brown", marginBottom: "20px" }}>Quản lý hãng</h2>
+      
+      <div className="search-container" style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+        <input
+          type="text"
+          placeholder="Nhập từ khóa tìm kiếm..."
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="modal-input"
+          style={{ flex: 1 }}
+        />
+        <select
+          value={searchCriteria}
+          onChange={(e) => {
+            setSearchCriteria(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="modal-input"
+          style={{ width: 'auto' }}
+        >
+          <option value="all">Tất cả</option>
+          <option value="MaHang">Mã hãng</option>
+          <option value="TenHang">Tên hãng</option>
+        </select>
+      </div>
+
       <button 
         onClick={handleAdd}
         className="button-common button-add"
@@ -176,38 +301,49 @@ const QuanLyHang = () => {
       {loading ? (
         <div style={{ textAlign: "center", padding: "20px" }}>Đang tải dữ liệu...</div>
       ) : (
-        <table className="table-container">
-          <thead>
-            <tr>
-              <th className="table-header">Mã hãng</th>
-              <th className="table-header">Tên hãng</th>
-              <th className="table-header">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {hangs.map((hang, index) => (
-              <tr key={hang.MaHang} className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}>
-                <td>{hang.MaHang}</td>
-                <td>{hang.TenHang}</td>
-                <td>
-                  <button
-                    onClick={() => handleEdit(hang)}
-                    className="button-common button-edit"
-                    style={{ marginRight: "8px" }}
-                  >
-                    Sửa
-                  </button>
-                  <button
-                    onClick={() => handleConfirmDelete(hang.MaHang)}
-                    className="button-common button-delete"
-                  >
-                    Xóa
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <>
+          {filteredHangs.length === 0 ? (
+            <div className="no-results-message">
+              Không tìm thấy kết quả phù hợp
+            </div>
+          ) : (
+            <>
+              <table className="table-container">
+                <thead>
+                  <tr>
+                    <th className="table-header">Mã hãng</th>
+                    <th className="table-header">Tên hãng</th>
+                    <th className="table-header">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentHangs.map((hang, index) => (
+                    <tr key={hang.MaHang} className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}>
+                      <td>{hang.MaHang}</td>
+                      <td>{hang.TenHang}</td>
+                      <td>
+                        <button
+                          onClick={() => handleEdit(hang)}
+                          className="button-common button-edit"
+                          style={{ marginRight: "8px" }}
+                        >
+                          Sửa
+                        </button>
+                        <button
+                          onClick={() => handleConfirmDelete(hang.MaHang)}
+                          className="button-common button-delete"
+                        >
+                          Xóa
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {renderPagination()}
+            </>
+          )}
+        </>
       )}
 
       {showModal && (

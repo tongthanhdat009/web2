@@ -42,7 +42,7 @@ const ThongKeNguoiDung = () => {
         try {
             setLoading(true);
             const response = await axios.get(
-                `http://localhost/Web2/server/api/getThongKeNguoiDung.php?timeRange=${timeRange}&limit=${topCount}&viewType=${viewType}`
+                `http://localhost/Web2/server/api/TrangChuAdmin/getThongKeNguoiDung.php?timeRange=${timeRange}&limit=${topCount}&viewType=${viewType}`
             );
             
             console.log("API response:", response.data); // Debug

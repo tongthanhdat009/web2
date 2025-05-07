@@ -3,6 +3,8 @@ import { fetchKhuyenMai, addKhuyenMai, updateKhuyenMai, deleteKhuyenMai } from "
 import KhuyenMaiDTO from "../../../DTO/KhuyenMaiDTO";
 import "../../../GUI/Components/css/QuanLyKhuyenMai.css";
 
+const ITEMS_PER_PAGE = 10;
+
 const QuanLyKhuyenMai = () => {
   const [khuyenMais, setKhuyenMais] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -17,6 +19,9 @@ const QuanLyKhuyenMai = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchCriteria, setSearchCriteria] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     loadKhuyenMais();
@@ -177,6 +182,104 @@ const QuanLyKhuyenMai = () => {
     setShowConfirm(true);
   };
 
+  const filterKhuyenMais = () => {
+    if (!searchTerm.trim()) return khuyenMais;
+
+    return khuyenMais.filter(khuyenMai => {
+      const searchLower = searchTerm.toLowerCase();
+      
+      switch (searchCriteria) {
+        case "MaKhuyenMai":
+          return khuyenMai.MaKhuyenMai.toLowerCase().includes(searchLower);
+        case "TenKhuyenMai":
+          return khuyenMai.TenKhuyenMai.toLowerCase().includes(searchLower);
+        case "MoTaKhuyenMai":
+          return khuyenMai.MoTaKhuyenMai.toLowerCase().includes(searchLower);
+        case "PhanTram":
+          return khuyenMai.PhanTram.toString().includes(searchTerm);
+        case "all":
+          return (
+            khuyenMai.MaKhuyenMai.toLowerCase().includes(searchLower) ||
+            khuyenMai.TenKhuyenMai.toLowerCase().includes(searchLower) ||
+            khuyenMai.MoTaKhuyenMai.toLowerCase().includes(searchLower) ||
+            khuyenMai.PhanTram.toString().includes(searchTerm)
+          );
+        default:
+          return true;
+      }
+    });
+  };
+
+  const filteredKhuyenMais = filterKhuyenMais();
+  const totalPages = Math.ceil(filteredKhuyenMais.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentKhuyenMais = filteredKhuyenMais.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const renderPagination = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <button
+          key={i}
+          className={`pagination-button ${currentPage === i ? 'active' : ''}`}
+          onClick={() => handlePageChange(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return (
+      <div className="pagination-container">
+        <button
+          className="pagination-button"
+          onClick={() => handlePageChange(1)}
+          disabled={currentPage === 1}
+        >
+          &laquo;
+        </button>
+        <button
+          className="pagination-button"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          &lsaquo;
+        </button>
+        {pages}
+        <button
+          className="pagination-button"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          &rsaquo;
+        </button>
+        <button
+          className="pagination-button"
+          onClick={() => handlePageChange(totalPages)}
+          disabled={currentPage === totalPages}
+        >
+          &raquo;
+        </button>
+        <span className="pagination-info">
+          Trang {currentPage} / {totalPages}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div style={{ padding: "40px", fontFamily: "Arial", backgroundColor: "#ffffff", borderRadius: "10px", minHeight: "500px" }}>
       {notification && (
@@ -188,6 +291,36 @@ const QuanLyKhuyenMai = () => {
         </div>
       )}
       <h2 style={{ textAlign: "center", color: "brown", marginBottom: "20px" }}>Quản lý khuyến mãi</h2>
+
+      <div className="search-container" style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+        <input
+          type="text"
+          placeholder="Nhập từ khóa tìm kiếm..."
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="modal-input"
+          style={{ flex: 1 }}
+        />
+        <select
+          value={searchCriteria}
+          onChange={(e) => {
+            setSearchCriteria(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="modal-input"
+          style={{ width: 'auto' }}
+        >
+          <option value="all">Tất cả</option>
+          <option value="MaKhuyenMai">Mã khuyến mãi</option>
+          <option value="TenKhuyenMai">Tên khuyến mãi</option>
+          <option value="MoTaKhuyenMai">Mô tả</option>
+          <option value="PhanTram">Phần trăm</option>
+        </select>
+      </div>
+
       <button 
         onClick={handleAdd}
         className="button-common button-add"
@@ -199,42 +332,52 @@ const QuanLyKhuyenMai = () => {
       {loading ? (
         <div style={{ textAlign: "center", padding: "20px" }}>Đang tải dữ liệu...</div>
       ) : (
-        <table className="table-container">
-          <thead>
-            <tr>
-              <th className="table-header">Mã khuyến mãi</th>
-              <th className="table-header">Tên khuyến mãi</th>
-              <th className="table-header">Mô tả</th>
-              <th className="table-header">Phần trăm</th>
-              <th className="table-header">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {khuyenMais.map((khuyenMai, index) => (
-              <tr key={khuyenMai.MaKhuyenMai} className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}>
-                <td>{khuyenMai.MaKhuyenMai}</td>
-                <td>{khuyenMai.TenKhuyenMai}</td>
-                <td>{khuyenMai.MoTaKhuyenMai}</td>
-                <td>{khuyenMai.PhanTram}%</td>
-                <td>
-                  <button
-                    onClick={() => handleEdit(khuyenMai)}
-                    className="button-common button-edit"
-                    style={{ marginRight: "8px" }}
-                  >
-                    Sửa
-                  </button>
-                  <button
-                    onClick={() => handleConfirmDelete(khuyenMai.MaKhuyenMai)}
-                    className="button-common button-delete"
-                  >
-                    Xóa
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <>
+          {filteredKhuyenMais.length === 0 ? (
+            <div className="no-results-message">
+              Không tìm thấy kết quả phù hợp
+            </div>
+          ) : (
+            <>
+              <table className="table-container">
+                <thead>
+                  <tr>
+                    <th className="table-header">Mã khuyến mãi</th>
+                    <th className="table-header">Tên khuyến mãi</th>
+                    <th className="table-header">Mô tả</th>
+                    <th className="table-header">Phần trăm</th>
+                    <th className="table-header">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentKhuyenMais.map((khuyenMai, index) => (
+                    <tr key={khuyenMai.MaKhuyenMai} className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}>
+                      <td>{khuyenMai.MaKhuyenMai}</td>
+                      <td>{khuyenMai.TenKhuyenMai}</td>
+                      <td>{khuyenMai.MoTaKhuyenMai}</td>
+                      <td>{khuyenMai.PhanTram}%</td>
+                      <td>
+                        <button
+                          onClick={() => handleEdit(khuyenMai)}
+                          className="button-common button-edit"
+                        >
+                          Sửa
+                        </button>
+                        <button
+                          onClick={() => handleConfirmDelete(khuyenMai.MaKhuyenMai)}
+                          className="button-common button-delete"
+                        >
+                          Xóa
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {renderPagination()}
+            </>
+          )}
+        </>
       )}
 
       {showModal && (
@@ -250,8 +393,8 @@ const QuanLyKhuyenMai = () => {
                 type="text"
                 className="modal-input"
                 value={editingKhuyenMai.MaKhuyenMai || ''}
-                onChange={(e) => setEditingKhuyenMai({...editingKhuyenMai, MaKhuyenMai: e.target.value})}
-                disabled={modalType === "edit"}
+                readOnly
+                style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
               />
             </div>
 

@@ -1,19 +1,20 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-
+import NavGioiThieuTrangWeb from "../Pages/User/Components/NavGioiThieuTrangWeb";
+import Footer from "../Pages/User/Components/Footer";
+import Header from "../Pages/User/Components/Header";
+import DanhMuc from "../Components/TrangChuNguoiDung/DanhMuc";
 const UserLayout = () => {
   return (
-    <div>
-      <h1>Trang Bán Hàng</h1>
-      <nav>
-        <a href="/">Trang Chủ</a>
-        <a href="/shop">Cửa Hàng</a>
-        <a href="/cart">Giỏ Hàng</a>
-      </nav>
-      <div>
-        <Outlet /> {/* Hiển thị các trang con bên trong */}
+    <>
+      <NavGioiThieuTrangWeb />
+      <Header/>
+      <DanhMuc/>
+      <div className="content flex-grow-1" style={{ height: "fit-content"}}>
+        <Outlet />
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 

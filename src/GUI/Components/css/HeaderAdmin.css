@@ -1,0 +1,5 @@
+@media (max-width: 600px) {
+    .user-info-responsive {
+      display: none !important;
+    }
+  }

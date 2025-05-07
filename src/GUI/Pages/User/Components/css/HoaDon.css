@@ -1,0 +1,90 @@
+.hoa-don-container {
+    width: 90%;
+    max-width: 1000px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #ccc;
+    margin: 20px auto;
+  }
+  
+  .hoa-don-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .hoa-don-header p {
+    margin: 5px 0;
+  }
+  .hoa-don-header .left {
+    width: 70%;
+    text-align: left;
+  }
+  .hoa-don-header .right {
+    width: 30%;
+    text-align: right;
+  }
+  
+  .hoa-don-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  .hoa-don-table th,
+  .hoa-don-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .hoa-don-table th {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  
+  .hoa-don-footer {
+    text-align: right;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .hoa-don-footer span {
+    color: #d9534f;
+    margin-left: 10px;
+  }
+  
+  .loading, .not-found {
+    text-align: center;
+    font-size: 18px;
+    color: #888;
+    padding: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .hoa-don-header {
+      flex-direction: column;
+    }
+  }
+  @media (max-width: 600px) {
+    /* Ẩn cột Đơn giá (thứ 5) và Số sê-ri (thứ 7) */
+    .hoa-don-table th:nth-child(5),
+    .hoa-don-table td:nth-child(5),
+    .hoa-don-table th:nth-child(7),
+    .hoa-don-table td:nth-child(7) {
+      display: none;
+    }
+    .hoa-don-table th:nth-child(2),
+    .hoa-don-table td:nth-child(2) {
+      display: none;
+    }
+  }

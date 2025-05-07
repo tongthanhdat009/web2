@@ -29,3 +29,16 @@
     width: 30px;
     margin-right: 10px;
 }
+/* ...existing code... */
+.admin-sidebar li.active {
+  background-color: #d1d5db !important;
+  color: #333;
+}
+
+@media (max-width: 800px) {
+  .admin-sidebar {
+    position: fixed;
+    transition: transform 0.3s;
+    z-index: 1000;
+  }
+}

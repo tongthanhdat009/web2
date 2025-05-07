@@ -1,8 +1,8 @@
+// src/DTO/ChucNangDTO.jsx
 class ChucNangDTO {
-    constructor(idChucNang, tenChucNang, moTa) {
-        this.idChucNang = idChucNang; // Mã chức năng
-        this.tenChucNang = tenChucNang; // Tên chức năng
-        this.moTa = moTa; // Mô tả chức năng
+    constructor(IDChucNang, TenChucNang) {
+        this.IDChucNang = IDChucNang;
+        this.TenChucNang = TenChucNang;
     }
 }
 

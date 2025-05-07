@@ -61,7 +61,7 @@ const ThongKeHoaDon = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost/Web2/server/api/getThongKeHoaDon.php?timeFrame=${timeFrame}&status=${statusFilter}`);
+      const response = await axios.get(`http://localhost/Web2/server/api/TrangChuAdmin/getThongKeHoaDon.php?timeFrame=${timeFrame}&status=${statusFilter}`);
       
       if (response.data.success) {
         const data = response.data.data;

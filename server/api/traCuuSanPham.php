@@ -16,11 +16,16 @@ if ($conn->connect_error) {
 }
 
 // Xây dựng truy vấn linh hoạt dựa trên các điều kiện
-$sql = "SELECT khohang.*, khohang.seri AS SeriKho, hanghoa.*, chitiethoadon.*, hoadon.* 
-        FROM khohang 
-        LEFT JOIN hanghoa ON khohang.MaHangHoa = hanghoa.MaHangHoa 
-        LEFT JOIN chitiethoadon ON khohang.seri = chitiethoadon.seri 
-        LEFT JOIN hoadon ON chitiethoadon.MaHoaDon = hoadon.MaHoaDon";
+$sql = "SELECT kh.*, klt.*, ktqa.*, ktg.*, hh.*, cthd.GiaBan, hd.*, pn.MaPhieuNhap
+FROM khohang kh
+JOIN chitietphieunhap ctpn ON ctpn.IDChiTietPhieuNhap =  kh.IDChiTietPhieuNhap
+JOIN khoiluongta klt ON klt.IDKhoiLuongTa = ctpn.IDKhoiLuongTa
+JOIN kichthuocquanao ktqa ON ktqa.IDKichThuocQuanAo = ctpn.IDKichThuocQuanAo
+JOIN kichthuocgiay ktg ON ktg.IDKichThuocGiay = ctpn.IDKichThuocGiay
+JOIN hanghoa hh ON hh.MaHangHoa = ctpn.MaHangHoa
+JOIN phieunhap pn ON pn.MaPhieuNhap = ctpn.MaPhieuNhap
+LEFT JOIN chitiethoadon cthd ON  cthd.Seri = kh.Seri
+LEFT JOIN hoadon hd ON hd.MaHoaDon = cthd.MaHoaDon";
 
 
 $result = $conn->query($sql);
