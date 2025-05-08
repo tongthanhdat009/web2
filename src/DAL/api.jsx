@@ -49,7 +49,17 @@ const API_ADD_NCC = "http://localhost/web2/server/api/addNCC.php";
 const API_DELETE_NCC = "http://localhost/web2/server/api/deleteNCC.php";
 const API_UPDATE_NCC = "http://localhost/web2/server/api/updateNCC.php";
 
+// API endpoints cho Phân quyền
+const API_URL_QUYEN = "http://localhost/web2/server/api/QuanLyPhanQuyen/getAllQuyen.php";
+const API_ADD_QUYEN = "http://localhost/web2/server/api/QuanLyPhanQuyen/addQuyen.php";
+const API_UPDATE_QUYEN = "http://localhost/web2/server/api/QuanLyPhanQuyen/updateQuyen.php";
+const API_DELETE_QUYEN = "http://localhost/web2/server/api/QuanLyPhanQuyen/deleteQuyen.php";
 
+// API endpoints cho Chức Năng
+const API_URL_CHUC_NANG = "http://localhost/web2/server/api/QuanLyPhanQuyen/getAllChucNang.php";
+const API_ADD_CHUC_NANG = "http://localhost/web2/server/api/QuanLyPhanQuyen/addChucNang.php";
+const API_UPDATE_CHUC_NANG = "http://localhost/web2/server/api/QuanLyPhanQuyen/updateChucNang.php";
+const API_DELETE_CHUC_NANG = "http://localhost/web2/server/api/QuanLyPhanQuyen/deleteChucNang.php";
 
 import KhuyenMaiDTO from "../DTO/KhuyenMaiDTO";
 import NhaCungCapDTO from "../DTO/NhaCungCapDTO";
@@ -62,10 +72,8 @@ import ChiTietPhieuNhapDTO from "../DTO/ChiTietPhieuNhapDTO";
 import KhoiLuongTaDTO from "../DTO/KhoiLuongTaDTO";
 import KichThuocQuanAoDTO from "../DTO/KichThuocQuanAoDTO";
 import KichThuocGiayDTO from "../DTO/KichThuocGiayDTO";
-
-
-
-
+import PhanQuyenDTO from "../DTO/PhanQuyenDTO";
+import ChucNangDTO from "../DTO/ChucNangDTO";
 
 // Lấy danh sách hàng hóa
 export async function fetchHangHoa() {
@@ -953,11 +961,306 @@ export async function addChiTietPhieuNhap(chiTietPhieuNhapDTO) {
         return { success: false, message: "Lỗi khi thêm chi tiết phiếu nhập: " + error.message };
     }
 }
-            
+
+// Lấy danh sách tất cả các quyền (không phân trang, dùng cho dropdowns, etc.)
+export async function fetchAllQuyen() {
+    try {
+        const response = await fetch(API_URL_QUYEN, {
+            credentials: 'include'
+        });
+        const data = await response.json(); console.log("API response Quyen:", data);
+        if (response.ok) {
+            const rolesData = Array.isArray(data) ? data : (data.data || []);
+            return {
+                success: true,
+                data: rolesData.map(role => new PhanQuyenDTO(role))
+            };
+        } else {
+            return {
+                success: false,
+                message: data.message || "Lỗi khi lấy danh sách tất cả quyền",
+                code: data.code
+            };
+        }
+    } catch (error) {
+        console.error("Lỗi khi gọi API lấy tất cả quyền:", error);
+        return {
+            success: false,
+            message: "Lỗi kết nối khi lấy danh sách tất cả quyền"
+        };
+    }
+}
+
+// Lấy danh sách tất cả các chức năng
+export async function getAllChucNang() {
+    try {
+        const response = await fetch(API_URL_CHUC_NANG, {
+            credentials: 'include'
+        });
+        const result = await response.json();
+        if (response.ok && result.data) {
+            return {
+                success: true,
+                data: result.data.map(cn => new ChucNangDTO(cn))
+            };
+        } else {
+            return {
+                success: false,
+                message: result.message || "Lỗi khi lấy danh sách chức năng",
+            };
+        }
+    } catch (error) {
+        console.error("Lỗi khi gọi API lấy danh sách chức năng:", error);
+        return {
+            success: false,
+            message: "Lỗi kết nối khi lấy danh sách chức năng"
+        };
+    }
+}
+
+// // Thêm chức năng mới
+// export async function addChucNang(chucNangData) {
+//     try {
+//         const response = await fetch(API_ADD_CHUC_NANG, {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 "Accept": "application/json"
+//             },
+//             credentials: 'include',
+//             body: JSON.stringify(chucNangData.toApiAddData())
+//         });
+//         const data = await response.json();
+//         if (data.success) {
+//             return { 
+//                 success: true, 
+//                 message: "Thêm chức năng thành công!",
+//                 data: new ChucNangDTO(data.data)
+//             };
+//         } else {
+//             return { 
+//                 success: false, 
+//                 message: data.message || "Lỗi khi thêm chức năng"
+//             };
+//         }
+//     } catch (error) {
+//         console.error("Lỗi khi thêm chức năng:", error);
+//         return { 
+//             success: false, 
+//             message: "Lỗi kết nối khi thêm chức năng"
+//         };
+//     }
+// }
+
+// // Cập nhật chức năng
+// export async function updateChucNang(chucNangData) {
+//     try {
+//         const response = await fetch(API_UPDATE_CHUC_NANG, {
+//             method: "PUT",
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 "Accept": "application/json"
+//             },
+//             credentials: 'include',
+//             body: JSON.stringify(chucNangData.toApiUpdateData())
+//         });
+//         const data = await response.json();
+//         if (data.success) {
+//             return { 
+//                 success: true, 
+//                 message: "Cập nhật chức năng thành công!"
+//             };
+//         } else {
+//             return { 
+//                 success: false, 
+//                 message: data.message || "Lỗi khi cập nhật chức năng"
+//             };
+//         }
+//     } catch (error) {
+//         console.error("Lỗi khi cập nhật chức năng:", error);
+//         return { 
+//             success: false, 
+//             message: "Lỗi kết nối khi cập nhật chức năng"
+//         };
+//     }
+// }
+
+// // Xóa chức năng
+// export async function deleteChucNang(idChucNang) {
+//     try {
+//         const response = await fetch(API_DELETE_CHUC_NANG, {
+//             method: "DELETE",
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 "Accept": "application/json"
+//             },
+//             credentials: 'include',
+//             body: JSON.stringify({ IDChucNang: idChucNang })
+//         });
+//         const data = await response.json();
+//         if (data.success) {
+//             return { 
+//                 success: true, 
+//                 message: "Xóa chức năng thành công!"
+//             };
+//         } else {
+//             return { 
+//                 success: false, 
+//                 message: data.message || "Lỗi khi xóa chức năng"
+//             };
+//         }
+//     } catch (error) {
+//         console.error("Lỗi khi xóa chức năng:", error);
+//         return { 
+//             success: false, 
+//             message: "Lỗi kết nối khi xóa chức năng"
+//         };
+//     }
+// }
+
+// Thêm quyền mới
+export async function addQuyen(quyenData) {
+    try {
+        // Validate data
+        if (!quyenData.TenQuyen) {
+            return { 
+                success: false, 
+                message: "Tên quyền không được để trống" 
+            };
+        }
+
+        // Creating payload 
+        const payload = {
+            TenQuyen: quyenData.TenQuyen,
+            ChucNang: quyenData.ChucNang || []
+        };
+
+        const response = await fetch(API_ADD_QUYEN, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            credentials: 'include', 
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            return { 
+                success: true, 
+                message: "Thêm quyền thành công!",
+                data: {
+                    IDQuyen: data.IDQuyen,
+                    TenQuyen: quyenData.TenQuyen,
+                    ChucNang: quyenData.ChucNang || []
+                }
+            };
+        } else {
+            return { 
+                success: false, 
+                message: data.message || "Lỗi khi thêm quyền" 
+            };
+        }
+    } catch (error) {
+        console.error("Lỗi khi thêm quyền:", error);
+        return { 
+            success: false, 
+            message: "Lỗi kết nối khi thêm quyền" 
+        };
+    }
+}
+
+// Cập nhật quyền
+export async function updateQuyen(quyenData) {
+    try {
+        // Validate data
+        if (!quyenData.IDQuyen) {
+            return { 
+                success: false, 
+                message: "ID quyền không được để trống" 
+            };
+        }
+
+        // Creating payload
+        const payload = {
+            IDQuyen: quyenData.IDQuyen,
+            TenQuyen: quyenData.TenQuyen,
+            ChucNang: quyenData.ChucNang || []
+        };
+
+        const response = await fetch(API_UPDATE_QUYEN, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            credentials: 'include',
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            return { 
+                success: true, 
+                message: "Cập nhật quyền thành công!" 
+            };
+        } else {
+            return { 
+                success: false, 
+                message: data.message || "Lỗi khi cập nhật quyền" 
+            };
+        }
+    } catch (error) {
+        console.error("Lỗi khi cập nhật quyền:", error);
+        return { 
+            success: false, 
+            message: "Lỗi kết nối khi cập nhật quyền" 
+        };
+    }
+}
+
+// Xóa quyền
+export async function deleteQuyen(idQuyen) {
+    try {
+        const response = await fetch(API_DELETE_QUYEN, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            credentials: 'include',
+            body: JSON.stringify({ IDQuyen: idQuyen })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            return { 
+                success: true, 
+                message: "Xóa quyền thành công!" 
+            };
+        } else {
+            return { 
+                success: false, 
+                message: data.message || "Lỗi khi xóa quyền" 
+            };
+        }
+    } catch (error) {
+        console.error("Lỗi khi xóa quyền:", error);
+        return { 
+            success: false, 
+            message: "Lỗi kết nối khi xóa quyền" 
+        };
+    }
+}
 
 
 
-            
+
+
 
 
 
