@@ -287,7 +287,13 @@ export default function TrangGioHang() {
             <div className="tinh-tien-total">
               <h4>Tổng tiền: {formatPrice(calculateTotal())}</h4>
             </div>
-            <button className="btn-checkout" onClick={handleShowForm}>Thanh toán</button>
+              <button
+                className="btn-checkout"
+                onClick={handleShowForm}
+                disabled={currentCart.length === 0}
+              >
+                Thanh toán
+              </button>
           </div>
           {showForm && (
             <FormXacNhanThanhToan
