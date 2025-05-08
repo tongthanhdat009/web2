@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 01, 2025 lúc 11:30 AM
+-- Thời gian đã tạo: Th5 07, 2025 lúc 07:36 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.1.25
+-- Phiên bản PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -32,6 +32,22 @@ CREATE TABLE `chitiethoadon` (
   `Seri` int(11) DEFAULT NULL,
   `GiaBan` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `chitiethoadon`
+--
+
+INSERT INTO `chitiethoadon` (`MaHoaDon`, `Seri`, `GiaBan`) VALUES
+(14, 39, 65000),
+(14, 40, 65000),
+(14, 43, 150000),
+(15, 45, 170000),
+(16, 46, 170000),
+(17, 49, 1600000),
+(17, 50, 1600000),
+(17, 51, 1600000),
+(17, 52, 1600000),
+(17, 53, 1600000);
 
 -- --------------------------------------------------------
 
@@ -70,11 +86,17 @@ INSERT INTO `chitietphieunhap` (`IDChiTietPhieuNhap`, `MaPhieuNhap`, `MaHangHoa`
 (11, 2, 25, 0, 1, 0, 100000, 150000, 2, 2),
 (12, 2, 25, 0, 2, 0, 100000, 150000, 2, 2),
 (13, 2, 25, 0, 3, 0, 100000, 150000, 2, 2),
-(29, 2, 1, 3, 0, 0, 70000, 100000, 2, 2),
+(29, 2, 1, 3, 0, 0, 70000, 100000, 2, 0),
 (30, 2, 2, 6, 0, 0, 90000, 130000, 2, 2),
-(31, 2, 3, 7, 0, 0, 110000, 150000, 2, 2),
-(32, 2, 4, 8, 0, 0, 130000, 170000, 2, 2),
-(33, 2, 5, 10, 0, 0, 150000, 190000, 2, 2);
+(31, 2, 3, 7, 0, 0, 110000, 150000, 2, 1),
+(32, 2, 4, 8, 0, 0, 130000, 170000, 2, 0),
+(33, 2, 5, 10, 0, 0, 150000, 190000, 2, 2),
+(34, 44, 105, 0, 0, 2, 190000, 2000000, 10, 10),
+(35, 44, 106, 0, 0, 10, 190000, 2000000, 20, 20),
+(36, 44, 105, 0, 0, 11, 190000, 2000000, 10, 10),
+(37, 44, 106, 0, 0, 11, 190000, 2000000, 10, 5),
+(38, 45, 107, 0, 0, 1, 1500000, 1600000, 10, 10),
+(39, 46, 106, 0, 0, 9, 3000000, 3000000, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -145,7 +167,9 @@ INSERT INTO `chungloai` (`MaChungLoai`, `TenChungLoai`, `MaTheLoai`) VALUES
 (22, 'Ghế tập tạ', 5),
 (23, 'Dây nhảy thể lực', 5),
 (24, 'Xà xà', 5),
-(25, 'Tạ tay', 1);
+(25, 'Tạ tay', 1),
+(26, 'Chạy bộ', 6),
+(27, 'Bóng đá', 6);
 
 -- --------------------------------------------------------
 
@@ -336,7 +360,10 @@ INSERT INTO `hanghoa` (`MaHangHoa`, `MaChungLoai`, `TenHangHoa`, `MaHang`, `MaKh
 (101, 11, 'Máy tập leo thang Tiger Sport TM-X200B', 22, NULL, 'Máy tập leo thang Tiger Sport TM-X200B là một thiết bị tập luyện đa chức năng với nhiều tính năng giúp nâng cao sức khỏe và sức mạnh cơ bắp.', 24, '../assets/AnhHangHoa/101.png', 1),
 (102, 11, 'Máy leo cầu thang CS800', 22, NULL, 'CS800 Stepper kết hợp động tác bước phụ thuộc quen thuộc với thiết kế bậc thang hình vòm và chiều cao bậc thang tối đa 16 ”ấn tượng để tập luyện phần thân dưới hiệu quả.', 24, '../assets/AnhHangHoa/102.png', 1),
 (103, 1, '123', 18, 1, 'ắdsd', NULL, 'blob:http://localhost:5173/33dbff4b-4fbf-4b3a-8d5e-caa652c52983', 0),
-(104, 1, 'abc', 18, 1, NULL, 23, NULL, 0);
+(104, 1, 'abc', 18, 1, NULL, 23, NULL, 0),
+(105, 26, 'Nike Vomero 18', 2, NULL, 'Nike Vomero 18', 24, '/public/assets/AnhHangHoa/105_1746635606.png', 1),
+(106, 27, 'adidas X Crazyfast.1 Laceless Soft Ground Boots', 3, 2, 'adidas X Crazyfast.1 Laceless Soft Ground Boots', 24, '/public/assets/AnhHangHoa/106_1746635761.jpg', 1),
+(107, 26, 'Adidas Alphabounce Em Sneakers', 3, NULL, 'Adidas Alphabounce Em Sneakers', 24, '/public/assets/AnhHangHoa/107_1746636120.jpg', 1);
 
 -- --------------------------------------------------------
 
@@ -355,6 +382,16 @@ CREATE TABLE `hoadon` (
   `SoDienThoai` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `HinhThucThanhToan` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `hoadon`
+--
+
+INSERT INTO `hoadon` (`MaHoaDon`, `IDTaiKhoan`, `NgayXuatHoaDon`, `NgayDuyet`, `TrangThai`, `DiaChi`, `TenNguoiMua`, `SoDienThoai`, `HinhThucThanhToan`) VALUES
+(14, 5, '2025-05-07', '2025-05-07', 'Đã Duyệt', '151/19B Lạc Long Quân$$Phường 2$$Quận 10$$Thành phố Hồ Chí Minh', 'tongthanhdat145', '0395632027', 'Tiền mặt'),
+(15, 5, '2025-05-07', '2025-05-07', 'Đã Hủy', '151/19B Lạc Long Quân$$Phường 1$$Quận 11$$Thành phố Hồ Chí Minh', 'tongthanhdat145', '0395632027', 'Tiền mặt'),
+(16, 5, '2025-05-07', '2025-05-07', 'Đã Duyệt', '151/19B$$Xã Lũng Phìn$$Huyện Đồng Văn$$Tỉnh Hà Giang', 'tongthanhdat145', '0395632027', 'Tiền mặt'),
+(17, 5, '2025-05-07', '2025-05-07', 'Đã Duyệt', '151/19B Lạc Long Quân$$Xã Đại Bái$$Huyện Gia Bình$$Tỉnh Bắc Ninh', 'tongthanhdat145', '0395632027', 'Tiền mặt');
 
 -- --------------------------------------------------------
 
@@ -411,16 +448,77 @@ INSERT INTO `khohang` (`Seri`, `TinhTrang`, `IDChiTietPhieuNhap`) VALUES
 (36, 'Chưa bán', 12),
 (37, 'Chưa bán', 13),
 (38, 'Chưa bán', 13),
-(39, 'Chưa bán', 29),
-(40, 'Chưa bán', 29),
+(39, 'Đã bán', 29),
+(40, 'Đã bán', 29),
 (41, 'Chưa bán', 30),
 (42, 'Chưa bán', 30),
-(43, 'Chưa bán', 31),
+(43, 'Đã bán', 31),
 (44, 'Chưa bán', 31),
-(45, 'Chưa bán', 32),
-(46, 'Chưa bán', 32),
+(45, 'Đã bán', 32),
+(46, 'Đã bán', 32),
 (47, 'Chưa bán', 33),
-(48, 'Chưa bán', 33);
+(48, 'Chưa bán', 33),
+(49, 'Đã bán', 37),
+(50, 'Đã bán', 37),
+(51, 'Đã bán', 37),
+(52, 'Đã bán', 37),
+(53, 'Đã bán', 37),
+(54, 'Chưa bán', 37),
+(55, 'Chưa bán', 37),
+(56, 'Chưa bán', 37),
+(57, 'Chưa bán', 37),
+(58, 'Chưa bán', 37),
+(59, 'Chưa bán', 36),
+(60, 'Chưa bán', 36),
+(61, 'Chưa bán', 36),
+(62, 'Chưa bán', 36),
+(63, 'Chưa bán', 36),
+(64, 'Chưa bán', 36),
+(65, 'Chưa bán', 36),
+(66, 'Chưa bán', 36),
+(67, 'Chưa bán', 36),
+(68, 'Chưa bán', 36),
+(69, 'Chưa bán', 35),
+(70, 'Chưa bán', 35),
+(71, 'Chưa bán', 35),
+(72, 'Chưa bán', 35),
+(73, 'Chưa bán', 35),
+(74, 'Chưa bán', 35),
+(75, 'Chưa bán', 35),
+(76, 'Chưa bán', 35),
+(77, 'Chưa bán', 35),
+(78, 'Chưa bán', 35),
+(79, 'Chưa bán', 35),
+(80, 'Chưa bán', 35),
+(81, 'Chưa bán', 35),
+(82, 'Chưa bán', 35),
+(83, 'Chưa bán', 35),
+(84, 'Chưa bán', 35),
+(85, 'Chưa bán', 35),
+(86, 'Chưa bán', 35),
+(87, 'Chưa bán', 35),
+(88, 'Chưa bán', 35),
+(89, 'Chưa bán', 34),
+(90, 'Chưa bán', 34),
+(91, 'Chưa bán', 34),
+(92, 'Chưa bán', 34),
+(93, 'Chưa bán', 34),
+(94, 'Chưa bán', 34),
+(95, 'Chưa bán', 34),
+(96, 'Chưa bán', 34),
+(97, 'Chưa bán', 34),
+(98, 'Chưa bán', 34),
+(99, 'Chưa bán', 38),
+(100, 'Chưa bán', 38),
+(101, 'Chưa bán', 38),
+(102, 'Chưa bán', 38),
+(103, 'Chưa bán', 38),
+(104, 'Chưa bán', 38),
+(105, 'Chưa bán', 38),
+(106, 'Chưa bán', 38),
+(107, 'Chưa bán', 38),
+(108, 'Chưa bán', 38),
+(109, 'Chưa bán', 39);
 
 -- --------------------------------------------------------
 
@@ -554,7 +652,8 @@ CREATE TABLE `nguoidung` (
 INSERT INTO `nguoidung` (`MaNguoiDung`, `HoTen`, `GioiTinh`, `Email`, `SoDienThoai`, `IDTaiKhoan`, `Anh`) VALUES
 (1, 'Người dùng 1', 'Nam', 'nd1@gmail.com', '09000000', 1, NULL),
 (2, 'Nguyên tuấn', 'Nam', 'nguyentuan06@gmail.com', '0903316095', 3, NULL),
-(3, 'Nguyễn Minh Tuấn', 'Nam', 'nguyentuan@gmail.com', '0397284705', 4, NULL);
+(3, 'Nguyễn Minh Tuấn', 'Nam', 'nguyentuan@gmail.com', '0397284705', 4, NULL),
+(4, 'tongthanhdat145', 'Nam', 'a0041405@gmail.com', '0395632027', 5, '1746623171_R.png');
 
 -- --------------------------------------------------------
 
@@ -649,7 +748,10 @@ CREATE TABLE `phieunhap` (
 
 INSERT INTO `phieunhap` (`MaPhieuNhap`, `TrangThai`, `IDTaiKhoan`, `MaNhaCungCap`, `NgayNhap`) VALUES
 (1, 'Đã duyệt', 1, 1, '2024-03-10 00:00:00'),
-(2, 'Đã duyệt', 1, 3, '2024-04-10 00:00:00');
+(2, 'Đã duyệt', 1, 3, '2024-04-10 00:00:00'),
+(44, 'Đã duyệt', 1, 1, '2025-05-07 00:00:00'),
+(45, 'Đã duyệt', 1, 1, '2025-05-07 00:00:00'),
+(46, 'Đã duyệt', 1, 1, '2025-05-07 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -694,7 +796,8 @@ CREATE TABLE `taikhoan` (
 INSERT INTO `taikhoan` (`IDTaiKhoan`, `TaiKhoan`, `matKhau`, `IDQuyen`, `TrangThai`, `HoatDong`, `SessionID`) VALUES
 (1, 'admin', 0x5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5, 1, 0, 1, ''),
 (3, 'tuanminhtuan123', 0x2432792431302444585933594d736b3577316370337a6c59436a69704f367345765449716b6e5873654f4e7634587278573548626854574c6e656d79, 2, 1, 0, NULL),
-(4, 'nguyeminhtuan123', 0x243279243130246e76465851476558392e57576871554f3774633257654c45466c73324d324c6a3757584257374b456e6b724e2f35524c4a32346836, 2, 1, 0, NULL);
+(4, 'nguyeminhtuan123', 0x243279243130246e76465851476558392e57576871554f3774633257654c45466c73324d324c6a3757584257374b456e6b724e2f35524c4a32346836, 2, 1, 0, NULL),
+(5, 'tongthanhdat145', 0x243279243130244c6e3670585a7672636f4130774a73566b6e45674b4f45516b725a65454a6d3874626f6b7766772e457659336a435036546b663379, 2, 1, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -716,7 +819,8 @@ INSERT INTO `theloai` (`MaTheLoai`, `TenTheLoai`) VALUES
 (2, 'Thiết bị cardio'),
 (3, 'Thời trang thể thao'),
 (4, 'Thực phẩm bổ sung'),
-(5, 'Dụng cụ khác');
+(5, 'Dụng cụ khác'),
+(6, 'Giày thể thao');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -882,7 +986,7 @@ ALTER TABLE `theloai`
 -- AUTO_INCREMENT cho bảng `chitietphieunhap`
 --
 ALTER TABLE `chitietphieunhap`
-  MODIFY `IDChiTietPhieuNhap` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `IDChiTietPhieuNhap` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT cho bảng `chucnang`
@@ -912,13 +1016,13 @@ ALTER TABLE `hanghoa`
 -- AUTO_INCREMENT cho bảng `hoadon`
 --
 ALTER TABLE `hoadon`
-  MODIFY `MaHoaDon` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `MaHoaDon` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT cho bảng `khohang`
 --
 ALTER TABLE `khohang`
-  MODIFY `Seri` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `Seri` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
 
 --
 -- AUTO_INCREMENT cho bảng `khoiluongta`
@@ -948,7 +1052,7 @@ ALTER TABLE `kichthuocquanao`
 -- AUTO_INCREMENT cho bảng `nguoidung`
 --
 ALTER TABLE `nguoidung`
-  MODIFY `MaNguoiDung` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `MaNguoiDung` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `nhacungcap`
@@ -960,7 +1064,7 @@ ALTER TABLE `nhacungcap`
 -- AUTO_INCREMENT cho bảng `phieunhap`
 --
 ALTER TABLE `phieunhap`
-  MODIFY `MaPhieuNhap` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `MaPhieuNhap` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT cho bảng `quyen`
@@ -972,13 +1076,13 @@ ALTER TABLE `quyen`
 -- AUTO_INCREMENT cho bảng `taikhoan`
 --
 ALTER TABLE `taikhoan`
-  MODIFY `IDTaiKhoan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `IDTaiKhoan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `theloai`
 --
 ALTER TABLE `theloai`
-  MODIFY `MaTheLoai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `MaTheLoai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Các ràng buộc cho các bảng đã đổ

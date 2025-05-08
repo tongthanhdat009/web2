@@ -8,8 +8,10 @@ const MA_THE_LOAI = {
     CARDIO: 2,
     THOI_TRANG: 3,
     THUCPHAM: 4,
-    KHAC: 5
+    KHAC: 5,
+    GIAY: 6
 };
+
 
 // API endpoint để lấy dữ liệu
 const KHOI_LUONG_API_URL = 'http://localhost/web2/server/api/LocTheoTheLoai/getKhoiLuong.php';

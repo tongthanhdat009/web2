@@ -8,7 +8,8 @@ const MA_THE_LOAI = {
     CARDIO: 2,
     THOI_TRANG: 3,
     THUCPHAM: 4,
-    KHAC: 5
+    KHAC: 5,
+    GIAY: 6
 };
 
 // API URLs
@@ -19,16 +20,16 @@ const KICH_THUOC_GIAY_API_URL = 'http://localhost/web2/server/api/LocTheoTheLoai
 function LocTheoThoiTrang({
     selectedChungLoai, setSelectedChungLoai,
     selectedClothingSizes, setSelectedClothingSizes, // Props cho size quần áo
-    selectedShoeSizes, setSelectedShoeSizes        // Props cho size giày
+    // selectedShoeSizes, setSelectedShoeSizes        // Props cho size giày
 }) {
 
     const [clothingSizeOptions, setClothingSizeOptions] = useState([]);
     const [loadingClothingSizes, setLoadingClothingSizes] = useState(true);
     const [errorClothingSizes, setErrorClothingSizes] = useState(null);
 
-    const [shoeSizeOptions, setShoeSizeOptions] = useState([]);
-    const [loadingShoeSizes, setLoadingShoeSizes] = useState(true);
-    const [errorShoeSizes, setErrorShoeSizes] = useState(null);
+    // const [shoeSizeOptions, setShoeSizeOptions] = useState([]);
+    // const [loadingShoeSizes, setLoadingShoeSizes] = useState(true);
+    // const [errorShoeSizes, setErrorShoeSizes] = useState(null);
 
     // Fetch Kích thước Quần áo
     useEffect(() => {
@@ -53,26 +54,26 @@ function LocTheoThoiTrang({
     }, []);
 
     // Fetch Kích thước Giày
-    useEffect(() => {
-        const fetchShoeSizes = async () => {
-            setLoadingShoeSizes(true);
-            setErrorShoeSizes(null);
-            try {
-                const response = await axios.get(KICH_THUOC_GIAY_API_URL);
-                if (response.data?.success && Array.isArray(response.data.data)) {
-                    setShoeSizeOptions(response.data.data);
-                } else {
-                    throw new Error(response.data?.message || "API không trả về dữ liệu size giày hợp lệ.");
-                }
-            } catch (error) {
-                console.error("Lỗi fetch size giày:", error);
-                setErrorShoeSizes("Không thể tải danh sách size giày.");
-            } finally {
-                setLoadingShoeSizes(false);
-            }
-        };
-        fetchShoeSizes();
-    }, []);
+    // useEffect(() => {
+    //     const fetchShoeSizes = async () => {
+    //         setLoadingShoeSizes(true);
+    //         setErrorShoeSizes(null);
+    //         try {
+    //             const response = await axios.get(KICH_THUOC_GIAY_API_URL);
+    //             if (response.data?.success && Array.isArray(response.data.data)) {
+    //                 setShoeSizeOptions(response.data.data);
+    //             } else {
+    //                 throw new Error(response.data?.message || "API không trả về dữ liệu size giày hợp lệ.");
+    //             }
+    //         } catch (error) {
+    //             console.error("Lỗi fetch size giày:", error);
+    //             setErrorShoeSizes("Không thể tải danh sách size giày.");
+    //         } finally {
+    //             setLoadingShoeSizes(false);
+    //         }
+    //     };
+    //     fetchShoeSizes();
+    // }, []);
 
     // Handler cho checkbox size quần áo
     const handleClothingSizeChange = (event) => {
@@ -88,18 +89,18 @@ function LocTheoThoiTrang({
     };
 
     // Handler cho checkbox size giày
-    const handleShoeSizeChange = (event) => {
-        const { value, checked } = event.target;
-        console.log("Checkbox size gia:", value, checked); // Debug log
+    // const handleShoeSizeChange = (event) => {
+    //     const { value, checked } = event.target;
+    //     console.log("Checkbox size gia:", value, checked); // Debug log
 
-        setSelectedShoeSizes(prevSelected => {
-            if (checked) {
-                return prevSelected.includes(value) ? prevSelected : [...prevSelected, value];
-            } else {
-                return prevSelected.filter(id => id !== value);
-            }
-        });
-    };
+    //     setSelectedShoeSizes(prevSelected => {
+    //         if (checked) {
+    //             return prevSelected.includes(value) ? prevSelected : [...prevSelected, value];
+    //         } else {
+    //             return prevSelected.filter(id => id !== value);
+    //         }
+    //     });
+    // };
 
     return (
         <>
@@ -138,7 +139,7 @@ function LocTheoThoiTrang({
             </div>
 
             {/* Bộ lọc Size Giày */}
-            <div className="mb-3 mt-3 border-top pt-3">
+            {/* <div className="mb-3 mt-3 border-top pt-3">
                 <h6>Size Giày</h6>
                  {loadingShoeSizes ? (
                     <small className="text-muted">Đang tải size...</small>
@@ -161,7 +162,7 @@ function LocTheoThoiTrang({
                  ) : (
                      <small className="text-muted">Không có size.</small>
                  )}
-            </div>
+            </div> */}
         </>
     );
 }

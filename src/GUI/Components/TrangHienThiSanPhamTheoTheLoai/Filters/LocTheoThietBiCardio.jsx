@@ -5,8 +5,10 @@ const MA_THE_LOAI = {
     CARDIO: 2,
     THOI_TRANG: 3,
     THUCPHAM: 4,
-    KHAC: 5
+    KHAC: 5,
+    GIAY: 6
 };
+
 // Nhận selectedChungLoai và setSelectedChungLoai từ props
 function LocTheoThietBiCardio({ selectedChungLoai, setSelectedChungLoai }) {
     return <LocTheoChungLoaiGeneric

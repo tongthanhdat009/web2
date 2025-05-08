@@ -10,6 +10,7 @@ const THE_LOAI_CHINH = [
     { MaTheLoai: 2, Ten: 'Thiết bị cardio' },
     { MaTheLoai: 3, Ten: 'Thời trang thể thao' },
     { MaTheLoai: 4, Ten: 'Thực phẩm chức năng' },
+    { MaTheLoai: 6, Ten: 'Giày thể thao' },
     { MaTheLoai: 5, Ten: 'Các thiết bị khác' },
 ];
 

@@ -67,6 +67,7 @@ const TraCuuSanPham = () => {
     return end;
   };
 
+
   // ...existing code...
   return (
     <div style={{ backgroundColor: "#ffffff", borderRadius: "10px", padding: "20px" }} className="tcsp-page">
@@ -225,7 +226,7 @@ const TraCuuSanPham = () => {
                 </tr>
                 <tr>
                   <td><strong>Địa chỉ</strong></td>
-                  <td>{selectedProduct.DiaChi}</td>
+                  <td>{selectedProduct.DiaChi.split('$$').join(', ')}</td>
                 </tr>
                 <tr>
                   <td><strong>Ngày duyệt đơn:</strong></td>
