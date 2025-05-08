@@ -202,7 +202,7 @@ const BangHoaDon = () => {
           dh.MaHoaDon === id ? {...dh, TrangThai: "Đã Duyệt", NgayDuyet: new Date().toISOString().split('T')[0]} : dh
         ));
         
-        const responseUpdateKhoHang = await axios.post(`http://localhost/Web2/server/api/QuanLyHoaDon/updateKhoHang.php?maHoaDon=${id}`, {
+        const responseUpdateKhoHang = await axios.get(`http://localhost/Web2/server/api/QuanLyHoaDon/updateKhoHang.php?maHoaDon=${id}&trangThai=Duyet`, {
           maHoaDon: id,
         });
         
@@ -247,12 +247,17 @@ const BangHoaDon = () => {
         setDonHang(donHang.map(dh => 
           dh.MaHoaDon === id ? {...dh, TrangThai: "Đã Hủy", NgayDuyet: new Date().toISOString().split('T')[0]} : dh
         ));
-        
-        // Thay thế alert bằng notification
-        setNotification({
-          message: "Đã hủy đơn hàng thành công!",
-          type: 'success'
+        const responseUpdateKhoHang = await axios.get(`http://localhost/Web2/server/api/QuanLyHoaDon/updateKhoHang.php?maHoaDon=${id}&trangThai=Huy`, {
+          maHoaDon: id,
         });
+        
+        if (responseUpdateKhoHang.data.success) {
+          // Thay thế alert bằng notification
+          setNotification({
+            message: "Đã hủy đơn hàng thành công!",
+            type: 'success'
+          });
+        }
       } else {
         setNotification({
           message: "Hủy đơn hàng thất bại: " + response.data.message,
