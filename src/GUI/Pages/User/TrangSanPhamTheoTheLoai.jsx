@@ -459,7 +459,7 @@ function TrangSanPhamTheoTheLoai() {
                                                 TenHangHoa={sp.TenHangHoa}
                                                 GiaGoc={sp.GiaBan}
                                                 // Truyền đường dẫn đã xử lý
-                                                Anh={imagePath}
+                                                Anh={imagePath||'../assets/AnhHangHoa/0.png'}
                                                 PhanTramKM={sp.PhanTram}
                                                 MoTa={sp.MoTa}
                                             />

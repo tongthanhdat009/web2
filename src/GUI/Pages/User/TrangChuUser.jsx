@@ -114,7 +114,7 @@ function TrangChuUser() {
             <div className="col p-2" key={`${maTheLoai}-${sp.MaHangHoa}`}> {/* Key vẫn dùng MaHangHoa */}
                 <SanPhamCardLayout
                     MaHangHoa={sp.MaHangHoa}
-                    Anh={sp.Anh || '/assets/AnhHangHoa/placeholder.png'}
+                    Anh={sp.Anh || '/assets/AnhHangHoa/0.png'}
                     MoTa={sp.MoTa || ''}
                     TenHangHoa={sp.TenHangHoa}
                     GiaGoc={sp.GiaBan} // Giá này là giá thấp nhất của sản phẩm đó

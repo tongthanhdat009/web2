@@ -1,5 +1,6 @@
 import React from 'react';
 import '../Components/css/SanPhamCardLayout.css'; // Import file CSS mới
+import { Anchor } from 'react-bootstrap';
 
 // Thay đổi props: nhận GiaGoc và PhanTramKM (phần trăm khuyến mãi)
 function SanPhamCardLayout({MaHangHoa, Anh, TenHangHoa, GiaGoc, PhanTramKM = 0, MoTa }) { // Đặt giá trị mặc định cho PhanTramKM là 0
@@ -21,12 +22,12 @@ function SanPhamCardLayout({MaHangHoa, Anh, TenHangHoa, GiaGoc, PhanTramKM = 0, 
         if (typeof value !== 'number') return 'Liên hệ';
         return value.toLocaleString('vi-VN') + 'đ';
     };
-
+    console.log(Anh)
     return (
         <div className="card product-card h-100 shadow-sm border-1 m-2" style={{ width: 'fit-content' }}>
             <a href={`/chi-tiet-san-pham/${MaHangHoa}`} className="text-decoration-none text-dark">
                 <img
-                    src={Anh || '/path/to/placeholder-image.png'}
+                    src={Anh || '/assets/AnhHangHoa/0.png'}
                     className="card-img-top product-card-img p-0"
                     style={{ width: '100%', height: 'auto' }}
                     alt={TenHangHoa || "Sản phẩm"}
