@@ -115,9 +115,9 @@ const AdminLayout = () => {
     const permission = quyen.find(item => item.TenChucNang === pageName);
     if (permission) {
       return { 
-        Them: permission.Them, 
-        Sua: permission.Sua, 
-        Xoa: permission.Xoa 
+        Them: permission.Them || 0, 
+        Sua: permission.Sua || 0, 
+        Xoa: permission.Xoa || 0
         // Bạn có thể thêm các quyền khác ở đây nếu cần, ví dụ: permission.Xem
       };
     }

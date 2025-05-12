@@ -3,7 +3,7 @@ import axios from "axios";
 import "../../../GUI/Components/css/QuanLyHang.css"; // Import CSS cho notification
 import XemChiTiet from "./XemChiTiet";
 
-const BangHoaDon = () => {
+const BangHoaDon = ({Sua}) => {
   const [donHang, setDonHang] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,6 +25,7 @@ const BangHoaDon = () => {
   const today = new Date().toISOString().split('T')[0]; // Định dạng YYYY-MM-DD của ngày hiện tại
   const minDate = "2025-01-01"; // Giới hạn min date là ngày 01/01/2025  
   
+  console.log("Sua", Sua);
   useEffect(() => {
     const fetchDonHang = async () => {
       try {
@@ -462,7 +463,7 @@ const BangHoaDon = () => {
                         </div>
                       </td>
                       <td className="text-center">
-                        {dh.TrangThai === "Chờ Duyệt" && (
+                        {dh.TrangThai === "Chờ Duyệt" && Sua === 1 &&(
                           <>
                             <button className="btn btn-sm btn-success m-1"
                               onClick={() => handleAprove(dh.MaHoaDon)}>Duyệt</button>
