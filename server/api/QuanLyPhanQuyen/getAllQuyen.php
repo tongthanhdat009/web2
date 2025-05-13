@@ -4,20 +4,19 @@ header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-// Kết nối CSDL bằng MySQLi
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "ql_cuahangdungcu";
+include_once '../../config/Database.php';
 
-$conn = new mysqli($servername, $username, $password, $database);
-if ($conn->connect_error) {
+$database = new Database();
+$db = $database->getConnection(); // Giả định là trả về MySQLi
+
+// Kiểm tra kết nối
+if ($db->connect_error) {
     http_response_code(500);
-    echo json_encode(["error" => "Kết nối thất bại: " . $conn->connect_error]);
+    echo json_encode(["error" => "Kết nối thất bại: " . $db->connect_error]);
     exit();
 }
 
-// Câu truy vấn
+// Truy vấn dữ liệu
 $query = "
 SELECT q.IDQuyen, q.TenQuyen, GROUP_CONCAT(
     CONCAT(cn.IDChucNang, ':', cn.TenChucNang, ':',
@@ -31,30 +30,32 @@ LEFT JOIN chucnang cn ON pq.IDChucNang = cn.IDChucNang
 GROUP BY q.IDQuyen, q.TenQuyen
 ";
 
-// Thực thi truy vấn
-$result = $conn->query($query);
+$result = $db->query($query);
 
-// Kiểm tra kết quả
+// Kiểm tra kết quả truy vấn
 if ($result && $result->num_rows > 0) {
     $quyens = array();
     while ($row = $result->fetch_assoc()) {
         $quyen = array(
-            "IDQuyen" => $row['IDQuyen'],
+            "IDQuyen" => (int)$row['IDQuyen'],
             "TenQuyen" => $row['TenQuyen'],
             "ChucNang" => array()
         );
 
-        if ($row['ChucNang']) {
+        if (!empty($row['ChucNang'])) {
             $chucnangs = explode(';', $row['ChucNang']);
             foreach ($chucnangs as $cn) {
-                list($id, $ten, $them, $xoa, $sua) = explode(':', $cn);
-                $quyen['ChucNang'][] = array(
-                    "IDChucNang" => $id,
-                    "TenChucNang" => $ten,
-                    "Them" => (bool)$them,
-                    "Xoa" => (bool)$xoa,
-                    "Sua" => (bool)$sua
-                );
+                $parts = explode(':', $cn);
+                if (count($parts) === 5) {
+                    list($id, $ten, $them, $xoa, $sua) = $parts;
+                    $quyen['ChucNang'][] = array(
+                        "IDChucNang" => (int)$id,
+                        "TenChucNang" => $ten,
+                        "Them" => (bool)$them,
+                        "Xoa" => (bool)$xoa,
+                        "Sua" => (bool)$sua
+                    );
+                }
             }
         }
 
@@ -69,5 +70,5 @@ if ($result && $result->num_rows > 0) {
 }
 
 // Đóng kết nối
-$conn->close();
+$db->close();
 ?>

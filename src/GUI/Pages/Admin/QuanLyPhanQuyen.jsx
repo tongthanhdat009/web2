@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Form, Select, Checkbox, Button, Card, Tabs, Modal, Input, Space, Spin } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons';
 import './QuanLyPhanQuyen.css';
-import { getAllQuyen, getAllChucNang, addQuyen, updateQuyen, deleteQuyen } from '../../../DAL/api.jsx';
+import { fetchAllQuyen, getAllChucNang, addQuyen, updateQuyen, deleteQuyen } from '../../../DAL/api.jsx';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -41,7 +41,7 @@ const QuanLyPhanQuyen = () => {
   const fetchQuyenList = async () => {
     setLoading(true);
     try {
-      const data = await getAllQuyen();
+      const data = await fetchAllQuyen();
       setQuyenList(data);
     } catch (error) {
       setNotification({
