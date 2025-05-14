@@ -9,29 +9,29 @@ import { getAllHangHoa } from '../../../DAL/apiTrangChuUser'; // Import the new 
 const TrangHienThiTatCaSanPham = () => {
     const { tenSanPham: encodedSearchTerm } = useParams();
     const [searchTerm, setSearchTerm] = useState('');
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate(); 
 
-    const [listSanPham, setListSanPham] = useState([]); // All products from API
-    const [allProducts, setAllProducts] = useState([]); // All products from API
+    const [listSanPham, setListSanPham] = useState([]); // Sản phẩm tìm kiếm
+    const [allProducts, setAllProducts] = useState([]); // Tất cả sản phẩm
     const [displayedProducts, setDisplayedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [sortOrder, setSortOrder] = useState('default');
 
     
-    // Price filter states
+    // Lọc theo khoảng giá
     const [overallMinPrice, setOverallMinPrice] = useState(0);
     const [overallMaxPrice, setOverallMaxPrice] = useState(10000000);
     const [minPrice, setMinPrice] = useState(0);
     const [maxPrice, setMaxPrice] = useState(10000000);
     const [tempMaxPrice, setTempMaxPrice] = useState(10000000);
 
-    // Discount filter state
+    // Lọc theo khuyến mãi
     const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
 
-    // Chung Loai filter states
+    // Lọc theo chủng loại
     const [availableChungLoai, setAvailableChungLoai] = useState([]); // { MaChungLoai, TenChungLoai }
-    const [selectedChungLoai, setSelectedChungLoai] = useState([]); // Array of MaChungLoai strings
-    const [showAllChungLoai, setShowAllChungLoai] = useState(true); // New state for "Show All"
+    const [selectedChungLoai, setSelectedChungLoai] = useState([]); // Chọn theo chủng loại
+    const [showAllChungLoai, setShowAllChungLoai] = useState(true); // Chọn tất cả
 
     useEffect(() => {
         if (encodedSearchTerm) {
@@ -42,16 +42,15 @@ const TrangHienThiTatCaSanPham = () => {
     // Fetch all products
     useEffect(() => {
         setLoading(true);
-        // Pass the decoded search term to the API call
+        // Lấy nội dung tìm kiếm từ URL
         const currentSearchTerm = encodedSearchTerm ? decodeURIComponent(encodedSearchTerm) : '';
-        console.log("Current Search Term:", currentSearchTerm); // Debugging line
-        getAllHangHoa(currentSearchTerm) // Pass the search term here
-            .then(apiResponse => { // Renamed 'data' to 'apiResponse' for clarity
-                // Ensure apiResponse is not null and has a data property which is an array
+        // console.log("Current Search Term:", currentSearchTerm); 
+        getAllHangHoa(currentSearchTerm) // yêu cầu API
+            .then(apiResponse => { 
                 const products = (apiResponse && apiResponse.success && Array.isArray(apiResponse.data)) ? apiResponse.data : [];
                 if (currentSearchTerm === '') {
-                    setAllProducts(products); // Store all products for filtering
-                    console.log("All products fetched:", products); // Debugging line
+                    setAllProducts(products); 
+                    // console.log("All products fetched:", products); 
                 }
                 setListSanPham(products);
                 if (products.length > 0) {
@@ -64,7 +63,7 @@ const TrangHienThiTatCaSanPham = () => {
                     setMaxPrice(max);
                     setTempMaxPrice(max);
 
-                    // Extract unique Chung Loai for filter
+                    // Lấy sản phẩm theo chủng loại
                     const uniqueCL = [];
                     const map = new Map();
                     for (const item of products) {
@@ -96,32 +95,32 @@ const TrangHienThiTatCaSanPham = () => {
                 setAvailableChungLoai([]);
                 setLoading(false);
             });
-    }, [encodedSearchTerm]); // Fetch once on mount
+    }, [encodedSearchTerm]); // fetch khi searchTerm thay đổi
 
     // Effect for filtering and sorting
     useEffect(() => {
         let filtered = [...listSanPham];
 
-        // 1. Filter by Search Term (TenHangHoa)
+        // Thêm điều kiện lọc theo tên sản phẩm
         if (searchTerm) {
             filtered = filtered.filter(sp =>
                 sp.TenHangHoa && sp.TenHangHoa.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
         
-        // 2. Filter by Chung Loai
+        // Lọc theo chủng loại
         if (!showAllChungLoai && selectedChungLoai.length > 0) {
             filtered = filtered.filter(sp =>
                 sp.MaChungLoai && selectedChungLoai.includes(sp.MaChungLoai.toString())
             );
         }
 
-        // 3. Filter by Discount
+        // Lọc theo khuyến mãi
         if (showDiscountedOnly) {
             filtered = filtered.filter(sp => sp.PhanTram != null && parseFloat(sp.PhanTram) > 0);
         }
 
-        // 4. Filter by Price
+        // Lọc theo khoảng giá
         if (minPrice > overallMinPrice || maxPrice < overallMaxPrice || minPrice !== 0 || maxPrice !== 0) {
              filtered = filtered.filter(sp => {
                 const giaBan = parseFloat(sp.GiaBan);
@@ -130,7 +129,7 @@ const TrangHienThiTatCaSanPham = () => {
         }
 
 
-        // 5. Group by MaHangHoa and select representative (cheapest variant)
+        // Nhóm sản phẩm theo MaHangHoa, reduce() là một phương thức của mảng (Array) dùng để rút gọn (reduce) toàn bộ mảng thành một giá trị duy nhất
         const groupedByMaHangHoa = filtered.reduce((acc, sp) => {
             const key = sp.MaHangHoa;
             if (!acc[key]) {
@@ -140,12 +139,13 @@ const TrangHienThiTatCaSanPham = () => {
             return acc;
         }, {});
 
+        // 5. Chọn sản phẩm đại diện cho mỗi nhóm chọn giá bán thấp nhất của loại hàng hoá
         let representativeProducts = Object.values(groupedByMaHangHoa).map(group => {
             group.sort((a, b) => parseFloat(a.GiaBan) - parseFloat(b.GiaBan));
             return group[0];
         });
 
-        // 6. Sort representative products
+        // 6. Sắp xếp sản phẩm đại diện theo giá bán
         switch (sortOrder) {
             case 'price-asc':
                 representativeProducts.sort((a, b) => parseFloat(a.GiaBan) - parseFloat(b.GiaBan));
@@ -213,18 +213,13 @@ const TrangHienThiTatCaSanPham = () => {
     };
     
     const handleViewAllProducts = () => {
-        // Reset local state filters
         setSearchTerm('');
         setShowDiscountedOnly(false);
         setSelectedChungLoai([]);
         setShowAllChungLoai(true);
         setSortOrder('default');
-        
-        // Reset price filters to overall range based on the currently fetched listSanPham
-        // This assumes listSanPham is the full unfiltered list from the last API call (without searchTerm)
-        // Or, if you have `allProducts` state, use that.
-        const currentProductsForRange = allProducts; // Or allProducts if you maintain it
-        console.log("Current products for range:", currentProductsForRange);
+        const currentProductsForRange = allProducts; 
+        // console.log("Current products for range:", currentProductsForRange);
         if (currentProductsForRange.length > 0) {
             const prices = currentProductsForRange.map(p => parseFloat(p.GiaBan)).filter(p => !isNaN(p));
             const min = prices.length > 0 ? Math.min(...prices) : 0;
@@ -232,21 +227,16 @@ const TrangHienThiTatCaSanPham = () => {
             setMinPrice(min);
             setMaxPrice(max);
             setTempMaxPrice(max);
-            // setOverallMinPrice(min); // Overall might not need reset if it reflects true overall
-            // setOverallMaxPrice(max);
         } else {
             setMinPrice(0);
             setMaxPrice(10000000);
             setTempMaxPrice(10000000);
         }
 
-
-        // Navigate to the base path to clear URL search term, triggering re-fetch if necessary
-        // Assuming '/tim-kiem' is the route for this page. Adjust if different.
+        // đổi URL thành '/tim-kiem' mà không làm mới trang
         if (encodedSearchTerm) {
-            navigate('/tim-kiem'); // Or your base route for all products
+            navigate('/tim-kiem'); 
         }
-        // If already on the base path, the state resets above will trigger re-filtering.
     };
 
 
@@ -258,7 +248,7 @@ const TrangHienThiTatCaSanPham = () => {
     return (
         <Container fluid className="my-4 min-vh-100">
             <Row>
-                {/* Filters Sidebar */}
+                {/* Lọc */}
                 <Col md={3} lg={2} className="border-end pe-3 mb-3 mb-md-0">
                     <h4 className='font-weight-bold mb-3'>
                         <Funnel className="me-2" />
@@ -273,7 +263,7 @@ const TrangHienThiTatCaSanPham = () => {
                     >
                         Xem tất cả sản phẩm
                     </Button>
-                    {/* Discount Filter */}
+                    {/* Lọc theo khuyến mãi */}
                     <div className="mb-3 mt-3 border-top pt-3">
                         <h6>Khuyến mãi</h6>
                         <Form.Check
@@ -286,7 +276,7 @@ const TrangHienThiTatCaSanPham = () => {
                         />
                     </div>
 
-                    {/* Price Filter */}
+                    {/* Lọc theo giá */}
                     <div className="mb-3 mt-3 border-top pt-3">
                         <h6>Khoảng giá</h6>
                         <Form.Label htmlFor="priceRangeSearch">
@@ -317,7 +307,7 @@ const TrangHienThiTatCaSanPham = () => {
                         </Row>
                     </div>
 
-                    {/* Chung Loai Filter */}
+                    {/* Lọc theo chủng loại */}
                     {availableChungLoai.length > 0 && (
                         <div className="mb-3 mt-3 border-top pt-3">
                             <h6>Chủng loại</h6>
@@ -346,7 +336,7 @@ const TrangHienThiTatCaSanPham = () => {
                     )}
                 </Col>
 
-                {/* Products Display Area */}
+                {/* Hiển thị sản phẩm */}
                 <Col md={9} lg={10}>
                     <Row className="mb-3 align-items-center">
                         <Col>

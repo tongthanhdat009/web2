@@ -5,7 +5,6 @@ import TieuDeDanhSach from "../../Components/TrangChuNguoiDung/TieuDeDanhSach.js
 import ChinhSachComponent from "../../Components/TrangChuNguoiDung/ChinhSachComponent.jsx";
 import SanPhamCardLayout from '../../Components/SanPhamCardLayout.jsx';
 import { getHangHoaTheoTheLoai } from '../../../DAL/apiTrangChuUser.jsx';
-import DanhMuc from '../../Components/TrangChuNguoiDung/DanhMuc.jsx';
 import DanhMucNoiBat from '../../Components/TrangChuNguoiDung/DanhMucNoiBat.jsx';
 const MA_THE_LOAI = {
     TA: 1,
