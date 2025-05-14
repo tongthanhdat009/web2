@@ -43,13 +43,13 @@ function TrangSanPhamTheoTheLoai() {
     const [selectedShoeTypes, setSelectedShoeTypes] = useState([]);       
 
 
-    // --- State mới cho bộ lọc giá ---
+    // --- State cho bộ lọc giá ---
     const [overallMinPrice, setOverallMinPrice] = useState(0);
     const [overallMaxPrice, setOverallMaxPrice] = useState(10000000); // Giá trị mặc định lớn
     const [minPrice, setMinPrice] = useState(0);
     const [maxPrice, setMaxPrice] = useState(10000000);
 
-    // --- State mới cho bộ lọc khuyến mãi ---
+    // --- State cho bộ lọc khuyến mãi ---
     const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
 
     // State để debounce việc cập nhật giá khi kéo slider
@@ -82,6 +82,7 @@ function TrangSanPhamTheoTheLoai() {
         setSelectedShoeSizes([]);
         setShowDiscountedOnly(false);
 
+        // lấy danh sách sản phẩm theo thể loại
         getHangHoaTheoTheLoai(maTheLoai)
           .then(data => {
             const products = data || [];
@@ -112,7 +113,6 @@ function TrangSanPhamTheoTheLoai() {
           .catch(error => {
             console.error("Error fetching products:", error);
             setListSanPham([]);
-             // Đặt giá trị mặc định khi lỗi
             setOverallMinPrice(0);
             setOverallMaxPrice(10000000);
             setMinPrice(0);
@@ -147,28 +147,28 @@ function TrangSanPhamTheoTheLoai() {
             );
         }
 
-        // 3. Lọc theo Size Quần Áo (chỉ cho Thời Trang)
+        // 3. Lọc theo Size Quần Áo
         if (maTheLoai === MA_THE_LOAI.THOI_TRANG && selectedClothingSizes.length > 0) {
             filtered = filtered.filter(sp =>
                 sp.IDKichThuocQuanAo != null && selectedClothingSizes.includes(sp.IDKichThuocQuanAo.toString())
             );
         }
 
-        // 4. Lọc theo Size Giày (chỉ cho Giày)
+        // 4. Lọc theo Size Giày
         if (maTheLoai === MA_THE_LOAI.GIAY && selectedShoeSizes.length > 0) {
             filtered = filtered.filter(sp =>
                 sp.IDKichThuocGiay != null && selectedShoeSizes.includes(sp.IDKichThuocGiay.toString()) 
             );
         }
 
-        // 4. Lọc theo Size Giày (chỉ cho Giày)
+        // 5. Lọc theo chủng loại Giày
         if (maTheLoai === MA_THE_LOAI.GIAY && selectedShoeTypes.length > 0) {
             filtered = filtered.filter(sp =>
                 sp.MaChungLoai != null && selectedShoeTypes.includes(sp.MaChungLoai.toString()) 
             );
         }
 
-        // --- 6. Lọc theo Giá ---
+        // 6. Lọc theo Giá
         // Chỉ lọc nếu minPrice hoặc maxPrice khác với giới hạn tổng thể
         if (minPrice > overallMinPrice || maxPrice < overallMaxPrice) {
             filtered = filtered.filter(sp =>
@@ -239,22 +239,17 @@ function TrangSanPhamTheoTheLoai() {
         setSortOrder(event.target.value);
     };
 
-    // --- Hàm xử lý thay đổi giá từ thanh trượt ---
+    // Hàm xử lý thay đổi giá từ thanh trượt 
     const handlePriceChange = (event) => {
         const newMax = parseInt(event.target.value, 10);
-        // Cập nhật giá trị tạm thời để hiển thị ngay lập tức
         setTempMaxPrice(newMax);
-        // Chỉ cập nhật maxPrice thực tế (kích hoạt lọc) khi người dùng nhả chuột
-        // (Sử dụng onMouseUp hoặc onChange tùy thuộc vào cách bạn muốn debounce)
-        // Ở đây dùng onChange, có thể cân nhắc debounce nếu hiệu năng bị ảnh hưởng
         setMaxPrice(newMax);
-        // Đảm bảo min không vượt quá max mới
         if (minPrice > newMax) {
             setMinPrice(newMax);
         }
     };
 
-    // Hàm xử lý thay đổi giá từ input (ví dụ)
+    // Hàm xử lý thay đổi giá từ input
     const handleMinPriceInputChange = (event) => {
         let newMin = parseInt(event.target.value, 10) || overallMinPrice;
         newMin = Math.max(overallMinPrice, Math.min(newMin, maxPrice)); // Giới hạn trong khoảng hợp lệ

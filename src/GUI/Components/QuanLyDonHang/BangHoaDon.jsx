@@ -25,7 +25,7 @@ const BangHoaDon = ({Sua}) => {
   const today = new Date().toISOString().split('T')[0]; // Định dạng YYYY-MM-DD của ngày hiện tại
   const minDate = "2025-01-01"; // Giới hạn min date là ngày 01/01/2025  
   
-  console.log("Sua", Sua);
+  // console.log("Sua", Sua);
   useEffect(() => {
     const fetchDonHang = async () => {
       try {
@@ -65,7 +65,7 @@ const BangHoaDon = ({Sua}) => {
     }
   }, [notification]);
 
-  // Populate location filter options
+  // Lọc theo địa chỉ
   useEffect(() => {
     if (donHang.length > 0) {
       const uniqueCities = new Set();
@@ -92,13 +92,14 @@ const BangHoaDon = ({Sua}) => {
     const components = diaChi.split('$$');
     let ward = null, district = null, city = null;
 
+    // Tách các phần tử thành phố/ tỉnh, quận/ huyện, phường/ xã theo ', '
     if (components.length > 0) {
         const firstPart = components[1].trim();
         const lastCommaIdx = firstPart.lastIndexOf(',');
         if (lastCommaIdx !== -1) {
             ward = firstPart.substring(lastCommaIdx + 1).trim();
         } else {
-            ward = firstPart; // Assumes if no comma, the first part is the ward or street part to filter on
+            ward = firstPart; 
         }
     }
     if (components.length > 1) {
