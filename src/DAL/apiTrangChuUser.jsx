@@ -64,3 +64,22 @@ export const getChungLoaiVaTheLoai = async () => {
         return null; 
     }
 };    
+
+export const getAllHangHoa = async (tenSanPham = '') => { // Accept tenSanPham, default to empty string
+    try {
+      let url = `${API_BASE_URL}/getAllHangHoa.php`;
+      if (tenSanPham) {
+        url += `?tenSanPham=${encodeURIComponent(tenSanPham)}`; // Add parameter if provided
+      }
+      const response = await axios.get(url); 
+      console.log("Response from getAllHangHoa:", response.data); // Log the response for debugging
+      // Assuming your PHP script returns the data directly, not nested under a 'data' or 'success' key
+      // If it does, you might need: return response.data.data; or similar
+      return response.data; 
+    } catch (error) {
+      console.error("Error fetching all products:", error);
+      // Consider how your PHP script handles errors and what it returns.
+      // If it returns JSON with an error message, you might want to parse that.
+      return []; // Return empty array on error or if no products found
+    }
+  };
