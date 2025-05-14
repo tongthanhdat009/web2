@@ -52,9 +52,10 @@ switch ($method) {
             // Tìm kiếm người dùng nếu có từ khóa
             if (isset($_GET['keyword'])) {
                 $keyword = '%' . trim($_GET['keyword']) . '%';
-                $sql = "SELECT n.*, t.TaiKhoan, t.IDQuyen, t.TrangThai, t.HoatDong
+                $sql = "SELECT n.*, t.TaiKhoan, t.IDQuyen, t.TrangThai, t.HoatDong, Q.TenQuyen
                         FROM nguoidung n 
                         INNER JOIN taikhoan t ON n.IDTaiKhoan = t.IDTaiKhoan 
+                        INNER JOIN quyen q ON t.IDQuyen = q.IDQuyen
                         WHERE n.HoTen LIKE ? OR n.Email LIKE ? OR n.SoDienThoai LIKE ? OR t.TaiKhoan LIKE ?";
                 $stmt = $conn->prepare($sql);
                 if (!$stmt) {

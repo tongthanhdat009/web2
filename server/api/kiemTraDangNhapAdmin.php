@@ -43,7 +43,7 @@ $tenTaiKhoan = $data->tenTaiKhoan;
 $matKhau = $data->matKhau;
 
 // Truy vấn kiểm tra tài khoản và lấy cả IDQuyen
-$sql = "SELECT IDTaiKhoan, MatKhau, IDQuyen FROM taikhoan WHERE TaiKhoan = ?";
+$sql = "SELECT IDTaiKhoan, MatKhau, IDQuyen, TrangThai FROM taikhoan WHERE TaiKhoan = ?";
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
     echo json_encode(["message" => "Lỗi chuẩn bị câu lệnh SQL: " . $conn->error]);
@@ -87,7 +87,12 @@ if (!$passwordValid) {
     echo json_encode(["message" => "Mật khẩu không chính xác"]);
     exit;
 }
-
+$trangThai = $row['TrangThai']; // Thêm dòng này
+if ($trangThai == 0) {
+    http_response_code(403); // Forbidden
+    echo json_encode(["message" => "Tài khoản bị khóa"]);
+    exit;
+}
 // Trả về idQuyen trong response thành công
 echo json_encode([
     "message" => "Đăng nhập thành công",
