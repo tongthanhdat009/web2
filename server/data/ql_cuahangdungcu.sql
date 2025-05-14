@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 08, 2025 lúc 04:00 AM
+-- Thời gian đã tạo: Th5 14, 2025 lúc 03:26 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.1.25
 
@@ -33,6 +33,13 @@ CREATE TABLE `chitiethoadon` (
   `GiaBan` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `chitiethoadon`
+--
+
+INSERT INTO `chitiethoadon` (`MaHoaDon`, `Seri`, `GiaBan`) VALUES
+(19, 401, 162500);
+
 -- --------------------------------------------------------
 
 --
@@ -57,7 +64,7 @@ CREATE TABLE `chitietphieunhap` (
 --
 
 INSERT INTO `chitietphieunhap` (`IDChiTietPhieuNhap`, `MaPhieuNhap`, `MaHangHoa`, `IDKhoiLuongTa`, `IDKichThuocQuanAo`, `IDKichThuocGiay`, `GiaNhap`, `GiaBan`, `SoLuongNhap`, `SoLuongTon`) VALUES
-(41, 48, 1, 3, 0, 0, 200000, 250000, 10, 10),
+(41, 48, 1, 3, 0, 0, 200000, 250000, 10, 9),
 (42, 48, 2, 6, 0, 0, 230000, 280000, 10, 10),
 (43, 48, 5, 10, 0, 0, 300000, 330000, 5, 5),
 (44, 48, 12, 5, 0, 0, 200000, 200000, 5, 5),
@@ -110,7 +117,8 @@ INSERT INTO `chucnang` (`IDChucNang`, `TenChucNang`) VALUES
 (8, 'Quản lý đơn hàng'),
 (9, 'Quản lý người dùng'),
 (10, 'Quản lý phân quyền'),
-(11, 'Tra cứu sản phẩm');
+(11, 'Tra cứu sản phẩm'),
+(12, 'Quản lý đánh giá');
 
 -- --------------------------------------------------------
 
@@ -160,6 +168,35 @@ INSERT INTO `chungloai` (`MaChungLoai`, `TenChungLoai`, `MaTheLoai`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `danhgia`
+--
+
+CREATE TABLE `danhgia` (
+  `IDDanhGia` int(11) NOT NULL,
+  `SoSao` int(11) NOT NULL,
+  `BinhLuan` varchar(255) NOT NULL,
+  `ThoiGian` datetime NOT NULL,
+  `TrangThai` varchar(255) DEFAULT NULL,
+  `IDTaiKhoan` int(11) NOT NULL,
+  `MaHangHoa` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `danhgia`
+--
+
+INSERT INTO `danhgia` (`IDDanhGia`, `SoSao`, `BinhLuan`, `ThoiGian`, `TrangThai`, `IDTaiKhoan`, `MaHangHoa`) VALUES
+(1, 5, 'Sản phẩm rất tốt, giao hàng nhanh.', '2025-05-01 10:15:00', 'Đã duyệt', 1, 22),
+(2, 4, 'Hàng đẹp, đúng mô tả, nhưng đóng gói hơi sơ sài.', '2025-05-02 08:30:00', 'Đã duyệt', 1, 22),
+(3, 3, 'Chất lượng ổn so với giá, tạm hài lòng.', '2025-05-03 13:45:00', 'Chưa duyệt', 1, 22),
+(4, 2, 'Sản phẩm không giống như hình, hơi thất vọng.', '2025-05-04 17:20:00', 'Chưa duyệt', 1, 22),
+(5, 1, 'Hàng lỗi, yêu cầu đổi trả nhưng chưa được xử lý.', '2025-05-05 09:10:00', 'Đã duyệt', 1, 22),
+(6, 5, 'a', '2025-05-14 16:44:37', 'Chưa duyệt', 1, 22),
+(7, 5, 'Hello', '2025-05-14 16:45:55', 'Đã duyệt', 1, 22);
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `giohang`
 --
 
@@ -171,6 +208,13 @@ CREATE TABLE `giohang` (
   `IDKichThuocGiay` int(11) NOT NULL,
   `SoLuong` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `giohang`
+--
+
+INSERT INTO `giohang` (`IDTaiKhoan`, `MaHangHoa`, `IDKhoiLuongTa`, `IDKichThuocQuanAo`, `IDKichThuocGiay`, `SoLuong`) VALUES
+(1, 22, 0, 2, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -234,7 +278,7 @@ CREATE TABLE `hanghoa` (
 --
 
 INSERT INTO `hanghoa` (`MaHangHoa`, `MaChungLoai`, `TenHangHoa`, `MaHang`, `MaKhuyenMai`, `MoTa`, `ThoiGianBaoHanh`, `Anh`, `TrangThai`) VALUES
-(1, 1, 'Tạ tay cao su BoFit 2.5Kg', 1, 4, 'Tạ Tập Tay BoFit 2.5Kg.', 22, '../assets/AnhHangHoa/1.png', 1),
+(1, 1, 'Tạ tay cao su BoFit 2.5Kg', 1, 4, 'Tạ Tập Tay BoFit 2.5Kg.', 22, '../assets/AnhHangHoa/1.png', 0),
 (2, 1, 'Tạ tay cao su BoFit 5Kg', 1, NULL, 'Tạ Tập Tay BoFit 5Kg.', 24, '../assets/AnhHangHoa/2.png', 1),
 (3, 1, 'Tạ tay cao su BoFit 7.5Kg', 1, NULL, 'Tạ tay cao su BoFit 7.5Kg', 24, '../assets/AnhHangHoa/3.png', 1),
 (4, 1, 'Tạ Tay Bọc Cao Su BoFit 10kg', 1, NULL, 'Tạ Tay Bọc Cao Su BoFit 10kg', 24, '../assets/AnhHangHoa/4.png', 1),
@@ -359,6 +403,13 @@ CREATE TABLE `hoadon` (
   `SoDienThoai` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `HinhThucThanhToan` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `hoadon`
+--
+
+INSERT INTO `hoadon` (`MaHoaDon`, `IDTaiKhoan`, `NgayXuatHoaDon`, `NgayDuyet`, `TrangThai`, `DiaChi`, `TenNguoiMua`, `SoDienThoai`, `HinhThucThanhToan`) VALUES
+(19, 1, '2025-05-14', '2025-05-14', 'Đã Duyệt', '1213$$Thị trấn Tứ Trưng$$Huyện Vĩnh Tường$$Tỉnh Vĩnh Phúc', 'Người dùng 1', '0900000000', 'Tiền mặt');
 
 -- --------------------------------------------------------
 
@@ -658,7 +709,7 @@ INSERT INTO `khohang` (`Seri`, `TinhTrang`, `IDChiTietPhieuNhap`) VALUES
 (398, 'Chưa bán', 42),
 (399, 'Chưa bán', 42),
 (400, 'Chưa bán', 42),
-(401, 'Chưa bán', 41),
+(401, 'Đã bán', 41),
 (402, 'Chưa bán', 41),
 (403, 'Chưa bán', 41),
 (404, 'Chưa bán', 41),
@@ -860,22 +911,23 @@ CREATE TABLE `phanquyen` (
 INSERT INTO `phanquyen` (`IDChucNang`, `IDQuyen`, `Them`, `Xoa`, `Sua`) VALUES
 (1, 1, 1, 1, 1),
 (1, 3, 1, 1, 1),
-(2, 1, NULL, NULL, NULL),
-(3, 1, 1, NULL, NULL),
-(3, 3, 1, NULL, NULL),
+(2, 1, 1, 1, 1),
+(3, 1, 1, 1, 1),
+(3, 3, 1, 1, 1),
 (4, 1, 1, 1, 1),
 (4, 3, 1, 1, 1),
 (5, 1, 1, 1, 1),
 (5, 3, 1, 1, 1),
-(6, 1, NULL, NULL, NULL),
-(6, 3, NULL, NULL, NULL),
+(6, 1, 1, 1, 1),
+(6, 3, 1, 1, 1),
 (7, 1, 1, 1, 1),
 (7, 3, 1, 1, 1),
 (8, 1, 1, 1, 1),
 (8, 3, 1, 1, 1),
 (9, 1, 1, 1, 1),
 (10, 1, 1, 1, 1),
-(11, 1, 1, 1, 1);
+(11, 1, 1, 1, 1),
+(12, 1, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1001,6 +1053,14 @@ ALTER TABLE `chucnang`
 ALTER TABLE `chungloai`
   ADD PRIMARY KEY (`MaChungLoai`),
   ADD KEY `FK_ChungLoai_TheLoai` (`MaTheLoai`);
+
+--
+-- Chỉ mục cho bảng `danhgia`
+--
+ALTER TABLE `danhgia`
+  ADD PRIMARY KEY (`IDDanhGia`),
+  ADD KEY `FK_DanhGia_TaiKhoan` (`IDTaiKhoan`),
+  ADD KEY `FK_DanhGia_HangHoa` (`MaHangHoa`);
 
 --
 -- Chỉ mục cho bảng `giohang`
@@ -1137,13 +1197,19 @@ ALTER TABLE `chitietphieunhap`
 -- AUTO_INCREMENT cho bảng `chucnang`
 --
 ALTER TABLE `chucnang`
-  MODIFY `IDChucNang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `IDChucNang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT cho bảng `chungloai`
 --
 ALTER TABLE `chungloai`
   MODIFY `MaChungLoai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+--
+-- AUTO_INCREMENT cho bảng `danhgia`
+--
+ALTER TABLE `danhgia`
+  MODIFY `IDDanhGia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `hang`
@@ -1161,7 +1227,7 @@ ALTER TABLE `hanghoa`
 -- AUTO_INCREMENT cho bảng `hoadon`
 --
 ALTER TABLE `hoadon`
-  MODIFY `MaHoaDon` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `MaHoaDon` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT cho bảng `khohang`
@@ -1255,6 +1321,13 @@ ALTER TABLE `chitietphieunhap`
 --
 ALTER TABLE `chungloai`
   ADD CONSTRAINT `FK_ChungLoai_TheLoai` FOREIGN KEY (`MaTheLoai`) REFERENCES `theloai` (`MaTheLoai`);
+
+--
+-- Các ràng buộc cho bảng `danhgia`
+--
+ALTER TABLE `danhgia`
+  ADD CONSTRAINT `FK_DanhGia_HangHoa` FOREIGN KEY (`MaHangHoa`) REFERENCES `hanghoa` (`MaHangHoa`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_DanhGia_TaiKhoan` FOREIGN KEY (`IDTaiKhoan`) REFERENCES `taikhoan` (`IDTaiKhoan`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `giohang`
