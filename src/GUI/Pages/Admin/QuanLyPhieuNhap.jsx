@@ -5,7 +5,8 @@ import "../../../GUI/Components/css/QuanLyPhieuNhap.css";
 
 const ITEMS_PER_PAGE = 10;
 
-const QuanLyPhieuNhap = () => {
+const QuanLyPhieuNhap = ({Them, Sua}) => {
+  console.log({Them, Sua});
   const [phieuNhaps, setPhieuNhaps] = useState([]);
   const [nhaCungCaps, setNhaCungCaps] = useState([]);
   const [hangHoas, setHangHoas] = useState([]);
@@ -382,12 +383,14 @@ const QuanLyPhieuNhap = () => {
       <h2 className="admin-header">Quản lý phiếu nhập</h2>
 
       <div className="action-buttons">
-        <button 
-          className="button-common button-add"
-          onClick={() => setShowAddForm(true)}
+        {Them === 1 && (
+          <button 
+            className="button-common button-add"
+            onClick={() => setShowAddForm(true)}
         >
           Thêm phiếu nhập
         </button>
+        )}
       </div>
 
       {showAddForm && (
@@ -667,7 +670,7 @@ const QuanLyPhieuNhap = () => {
                           >
                             Xem chi tiết
                           </button>
-                          {phieuNhap.TrangThai === "Chưa duyệt" && (
+                          {phieuNhap.TrangThai === "Chưa duyệt" && Sua === 1 && (
                             <button
                               className="button-common button-approve"
                               onClick={() => handleDuyetPhieuNhap(phieuNhap)}
