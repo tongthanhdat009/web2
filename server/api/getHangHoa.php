@@ -10,7 +10,7 @@ require_once "../config/Database.php";
 $database = new Database();
 $conn = $database->getConnection();
 
-$sql = "SELECT * FROM hanghoa";
+$sql = "SELECT * FROM hanghoa WHERE TrangThai != -1";
 $result = $conn->query($sql);
 
 $products = [];

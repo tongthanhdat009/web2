@@ -4,7 +4,8 @@ import "../../../GUI/Components/css/QuanLyChungLoai.css";
 
 const ITEMS_PER_PAGE = 10;
 
-const QuanLyChungLoai = () => {
+const QuanLyChungLoai = ({Them, Sua}) => {
+  console.log({Them, Sua});
   const [chungLoais, setChungLoais] = useState([]);
   const [theLoais, setTheLoais] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -213,12 +214,14 @@ const QuanLyChungLoai = () => {
         </div>
       )}
       <h2 className="admin-header">Quản lý chủng loại</h2>
-      <button 
-        onClick={handleAdd}
-        className="button-common button-add"
-      >
-        Thêm chủng loại
-      </button>
+      {Them === 1 && (
+        <button 
+          onClick={handleAdd}
+          className="button-common button-add"
+        >
+          Thêm chủng loại
+        </button>
+      )}
 
       {loading ? (
         <div style={{ textAlign: "center", padding: "20px" }}>Đang tải dữ liệu...</div>
@@ -230,7 +233,7 @@ const QuanLyChungLoai = () => {
                 <th className="table-header">Mã chủng loại</th>
                 <th className="table-header">Tên chủng loại</th>
                 <th className="table-header">Tên thể loại</th>
-                <th className="table-header">Thao tác</th>
+                {Sua === 1 && <th className="table-header">Thao tác</th>}
               </tr>
             </thead>
             <tbody>
@@ -239,14 +242,16 @@ const QuanLyChungLoai = () => {
                   <td>{chungLoai.MaChungLoai}</td>
                   <td>{chungLoai.TenChungLoai}</td>
                   <td>{chungLoai.TenTheLoai || "(trống)"}</td>
-                  <td>
-                    <button
-                      onClick={() => handleEdit(chungLoai)}
-                      className="button-common button-edit"
-                    >
-                      Sửa
-                    </button>
-                  </td>
+                  {Sua === 1 && (
+                    <td>
+                      <button
+                        onClick={() => handleEdit(chungLoai)}
+                        className="button-common button-edit"
+                      >
+                        Sửa
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

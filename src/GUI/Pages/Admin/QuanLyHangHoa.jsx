@@ -4,7 +4,8 @@ import "../../../GUI/Components/css/QuanLyHangHoa.css";
 
 const ITEMS_PER_PAGE = 10;
 
-const QuanLyHangHoa = () => {
+const QuanLyHangHoa = ({Them, Sua, Xoa}) => {
+  console.log({Them, Sua, Xoa});
   const [hangHoas, setHangHoas] = useState([]);
   const [chungLoais, setChungLoais] = useState([]);
   const [hangs, setHangs] = useState([]);
@@ -81,23 +82,79 @@ const QuanLyHangHoa = () => {
         TrangThai: updatedTrangThai
       };
   
-      const response = await updateHangHoa(updatedHangHoa);
+      const formData = new FormData();
+      
+      // Thêm các trường dữ liệu vào FormData
+      Object.keys(updatedHangHoa).forEach(key => {
+        // Chỉ thêm các trường có giá trị
+        if (updatedHangHoa[key] !== null && updatedHangHoa[key] !== undefined) {
+          formData.append(key, updatedHangHoa[key].toString().trim());
+        }
+      });
+
+      // Log FormData để debug
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+      }
+      
+      const response = await fetch('http://localhost/web2/server/api/updateHangHoa.php', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      console.log("Server response:", data); // Log phản hồi từ server
   
-      if (response.success) {
+      if (data.success) {
         setNotification({
           message: "Cập nhật trạng thái thành công",
           type: "success"
         });
-        loadData();
+        await loadData();
       } else {
         setNotification({
-          message: response.message || "Cập nhật trạng thái thất bại",
+          message: data.message || "Cập nhật trạng thái thất bại",
           type: "error"
         });
       }
     } catch (error) {
+      console.error("Error:", error); // Log lỗi nếu có
       setNotification({
-        message: "Lỗi khi cập nhật trạng thái: " + error.message,
+        message: "Lỗi khi cập nhật trạng thái: " + (error.message || "Không xác định"),
+        type: "error"
+      });
+    }
+  };
+
+  const handleDelete = async (hangHoa) => {
+    try {
+      const response = await fetch('http://localhost/web2/server/api/deleteHangHoa.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ MaHangHoa: hangHoa.MaHangHoa }),
+      });
+
+      const data = await response.json();
+      console.log("Server response:", data); // Log phản hồi từ server
+  
+      if (data.success) {
+        setNotification({
+          message: data.message,
+          type: "success"
+        });
+        await loadData();
+      } else {
+        setNotification({
+          message: data.message || "Xóa hàng hóa thất bại",
+          type: "error"
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error); // Log lỗi nếu có
+      setNotification({
+        message: "Lỗi khi xóa hàng hóa: " + (error.message || "Không xác định"),
         type: "error"
       });
     }
@@ -369,12 +426,14 @@ const QuanLyHangHoa = () => {
         </select>
       </div>
 
-      <button 
-        onClick={handleAdd}
-        className="button-common button-add"
-      >
-        Thêm hàng hóa
-      </button>
+      {Them === 1 && (
+        <button 
+          onClick={handleAdd}
+          className="button-common button-add"
+        >
+          Thêm hàng hóa
+        </button>
+      )}
 
       {loading ? (
         <div className="loading-container">
@@ -400,7 +459,7 @@ const QuanLyHangHoa = () => {
                     <th className="table-header">Thời gian bảo hành (Tháng)</th>
                     <th className="table-header">Ảnh</th>
                     <th className="table-header">Trạng thái</th>
-                    <th className="table-header">Thao tác</th>
+                    {Sua === 1 && <th className="table-header">Thao tác</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -435,23 +494,39 @@ const QuanLyHangHoa = () => {
                         </td>
                         <td>
                           <span className={`status-badge ${hangHoa.TrangThai === "1" ? 'status-active' : 'status-inactive'}`}>
-                            {hangHoa.TrangThai === "1" ? "Hoạt động" : "Ngừng hoạt động"}
+                            {hangHoa.TrangThai === "1" ? "Hoạt động" : "Ngừng HĐ"}
                           </span>
                         </td>
-                        <td>
-                          <button
-                            onClick={() => handleEdit(hangHoa)}
-                            className="button-common button-edit"
-                          >
-                            Sửa
-                          </button>
-                          <button
-                            onClick={() => handleToggleTrangThai(hangHoa)}
-                            className={`button-common ${hangHoa.TrangThai === "1" ? 'button-delete' : 'button-add'}`}
-                          >
-                            {hangHoa.TrangThai === "1" ? "Ngừng hoạt động" : "Kích hoạt"}
-                          </button>
-                        </td>
+                        {Sua === 1 && (
+                          <td>
+                            <div className="button-vertical-container">
+                              {Sua === 1 &&(
+                                <button
+                                  onClick={() => handleEdit(hangHoa)}
+                                  className="button-common button-edit button-full-width"
+                                >
+                                  Sửa
+                                </button>
+                              )}
+                              {Sua === 1 &&(
+                                <button
+                                  onClick={() => handleToggleTrangThai(hangHoa)}
+                                  className={`button-common ${hangHoa.TrangThai === "1" ? 'button-delete' : 'button-add'} button-full-width`}
+                                >
+                                  {hangHoa.TrangThai === "1" ? "Ngừng HĐ" : "Kích hoạt"}
+                                </button>
+                              )}
+                              {Xoa === 1 && (
+                                <button
+                                  onClick={() => handleDelete(hangHoa)}
+                                  className="button-common button-delete button-full-width"
+                                >
+                                  Xóa HH
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        )}
                       </tr>
                     );
                   })}
@@ -570,7 +645,7 @@ const QuanLyHangHoa = () => {
                 onChange={(e) => setEditingHangHoa({...editingHangHoa, TrangThai: e.target.value})}
               >
                 <option value="1">Hoạt động</option>
-                <option value="0">Ngừng hoạt động</option>
+                <option value="0">Ngừng HĐ</option>
               </select>
             </div>
 
