@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchHang, addHang, updateHang, deleteHang } from "../../../DAL/api.jsx";
+import { fetchHang, addHang, updateHang, deleteHang, fetchQuyenByTaiKhoan } from "../../../DAL/api.jsx";
 import HangDTO from "../../../DTO/HangDTO";
 import "../../../GUI/Components/css/QuanLyHang.css";
 
@@ -20,9 +20,15 @@ const QuanLyHang = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCriteria, setSearchCriteria] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [permissions, setPermissions] = useState({
+    them: false,
+    xoa: false,
+    sua: false
+  });
 
   useEffect(() => {
     loadHangs();
+    checkPermissions();
   }, []);
 
   useEffect(() => {
@@ -53,6 +59,33 @@ const QuanLyHang = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkPermissions = async () => {
+    try {
+      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      if (!userInfo) {
+        setPermissions({ them: false, xoa: false, sua: false });
+        return;
+      }
+      const data = await fetchQuyenByTaiKhoan(userInfo.IDTaiKhoan);
+      if (data.success) {
+        const permission = data.data.find(item => item.IDChucNang === 3);
+        if (permission) {
+          setPermissions({
+            them: permission.Them === 1,
+            xoa: permission.Xoa === 1,
+            sua: permission.Sua === 1
+          });
+        } else {
+          setPermissions({ them: false, xoa: false, sua: false });
+        }
+      } else {
+        setPermissions({ them: false, xoa: false, sua: false });
+      }
+    } catch (error) {
+      setPermissions({ them: false, xoa: false, sua: false });
     }
   };
 
@@ -290,13 +323,15 @@ const QuanLyHang = () => {
         </select>
       </div>
 
-      <button 
-        onClick={handleAdd}
-        className="button-common button-add"
-        style={{ marginBottom: "20px" }}
-      >
-        Thêm hãng
-      </button>
+      {permissions.them && (
+        <button 
+          onClick={handleAdd}
+          className="button-common button-add"
+          style={{ marginBottom: "20px" }}
+        >
+          Thêm hãng
+        </button>
+      )}
 
       {loading ? (
         <div style={{ textAlign: "center", padding: "20px" }}>Đang tải dữ liệu...</div>
@@ -313,7 +348,9 @@ const QuanLyHang = () => {
                   <tr>
                     <th className="table-header">Mã hãng</th>
                     <th className="table-header">Tên hãng</th>
-                    <th className="table-header">Thao tác</th>
+                    {(permissions.sua || permissions.xoa) && (
+                      <th className="table-header">Thao tác</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -321,21 +358,27 @@ const QuanLyHang = () => {
                     <tr key={hang.MaHang} className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}>
                       <td>{hang.MaHang}</td>
                       <td>{hang.TenHang}</td>
-                      <td>
-                        <button
-                          onClick={() => handleEdit(hang)}
-                          className="button-common button-edit"
-                          style={{ marginRight: "8px" }}
-                        >
-                          Sửa
-                        </button>
-                        <button
-                          onClick={() => handleConfirmDelete(hang.MaHang)}
-                          className="button-common button-delete"
-                        >
-                          Xóa
-                        </button>
-                      </td>
+                      {(permissions.sua || permissions.xoa) && (
+                        <td>
+                          {permissions.sua && (
+                            <button
+                              onClick={() => handleEdit(hang)}
+                              className="button-common button-edit"
+                              style={{ marginRight: "8px" }}
+                            >
+                              Sửa
+                            </button>
+                          )}
+                          {permissions.xoa && (
+                            <button
+                              onClick={() => handleConfirmDelete(hang.MaHang)}
+                              className="button-common button-delete"
+                            >
+                              Xóa
+                            </button>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
