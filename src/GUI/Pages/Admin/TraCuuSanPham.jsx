@@ -20,6 +20,7 @@ const TraCuuSanPham = () => {
         const result = await traCuuSanPham();
         if (Array.isArray(result)) {
           setData(result);
+          console.log(result);
         } else {
           console.error("Dữ liệu không phải là mảng:", result);
         }
@@ -151,7 +152,7 @@ const TraCuuSanPham = () => {
           </thead>
           <tbody>
             {results.map((item, index) => {
-              const ngayDuyet = new Date(item.NgayDuyet);
+              const ngayDuyet = item.NgayDuyet ? new Date(item.NgayDuyet) : new Date();
               const ngayHetHan = calculateWarrantyEndDate(ngayDuyet, item.ThoiGianBaoHanh);
 
               const conBaoHanh = item.TinhTrang === "0" || ngayHetHan > new Date();
