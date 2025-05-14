@@ -23,7 +23,8 @@ if ($conn->connect_error) {
 }
 
 // Lấy mã hóa đơn từ POST
-$maHoaDon = isset($_POST['MaHoaDon']) ? intval($_POST['MaHoaDon']) : 0;
+$input = json_decode(file_get_contents("php://input"), true);
+$maHoaDon = isset($_POST['MaHoaDon']) ? intval($_POST['MaHoaDon']) : (isset($input['MaHoaDon']) ? intval($input['MaHoaDon']) : 0);
 if ($maHoaDon <= 0) {
     echo json_encode(["success" => false, "message" => "Thiếu hoặc sai mã hóa đơn"]);
     exit();

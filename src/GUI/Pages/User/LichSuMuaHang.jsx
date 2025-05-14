@@ -64,6 +64,7 @@ const LichSuMuaHang = () => {
               <th>Mã Đơn</th>
               <th>Ngày Mua</th>
               <th>Trạng Thái</th>
+              <th>Hình Thức Thanh Toán</th>
               <th>Tổng Tiền</th>
               <th></th> {/* Cột nút Xem chi tiết */}
             </tr>
@@ -74,6 +75,7 @@ const LichSuMuaHang = () => {
                 <td>{item.MaHoaDon}</td>
                 <td>{item.NgayXuatHoaDon}</td>
                 <td>{item.TrangThai}</td>
+                <td>{item.HinhThucThanhToan}</td>
                 <td>{Number(item.TongTien).toLocaleString()} đ</td>
                 <td>
                   <button

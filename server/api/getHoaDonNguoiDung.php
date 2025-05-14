@@ -31,6 +31,7 @@ $sql = "
         hoadon.NgayXuatHoaDon, 
         hoadon.NgayDuyet, 
         hoadon.TrangThai, 
+        hoadon.HinhThucThanhToan,
         SUM(chitiethoadon.GiaBan) AS TongTien
     FROM hoadon
     JOIN chitiethoadon ON chitiethoadon.MaHoaDon = hoadon.MaHoaDon

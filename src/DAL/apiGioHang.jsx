@@ -316,6 +316,7 @@ export async function XoaGioHang(idTaiKhoan) {
 }
 export async function XoaHoaDon(maHoaDon) {
   try {
+    console.log("Xóa hóa đơn với mãaaaa:", maHoaDon);
     const response = await fetch(XOA_HOA_DON, {
       method: "POST",
       headers: {

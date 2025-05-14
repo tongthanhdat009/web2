@@ -22,6 +22,7 @@ export default function KetQuaThanhToanOnline() {
     if (!maHoaDon) {
       navigate("/");  // Chuyển hướng về trang chủ nếu không có mã hóa đơn
     }
+    console.log("Mã hóa đơn:", maHoaDon);
   }, [maHoaDon, navigate]);
 
   const IDTaiKhoan = localStorage.getItem("IDTaiKhoan");
@@ -31,8 +32,10 @@ export default function KetQuaThanhToanOnline() {
       XoaGioHang(IDTaiKhoan);
       setShowHoaDon(true);
       setIsSuccess(true);
-    } else if (responseCode !== "00" && maHoaDon?.maHoaDon) {
-      XoaHoaDon(maHoaDon.maHoaDon);
+      console.log("Xóa hóa đơn thành côngádfasdf",maHoaDon);
+    } else if (responseCode !== "00") {
+      console.log("Xóa hóa đơn thành công",maHoaDon);
+      XoaHoaDon(maHoaDon);
       setIsSuccess(false);
     }
   }, [responseCode, IDTaiKhoan, maHoaDon]);
