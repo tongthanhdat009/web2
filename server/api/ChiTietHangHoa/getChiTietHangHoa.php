@@ -41,7 +41,7 @@ LEFT JOIN KhoiLuongTa klt ON ctpn.IDKhoiLuongTa = klt.IDKhoiLuongTa
 LEFT JOIN KichThuocQuanAo kq ON ctpn.IDKichThuocQuanAo = kq.IDKichThuocQuanAo
 LEFT JOIN KichThuocGiay kg ON ctpn.IDKichThuocGiay = kg.IDKichThuocGiay
 LEFT JOIN khuyenmai km ON hh.MaKhuyenMai = km.MaKhuyenMai
-WHERE hh.MaHangHoa = ? 
+WHERE hh.MaHangHoa = ?  AND hh.TrangThai = 1
   AND ctpn.SoLuongTon > 0 
   AND pn.TrangThai = 'Đã duyệt'
   AND pn.NgayNhap = (

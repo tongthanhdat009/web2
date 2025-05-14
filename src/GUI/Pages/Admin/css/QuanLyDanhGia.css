@@ -1,0 +1,136 @@
+.qldg-container {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    font-family: Arial, sans-serif;
+}
+
+.qldg-header {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.qldg-notification {
+    padding: 10px;
+    margin: 15px 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.qldg-notification-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.qldg-notification-error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.qldg-filters {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
+}
+
+.qldg-input,
+.qldg-select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.qldg-input[type="text"] {
+    width: 220px;
+}
+
+.qldg-table-wrapper {
+    overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
+}
+
+.qldg-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.qldg-table th,
+.qldg-table td {
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.qldg-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    color: #495057;
+}
+
+.qldg-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.qldg-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.qldg-product-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+.qldg-comment-cell {
+    min-width: 250px;
+    max-width: 400px; /* Giới hạn chiều rộng tối đa */
+    word-wrap: break-word; /* Cho phép xuống dòng nếu bình luận quá dài */
+}
+
+.qldg-actions button {
+    padding: 6px 12px;
+    margin-right: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.qldg-button-duyet {
+    background-color: #28a745;
+    color: white;
+}
+.qldg-button-duyet:hover {
+    background-color: #218838;
+}
+
+.qldg-button-xoa {
+    background-color: #dc3545;
+    color: white;
+}
+.qldg-button-xoa:hover {
+    background-color: #c82333;
+}
+
+.qldg-loading-message,
+.qldg-error-message,
+.qldg-no-data-message {
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+    color: #555;
+}
+
+.qldg-error-message {
+    color: red;
+}

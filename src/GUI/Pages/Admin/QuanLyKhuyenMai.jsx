@@ -44,12 +44,12 @@ const QuanLyKhuyenMai = () => {
 
   const checkPermissions = async () => {
     try {
-      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      const userInfo = JSON.parse(localStorage.getItem('IDTaiKhoanAdmin'));
       if (!userInfo) {
         setPermissions({ them: false, xoa: false, sua: false });
         return;
       }
-      const data = await fetchQuyenByTaiKhoan(userInfo.IDTaiKhoan);
+      const data = await fetchQuyenByTaiKhoan(userInfo);
       if (data.success) {
         const khuyenMaiPermission = data.data.find(item => item.IDChucNang === 2);
         if (khuyenMaiPermission) {

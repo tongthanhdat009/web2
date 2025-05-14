@@ -33,7 +33,7 @@ try {
         FROM hanghoa hh 
         JOIN chitietphieunhap ctpn ON hh.MaHangHoa = ctpn.MaHangHoa 
         JOIN khohang kh ON kh.IDChiTietPhieuNhap = ctpn.IDChiTietPhieuNhap
-        WHERE ctpn.SoLuongTon > 0 AND hh.MaChungLoai = ?
+        WHERE ctpn.SoLuongTon > 0 AND hh.MaChungLoai = ? AND hh.TrangThai = 1
         GROUP BY hh.MaHangHoa
         ORDER BY SoLuongDaBan DESC
     ";
