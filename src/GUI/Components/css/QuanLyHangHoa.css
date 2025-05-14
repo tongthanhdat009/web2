@@ -28,6 +28,18 @@
   gap: 0.5rem;
 }
 
+.button-vertical-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.button-full-width {
+  width: 100%;
+  justify-content: center;
+}
+
 .button-add {
   background-color: #4CAF50;
   color: white;
@@ -41,7 +53,7 @@
 .button-edit {
   background-color: #2196F3;
   color: white;
-  margin-right: 0.5rem;
+  margin-right: 0;
 }
 
 .button-edit:hover {
