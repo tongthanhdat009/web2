@@ -25,7 +25,8 @@ import {
   Grid,
 } from "@mui/material";
 
-const QuanLyNguoiDung = () => {
+const QuanLyNguoiDung = ({Them, Xoa, Sua}) => {
+  console.log(Them, Xoa, Sua);
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
@@ -295,14 +296,16 @@ const QuanLyNguoiDung = () => {
         </Button>
       </Box>
       
-      <Button 
-        variant="contained" 
-        color="primary" 
-        onClick={handleOpenDialog}
-        sx={{ mb: 2 }}
-      >
-        Thêm người dùng
-      </Button>
+        {Them === 1 && (
+          <Button 
+            variant="contained" 
+            color="primary" 
+            onClick={handleOpenDialog}
+            sx={{ mb: 2 }}
+          >
+            Thêm người dùng
+          </Button>
+        )}
       
       {isLoading && (
         <Box display="flex" justifyContent="center" my={3}>
@@ -341,23 +344,27 @@ const QuanLyNguoiDung = () => {
                 <TableCell>{user.TaiKhoan}</TableCell>
                 <TableCell>{user.TenQuyen}</TableCell>
                 <TableCell>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    size="small"
-                    sx={{ mr: 1 }}
-                    onClick={() => handleOpenEdit(user)}
-                  >
-                    Sửa
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color={user.TrangThai === 1 ? "error" : "success"}
-                    size="small"
-                    onClick={() => handleToggleLock(user)}
-                  >
-                    {user.TrangThai === 1 ? "Khóa" : "Mở khóa"}
-                  </Button>
+                  {Sua === 1 && (
+                    <>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        size="small"
+                        sx={{ mr: 1 }}
+                        onClick={() => handleOpenEdit(user)}
+                      >
+                        Sửa
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color={user.TrangThai === 1 ? "error" : "success"}
+                        size="small"
+                        onClick={() => handleToggleLock(user)}
+                      >
+                        {user.TrangThai === 1 ? "Khóa" : "Mở khóa"}
+                      </Button>
+                    </>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

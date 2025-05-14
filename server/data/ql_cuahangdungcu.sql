@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 14, 2025 lúc 03:26 PM
+-- Thời gian đã tạo: Th5 14, 2025 lúc 09:26 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.1.25
 
@@ -118,7 +118,8 @@ INSERT INTO `chucnang` (`IDChucNang`, `TenChucNang`) VALUES
 (9, 'Quản lý người dùng'),
 (10, 'Quản lý phân quyền'),
 (11, 'Tra cứu sản phẩm'),
-(12, 'Quản lý đánh giá');
+(12, 'Quản lý đánh giá'),
+(13, 'Quản lý quyền');
 
 -- --------------------------------------------------------
 
@@ -187,12 +188,12 @@ CREATE TABLE `danhgia` (
 
 INSERT INTO `danhgia` (`IDDanhGia`, `SoSao`, `BinhLuan`, `ThoiGian`, `TrangThai`, `IDTaiKhoan`, `MaHangHoa`) VALUES
 (1, 5, 'Sản phẩm rất tốt, giao hàng nhanh.', '2025-05-01 10:15:00', 'Đã duyệt', 1, 22),
-(2, 4, 'Hàng đẹp, đúng mô tả, nhưng đóng gói hơi sơ sài.', '2025-05-02 08:30:00', 'Đã duyệt', 1, 22),
-(3, 3, 'Chất lượng ổn so với giá, tạm hài lòng.', '2025-05-03 13:45:00', 'Chưa duyệt', 1, 22),
+(3, 3, 'Chất lượng ổn so với giá, tạm hài lòng.', '2025-05-03 13:45:00', 'Đã duyệt', 1, 22),
 (4, 2, 'Sản phẩm không giống như hình, hơi thất vọng.', '2025-05-04 17:20:00', 'Chưa duyệt', 1, 22),
 (5, 1, 'Hàng lỗi, yêu cầu đổi trả nhưng chưa được xử lý.', '2025-05-05 09:10:00', 'Đã duyệt', 1, 22),
-(6, 5, 'a', '2025-05-14 16:44:37', 'Chưa duyệt', 1, 22),
-(7, 5, 'Hello', '2025-05-14 16:45:55', 'Đã duyệt', 1, 22);
+(6, 5, 'a', '2025-05-14 16:44:37', 'Đã duyệt', 1, 22),
+(7, 5, 'Hello', '2025-05-14 16:45:55', 'Đã duyệt', 1, 22),
+(9, 4, 'Sản phẩm chất lượng ổn.', '2025-05-14 23:04:16', 'Đã duyệt', 1, 2);
 
 -- --------------------------------------------------------
 
@@ -850,10 +851,15 @@ CREATE TABLE `nguoidung` (
 --
 
 INSERT INTO `nguoidung` (`MaNguoiDung`, `HoTen`, `GioiTinh`, `Email`, `SoDienThoai`, `IDTaiKhoan`, `Anh`) VALUES
-(1, 'Người dùng 1', 'Nam', 'nd1@gmail.com', '09000000', 1, NULL),
+(1, 'Người dùng 1', 'Nam', 'nd1@gmail.com', '0900000000', 1, NULL),
 (2, 'Nguyên tuấn', 'Nam', 'nguyentuan06@gmail.com', '0903316095', 3, NULL),
 (3, 'Nguyễn Minh Tuấn', 'Nam', 'nguyentuan@gmail.com', '0397284705', 4, NULL),
-(4, 'tongthanhdat145', 'Nam', 'a0041405@gmail.com', '0395632027', 5, '1746623171_R.png');
+(4, 'tongthanhdat145', 'Nam', 'a0041405@gmail.com', '0395632027', 5, '1746623171_R.png'),
+(5, 'Người dùng 2', 'Nam', 'nguyenminhtuan01@gmail.com', '0901076990', 6, NULL),
+(6, 'NguyenMinhTuan', 'Nam', 'ab@gmail.com', '0900000001', 7, NULL),
+(7, 'Người dùng 1', 'Nam', 'abc@gmail.com', '0900000002', 8, NULL),
+(8, 'Người dùng 11', 'Nam', 'a1@gmail.com', '0900000003', 9, NULL),
+(9, 'Nguyễn Minh Tuấn', 'Nam', 'a3@gmail.com', '0900000004', 10, NULL);
 
 -- --------------------------------------------------------
 
@@ -924,10 +930,11 @@ INSERT INTO `phanquyen` (`IDChucNang`, `IDQuyen`, `Them`, `Xoa`, `Sua`) VALUES
 (7, 3, 1, 1, 1),
 (8, 1, 1, 1, 1),
 (8, 3, 1, 1, 1),
-(9, 1, 1, 1, 1),
+(9, 1, 0, 1, 1),
 (10, 1, 1, 1, 1),
 (11, 1, 1, 1, 1),
-(12, 1, 1, 1, 1);
+(12, 1, 1, 1, 1),
+(13, 1, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -991,10 +998,15 @@ CREATE TABLE `taikhoan` (
 --
 
 INSERT INTO `taikhoan` (`IDTaiKhoan`, `TaiKhoan`, `matKhau`, `IDQuyen`, `TrangThai`, `HoatDong`, `SessionID`) VALUES
-(1, 'admin', 0x5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5, 1, 0, 1, ''),
+(1, 'admin', 0x5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5, 1, 1, 1, ''),
 (3, 'tuanminhtuan123', 0x2432792431302444585933594d736b3577316370337a6c59436a69704f367345765449716b6e5873654f4e7634587278573548626854574c6e656d79, 2, 1, 0, NULL),
 (4, 'nguyeminhtuan123', 0x243279243130246e76465851476558392e57576871554f3774633257654c45466c73324d324c6a3757584257374b456e6b724e2f35524c4a32346836, 2, 1, 0, NULL),
-(5, 'tongthanhdat145', 0x243279243130244c6e3670585a7672636f4130774a73566b6e45674b4f45516b725a65454a6d3874626f6b7766772e457659336a435036546b663379, 2, 1, 1, NULL);
+(5, 'tongthanhdat145', 0x243279243130244c6e3670585a7672636f4130774a73566b6e45674b4f45516b725a65454a6d3874626f6b7766772e457659336a435036546b663379, 2, 1, 1, NULL),
+(6, 'nguoidungasdf', 0x243279243130246b4935645a6e7a5330764d493955344a77657671494f306739476f7171596d796a386c6b772f5552726836626b544b4a656e543461, 1, 1, 0, NULL),
+(7, 'minhtuan123', 0x24327924313024464d653266352f4d31376b7a4179535142414831664f6f4c4b6f374972776c7453655547463651686559584a3862522e54352e5236, 1, 1, 0, NULL),
+(8, 'minhtuan1231', 0x243279243130247759504b4e317771683864484c6e6953396c49524c2e51494d63697352746d6a46667637615a4f507330694b7a42504e667461716d, 3, 1, 0, NULL),
+(9, 'minhtuan1232', 0x24327924313024556b5a44552f767079797477547253445157626f6a7577626d774a6345494f5654427459593251594d773078532f516b4537617a4f, 1, 1, 0, NULL),
+(10, 'minhtuan1233', 0x24327924313024345a396c30464a534a37666e386539724c514135566570662f6d6843474b543076594c2e56637051527a544e645768516d64453169, 2, 1, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -1197,7 +1209,7 @@ ALTER TABLE `chitietphieunhap`
 -- AUTO_INCREMENT cho bảng `chucnang`
 --
 ALTER TABLE `chucnang`
-  MODIFY `IDChucNang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `IDChucNang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT cho bảng `chungloai`
@@ -1209,7 +1221,7 @@ ALTER TABLE `chungloai`
 -- AUTO_INCREMENT cho bảng `danhgia`
 --
 ALTER TABLE `danhgia`
-  MODIFY `IDDanhGia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `IDDanhGia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT cho bảng `hang`
@@ -1263,7 +1275,7 @@ ALTER TABLE `kichthuocquanao`
 -- AUTO_INCREMENT cho bảng `nguoidung`
 --
 ALTER TABLE `nguoidung`
-  MODIFY `MaNguoiDung` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `MaNguoiDung` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT cho bảng `nhacungcap`
@@ -1281,13 +1293,13 @@ ALTER TABLE `phieunhap`
 -- AUTO_INCREMENT cho bảng `quyen`
 --
 ALTER TABLE `quyen`
-  MODIFY `IDQuyen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `IDQuyen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `taikhoan`
 --
 ALTER TABLE `taikhoan`
-  MODIFY `IDTaiKhoan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `IDTaiKhoan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT cho bảng `theloai`
