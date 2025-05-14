@@ -13,6 +13,7 @@ import QuanLyDonHang from "../Pages/Admin/QuanLyDonHang";
 import QuanLyNguoiDung from "../Pages/Admin/QuanLyNguoiDung";
 import QuanLyPhanQuyen from "../Pages/Admin/QuanLyPhanQuyen";
 import QuanLyDanhGia from "../Pages/Admin/QuanLyDanhGia";
+import QuanLyQuyen from "../Pages/Admin/QuanLyQuyen";
 import Header from "./Header";
 import { layThongTinTaiKhoan } from "../../DAL/apiDangNhapAdmin";
 import { dangNhap } from "../../DAL/apiDangNhapAdmin";
@@ -84,6 +85,7 @@ const AdminLayout = () => {
   "quan-ly-phan-quyen": "Quản lý phân quyền",
   "tra-cuu-san-pham": "Tra cứu sản phẩm",
   "quan-ly-danh-gia": "Quản lý đánh giá",
+  "quan-ly-quyen": "Quản lý quyền",
 };
 
   const reversePathMapping = (pageName) => {
@@ -100,6 +102,7 @@ const AdminLayout = () => {
       "quan-ly-phan-quyen": "Quản lý phân quyền",
       "tra-cuu-san-pham": "Tra cứu sản phẩm",
       "quan-ly-danh-gia": "Quản lý đánh giá",
+      "quan-ly-quyen": "Quản lý quyền",
     };
     for (let key in pathMapping) {
       if (pathMapping[key] === pageName) {
@@ -176,6 +179,9 @@ const AdminLayout = () => {
               )}
               {allowedRoutes.includes('quan-ly-danh-gia') && (
                 <Route path="quan-ly-danh-gia" element={<QuanLyDanhGia {...getPermissionsForRoute('quan-ly-danh-gia')} />} />
+              )}
+              {allowedRoutes.includes('quan-ly-quyen') && (
+                <Route path="quan-ly-quyen" element={<QuanLyQuyen {...getPermissionsForRoute('quan-ly-quyen')} />} />
               )}
               {/* Thêm một route mặc định hoặc trang 403 nếu không có quyền truy cập */}
               <Route path="*" element={<div>Trang không tồn tại hoặc bạn không có quyền truy cập.</div>} />

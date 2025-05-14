@@ -128,8 +128,6 @@ const QuanLyDanhGia = ({ Xoa, Sua }) => {
 
     return (
         <div className="qldg-container">
-            <h1 className="qldg-header">Quản Lý Đánh Giá</h1>
-
             {notification.message && (
                 <div className={`qldg-notification ${notification.type === 'success' ? 'qldg-notification-success' : 'qldg-notification-error'}`}>
                     {notification.message}

@@ -134,3 +134,101 @@
 .qldg-error-message {
     color: red;
 }
+@media screen and (max-width: 768px) {
+    .qldg-table thead {
+        display: none; /* Ẩn tiêu đề bảng gốc */
+    }
+
+    .qldg-table, 
+    .qldg-table tbody, 
+    .qldg-table tr, 
+    .qldg-table td {
+        display: block; /* Chuyển các thành phần bảng thành block */
+        width: 100% !important; 
+        box-sizing: border-box;
+    }
+
+    .qldg-table tr {
+        margin-bottom: 15px; 
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        background-color: #fff; 
+    }
+    
+    .qldg-table tbody tr:nth-child(even) {
+        background-color: #fff; /* Bỏ background xen kẽ cho thẻ */
+    }
+
+    .qldg-table td {
+        padding: 8px 0px 8px 0px; 
+        position: relative;
+        border: none; 
+        border-bottom: 1px dotted #eee; 
+        min-height: 30px; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center;
+        text-align: center ; /* THAY ĐỔI TỪ right SANG center */
+    }
+
+
+    .qldg-table td:last-child {
+        border-bottom: none; 
+    }
+
+    .qldg-table td::before {
+        content: attr(data-label); 
+        font-weight: bold;
+        text-align: left;
+        padding-right: 10px; 
+        white-space: normal; 
+        flex-grow: 1; 
+    }
+
+    /* Điều chỉnh cho các ô cụ thể */
+    .qldg-table td[data-label="Ảnh"] {
+        justify-content: flex-start; 
+    }
+    .qldg-table td[data-label="Ảnh"] .qldg-product-image {
+         max-width: 80px; /* Giới hạn kích thước ảnh trên mobile */
+         max-height: 80px;
+    }
+    
+    .qldg-table td[data-label="Bình Luận"] {
+        flex-direction: column; 
+        align-items: flex-start;
+        text-align: left; 
+    }
+    .qldg-table td[data-label="Bình Luận"]::before {
+        margin-bottom: 5px;
+    }
+
+    .qldg-table td[data-label="Thao Tác"] {
+        justify-content: center; /* Căn các nút về bên trái */
+        padding-top: 10px;
+    }
+    .qldg-table td[data-label="Thao Tác"]::before {
+       /* display: none; */ /* Bạn có thể chọn ẩn label "Thao Tác:" nếu muốn */
+       margin-bottom: 5px; /* Thêm khoảng cách nếu label được hiển thị */
+    }
+     .qldg-table td[data-label="Thao Tác"] button {
+        display: inline-block; 
+        width: auto;
+        margin: 0 5px 5px 0; /* Điều chỉnh margin cho nút */
+    }
+    
+    .qldg-comment-cell { 
+        min-width: unset;
+        max-width: unset;
+    }
+
+    .qldg-filters {
+        flex-direction: column; 
+        gap: 10px;
+    }
+    .qldg-input[type="text"],
+    .qldg-select {
+        width: 100%; 
+    }
+}
