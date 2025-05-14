@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FaTags } from "react-icons/fa";
 import SanPhamGoiY from "./Components/SanPhamGoiY.jsx";
 import "./css/chiTietHangHoa.css";
+import DanhGia from './Components/DanhGia.jsx';
 
 function TrangChiTietHangHoa() {
   const [chiTiet, setChiTiet] = useState([]);
@@ -185,6 +186,7 @@ function TrangChiTietHangHoa() {
           <SanPhamGoiY maChungLoai={current.MaChungLoai} maHangHoaHienTai={maHangHoa} />
         )}
       </div>
+      <DanhGia maHangHoa={maHangHoa}></DanhGia>
     </div>
   );
 }

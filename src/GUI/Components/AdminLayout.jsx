@@ -148,7 +148,7 @@ const AdminLayout = () => {
                 <Route path="quan-ly-khuyen-mai" element={<QuanLyKhuyenMai {...getPermissionsForRoute('quan-ly-khuyen-mai')} />} />
               )}
               {allowedRoutes.includes('quan-ly-hang') && (
-                <Route path="quan-ly-hang" element={<QuanLyHang />} />
+                <Route path="quan-ly-hang" element={<QuanLyHang {...getPermissionsForRoute('quan-ly-hang')} />} />
               )}
               {allowedRoutes.includes('quan-ly-nha-cung-cap') && (
                 <Route path="quan-ly-nha-cung-cap" element={<QuanLyNhaCungCap {...getPermissionsForRoute('quan-ly-nha-cung-cap')} />} />
