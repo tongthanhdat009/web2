@@ -30,7 +30,7 @@ if ($maHoaDon <= 0) {
 }
 
 $sql = "
-SELECT hd.*, cthd.*, kh.*, ctpn.*, klt.*, ktqa.*, ktg.*, hh.MaHangHoa, hh.TenHangHoa, hh.Anh
+SELECT hd.*, cthd.*, kh.*, ctpn.*, klt.*, ktqa.*, ktg.*, hh.MaHangHoa, hh.TenHangHoa, hh.Anh, hh.MaKhuyenMai, km.PhanTram
 FROM hoadon hd
 JOIN chitiethoadon cthd ON cthd.MaHoaDon = hd.MaHoaDon
 JOIN khohang kh ON kh.Seri = cthd.Seri
@@ -39,6 +39,7 @@ LEFT JOIN khoiluongta klt ON klt.IDKhoiLuongTa = ctpn.IDKhoiLuongTa
 LEFT JOIN kichthuocquanao ktqa ON ktqa.IDKichThuocQuanAo = ctpn.IDKichThuocQuanAo
 LEFT JOIN kichthuocgiay ktg ON ktg.IDKichThuocGiay = ctpn.IDKichThuocGiay
 LEFT JOIN hanghoa hh ON hh.MaHangHoa = ctpn.MaHangHoa
+LEFT JOIN khuyenmai km ON km.MaKhuyenMai = hh.MaKhuyenMai
 WHERE hd.MaHoaDon = ?
 ";
 

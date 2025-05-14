@@ -953,7 +953,17 @@ export async function addChiTietPhieuNhap(chiTietPhieuNhapDTO) {
         return { success: false, message: "Lỗi khi thêm chi tiết phiếu nhập: " + error.message };
     }
 }
-            
+
+export async function fetchQuyenByTaiKhoan(IDTaiKhoan) {
+    try {
+        const response = await fetch(`http://localhost/web2/server/api/getQuyen.php?IDTaiKhoan=${IDTaiKhoan}`);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Lỗi khi lấy quyền:", error);
+        return { success: false, data: [] };
+    }
+}
 
 
 

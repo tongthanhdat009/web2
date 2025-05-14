@@ -21,6 +21,7 @@ import KetQuaThanhToanOnline from "./Pages/User/KetQuaThanhToanOnline";
 import KetQuaThanhToan from "./Pages/User/KetQuaThanhToan";
 import TrangXemThongTinCaNhan from "./Pages/User/TrangXemThongTinCaNhan";
 import LichSuMuaHang from "./Pages/User/LichSuMuaHang";
+import TrangHienThiTatCaSanPham from "./Pages/User/TrangHienThiTatCaSanPham";
 
 function App() {
   return (
@@ -43,6 +44,8 @@ function App() {
           <Route path="/ket-qua-thanh-toan" element={<KetQuaThanhToan />} />
           <Route path="/thong-tin-tai-khoan" element={<TrangXemThongTinCaNhan />} />
           <Route path="/don-hang-cua-toi" element={<LichSuMuaHang />} />
+          <Route path="/tim-kiem/:tenSanPham" element={<TrangHienThiTatCaSanPham />} />
+          <Route path="/tim-kiem" element={<TrangHienThiTatCaSanPham />} />
         </Route>
         <Route path="/dang-nhap-dang-ky" element={<TrangDangNhapDangKy />} />
         <Route path="/admin/*" element={<AdminLayout />} />

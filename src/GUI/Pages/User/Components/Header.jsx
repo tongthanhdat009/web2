@@ -8,6 +8,7 @@ function Header() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('success');
+  const [searchTerm, setSearchTerm] = useState(''); // State for search input
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -54,6 +55,18 @@ function Header() {
     }, 1500);
   };
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault(); // Prevent default form submission
+    if (searchTerm.trim()) {
+      navigate(`/tim-kiem/${encodeURIComponent(searchTerm.trim())}`);
+      setSearchTerm(''); // Optional: Clear search input after submission
+    }
+  };
+
   return (
     <>
       <ToastContainer 
@@ -95,7 +108,7 @@ function Header() {
             </Col>
 
             <Col xs={12} md={6} className="my-2 my-md-0">
-              <Form className="d-flex">
+              <Form className="d-flex" onSubmit={handleSearchSubmit}>
                  <InputGroup>
                     <InputGroup.Text style={{ backgroundColor: 'white', borderRight: 'none' }}>
                         <Search color="grey" />
@@ -105,6 +118,8 @@ function Header() {
                         placeholder="Tìm kiếm sản phẩm..."
                         aria-label="Search"
                         style={{ borderLeft: 'none' }}
+                        value={searchTerm} 
+                        onChange={handleSearchChange} 
                         className="me-2" 
                     />
                  </InputGroup>
