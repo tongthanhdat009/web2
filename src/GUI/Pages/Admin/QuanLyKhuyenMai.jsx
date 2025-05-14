@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchKhuyenMai, addKhuyenMai, updateKhuyenMai, deleteKhuyenMai } from "../../../DAL/api.jsx";
+import { fetchKhuyenMai, addKhuyenMai, updateKhuyenMai, deleteKhuyenMai, fetchQuyenByTaiKhoan } from "../../../DAL/api.jsx";
 import KhuyenMaiDTO from "../../../DTO/KhuyenMaiDTO";
 import "../../../GUI/Components/css/QuanLyKhuyenMai.css";
 
@@ -22,9 +22,15 @@ const QuanLyKhuyenMai = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCriteria, setSearchCriteria] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [permissions, setPermissions] = useState({
+    them: false,
+    xoa: false,
+    sua: false
+  });
 
   useEffect(() => {
     loadKhuyenMais();
+    checkPermissions();
   }, []);
 
   useEffect(() => {
@@ -35,6 +41,34 @@ const QuanLyKhuyenMai = () => {
       return () => clearTimeout(timer);
     }
   }, [notification]);
+
+  const checkPermissions = async () => {
+    try {
+      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      if (!userInfo) {
+        setPermissions({ them: false, xoa: false, sua: false });
+        return;
+      }
+      const data = await fetchQuyenByTaiKhoan(userInfo.IDTaiKhoan);
+      if (data.success) {
+        const khuyenMaiPermission = data.data.find(item => item.IDChucNang === 2);
+        if (khuyenMaiPermission) {
+          setPermissions({
+            them: khuyenMaiPermission.Them === 1,
+            xoa: khuyenMaiPermission.Xoa === 1,
+            sua: khuyenMaiPermission.Sua === 1
+          });
+        } else {
+          setPermissions({ them: false, xoa: false, sua: false });
+        }
+      } else {
+        setPermissions({ them: false, xoa: false, sua: false });
+      }
+    } catch (error) {
+      console.error('Error checking permissions:', error);
+      setPermissions({ them: false, xoa: false, sua: false });
+    }
+  };
 
   const loadKhuyenMais = async () => {
     setLoading(true);
@@ -321,13 +355,15 @@ const QuanLyKhuyenMai = () => {
         </select>
       </div>
 
-      <button 
-        onClick={handleAdd}
-        className="button-common button-add"
-        style={{ marginBottom: "20px" }}
-      >
-        Thêm khuyến mãi
-      </button>
+      {permissions.them && (
+        <button 
+          onClick={handleAdd}
+          className="button-common button-add"
+          style={{ marginBottom: "20px" }}
+        >
+          Thêm khuyến mãi
+        </button>
+      )}
 
       {loading ? (
         <div style={{ textAlign: "center", padding: "20px" }}>Đang tải dữ liệu...</div>
@@ -346,7 +382,9 @@ const QuanLyKhuyenMai = () => {
                     <th className="table-header">Tên khuyến mãi</th>
                     <th className="table-header">Mô tả</th>
                     <th className="table-header">Phần trăm</th>
-                    <th className="table-header">Thao tác</th>
+                    {(permissions.sua || permissions.xoa) && (
+                      <th className="table-header">Thao tác</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -356,20 +394,26 @@ const QuanLyKhuyenMai = () => {
                       <td>{khuyenMai.TenKhuyenMai}</td>
                       <td>{khuyenMai.MoTaKhuyenMai}</td>
                       <td>{khuyenMai.PhanTram}%</td>
-                      <td>
-                        <button
-                          onClick={() => handleEdit(khuyenMai)}
-                          className="button-common button-edit"
-                        >
-                          Sửa
-                        </button>
-                        <button
-                          onClick={() => handleConfirmDelete(khuyenMai.MaKhuyenMai)}
-                          className="button-common button-delete"
-                        >
-                          Xóa
-                        </button>
-                      </td>
+                      {(permissions.sua || permissions.xoa) && (
+                        <td>
+                          {permissions.sua && (
+                            <button
+                              onClick={() => handleEdit(khuyenMai)}
+                              className="button-common button-edit"
+                            >
+                              Sửa
+                            </button>
+                          )}
+                          {permissions.xoa && (
+                            <button
+                              onClick={() => handleConfirmDelete(khuyenMai.MaKhuyenMai)}
+                              className="button-common button-delete"
+                            >
+                              Xóa
+                            </button>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>

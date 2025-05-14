@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchNCC, addNCC, updateNCC, deleteNCC } from "../../../DAL/api.jsx";
+import { fetchNCC, addNCC, updateNCC, deleteNCC, fetchQuyenByTaiKhoan } from "../../../DAL/api.jsx";
 import NhaCungCapDTO from "../../../DTO/NhaCungCapDTO";
 import "../../../GUI/Components/css/QuanLyNhaCungCap.css";
 
@@ -20,9 +20,15 @@ const QuanLyNhaCungCap = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCriteria, setSearchCriteria] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [permissions, setPermissions] = useState({
+    them: false,
+    xoa: false,
+    sua: false
+  });
 
   useEffect(() => {
     loadNCCs();
+    checkPermissions();
   }, []);
 
   useEffect(() => {
@@ -53,6 +59,33 @@ const QuanLyNhaCungCap = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkPermissions = async () => {
+    try {
+      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      if (!userInfo) {
+        setPermissions({ them: false, xoa: false, sua: false });
+        return;
+      }
+      const data = await fetchQuyenByTaiKhoan(userInfo.IDTaiKhoan);
+      if (data.success) {
+        const permission = data.data.find(item => item.IDChucNang === 4);
+        if (permission) {
+          setPermissions({
+            them: permission.Them === 1,
+            xoa: permission.Xoa === 1,
+            sua: permission.Sua === 1
+          });
+        } else {
+          setPermissions({ them: false, xoa: false, sua: false });
+        }
+      } else {
+        setPermissions({ them: false, xoa: false, sua: false });
+      }
+    } catch (error) {
+      setPermissions({ them: false, xoa: false, sua: false });
     }
   };
 
@@ -287,13 +320,15 @@ const QuanLyNhaCungCap = () => {
         </select>
       </div>
 
-      <button 
-        onClick={handleAdd}
-        className="button-common button-add"
-        style={{ marginBottom: "20px" }}
-      >
-        Thêm nhà cung cấp
-      </button>
+      {permissions.them && (
+        <button 
+          onClick={handleAdd}
+          className="button-common button-add"
+          style={{ marginBottom: "20px" }}
+        >
+          Thêm nhà cung cấp
+        </button>
+      )}
 
       {loading ? (
         <div style={{ textAlign: "center", padding: "20px" }}>Đang tải dữ liệu...</div>
@@ -310,7 +345,9 @@ const QuanLyNhaCungCap = () => {
                   <tr>
                     <th className="table-header">Mã nhà cung cấp</th>
                     <th className="table-header">Tên nhà cung cấp</th>
-                    <th className="table-header">Thao tác</th>
+                    {(permissions.sua || permissions.xoa) && (
+                      <th className="table-header">Thao tác</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -318,20 +355,26 @@ const QuanLyNhaCungCap = () => {
                     <tr key={ncc.MaNhaCungCap} className={index % 2 === 0 ? "table-row-even" : "table-row-odd"}>
                       <td>{ncc.MaNhaCungCap}</td>
                       <td>{ncc.TenNhaCungCap}</td>
-                      <td>
-                        <button
-                          onClick={() => handleEdit(ncc)}
-                          className="button-common button-edit"
-                        >
-                          Sửa
-                        </button>
-                        <button
-                          onClick={() => handleConfirmDelete(ncc.MaNhaCungCap)}
-                          className="button-common button-delete"
-                        >
-                          Xóa
-                        </button>
-                      </td>
+                      {(permissions.sua || permissions.xoa) && (
+                        <td>
+                          {permissions.sua && (
+                            <button
+                              onClick={() => handleEdit(ncc)}
+                              className="button-common button-edit"
+                            >
+                              Sửa
+                            </button>
+                          )}
+                          {permissions.xoa && (
+                            <button
+                              onClick={() => handleConfirmDelete(ncc.MaNhaCungCap)}
+                              className="button-common button-delete"
+                            >
+                              Xóa
+                            </button>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
