@@ -6,8 +6,8 @@ date_default_timezone_set('Asia/Ho_Chi_Minh');
  * and open the template in the editor.
  */
   
-$vnp_TmnCode = "U4YPURL6"; //Mã định danh merchant kết nối (Terminal Id)
-$vnp_HashSecret = "GDVVYRVG3JWBS71R6W75VS8T7VMKQ5MK"; //Secret key
+$vnp_TmnCode = "B57NF3PO"; //Mã định danh merchant kết nối (Terminal Id)
+$vnp_HashSecret = "ZC8S54CA747K3MRPRV5ADE6MKHMTEB03"; //Secret key
 $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 $vnp_Returnurl = "http://localhost:5173/ket-qua-thanh-toan-online";
 $vnp_apiUrl = "http://sandbox.vnpayment.vn/merchant_webapi/merchant.html";
